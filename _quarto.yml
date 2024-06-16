@@ -1,0 +1,39 @@
+project:
+  type: book
+
+book:
+  title: "大数据分析——基于R语言"
+  author: "黄天元"
+  date: today
+  chapters:
+    - index.qmd
+    - 大数据基本概念.qmd
+    - R语言编程入门.qmd
+    - 数据处理效能的衡量.qmd
+    - 快速读写：大数据的导入与导出.qmd
+    - 快速整理：基于data.table的数据处理工具.qmd
+    - 快速绘图：大数据可视化工具.qmd
+    - 快速建模：高性能机器学习工具.qmd
+    - 化整为零：对文件进行批处理.qmd
+    - 跨语言召唤术：在R中调用其他编程工具.qmd
+    - 时间换空间：大数据流式计算.qmd
+    - 空间换时间：大数据并行计算.qmd
+    - 从内存到外存：用数据库管理数据.qmd
+    - 从本地到集群：大数据分布式计算.qmd
+    - 参考资料.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+  docx:
+    toc: true
+    number-sections: true
+    number-depth: 3
+    highlight-style: github
+    toc-title: 目录
+editor: visual
+

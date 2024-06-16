@@ -1,0 +1,9 @@
+# 参考资料 {.unnumbered}
+
+(@) Matter, Ulrich. [Big data analytics: a guide to data science practitioners making the transition to big data](https://umatter.github.io/BigData/). CRC Press, 2023.
+(@) Wickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. [R for data science](https://r4ds.hadley.nz/). O'Reilly Media, 2023.
+(@) Luraschi, Javier, Kevin Kuo, and Edgar Ruiz. [Mastering Spark with R: the complete guide to large-scale analysis and modeling](https://therinspark.com/). O'Reilly Media, 2019.
+(@) 刘艺非. R语言高效能实战:更多数据和更快速度. 人民邮电出版社, 2022.
+(@) [Larger-Than-Memory Data Workflows with Apache Arrow](https://arrow-user2022.netlify.app/)
+(@) [Apache Arrow R Cookbook](https://arrow.apache.org/cookbook/r/index.html)
+(@) [R interface to Apache Spark](https://spark.posit.co/)

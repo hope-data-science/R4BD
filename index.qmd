@@ -1,0 +1,29 @@
+# 前言 {.unnumbered}
+
+本教程主要介绍如何使用R语言来进行高性能计算，从而应对大数据时代给我们带来的各种挑战。这本书面向的是已经具有一定R语言基础的读者，在面对海量观测构成的数据集时，如何从容地像往常一样对数据进行丰富的分析与建模。为了对R基础较为薄弱的读者也友好，本书不会使用过分深刻晦涩的材料，力求深入浅出。书会结合当前最先进的R语言工具包（包括但不限于**data.table、duckdb、arrow、sparklyr、Rcpp、future**），系统地介绍以下几个部分的内容：
+
+-   大数据基本概念
+-   R语言基本介绍
+-   数据处理效能的衡量
+-   快速读写：大数据的导入与导出
+-   快速整理：基于data.table的数据处理工具
+-   快速绘图：大数据可视化工具
+-   快速建模：高性能机器学习工具
+-   化整为零：对文件进行批处理
+-   跨语言召唤术：在R中调用其他编程工具
+-   时间换空间：大数据流式计算
+-   空间换时间：大数据并行计算
+-   从内存到外存：用数据库管理数据
+-   从本地到集群：大数据分布式计算
+
+本书所需要用到的R包可以使用以下代码一次性进行安装：
+
+```{r}
+#| eval: false
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  tidyfst,microbenchmark,pryr,bench,profvis,rio,scattermore,tidyverse,hexbin,
+  ggridges,GGally,mlr3verse,FSelectorRcpp,praznik,ranger,kknn,fs,archive,openxlsx2,
+  Rcpp,DBI,RSQLite,futureverse,DBI,duckdb,dbplyr,arrow,sparklyr
+)
+```

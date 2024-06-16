@@ -1,0 +1,235 @@
+# 快速读写：大数据的导入与导出
+
+在当今信息爆炸的时代，大数据的快速读写是实现数据处理和分析的关键步骤之一。本章将重点介绍大数据的导入与导出过程，以R语言为例，讲述了数据从外部系统导入到R环境的方法，以及从R环境导出到外部的技术。通过学习本章内容，读者将能够掌握大数据读写的基本原理、常用工具和技术，为实现高效的数据交换和应用提供指导和支持。
+
+## 数据导入导出所需要考虑的因素
+
+在对大数据进行导出和导入的时候，在保证数据不会在导入导出过程中被损坏的前提下，需要重点考虑的因素有三个：1、读写速度；2、内存占用；3、文件格式通用性。一般来说，我们希望数据的读写速度快，内存占用小。除了从效能方面进行考虑以外，有时候还需要考虑的因素是数据是否能够跨平台复用，比如从R语言中导出的数据格式，是否能够用Excel或者Python也能够打开。如果答案是肯定的，那么使用不同分析工具的成员就能够更好地协作完成项目。在本章中，我们将以R语言为例，描述如何对表格进行高效的读写。案例主要使用**rio**包进行实现（六边形标志符见图[-@fig-rio]），因为它集成了R语言生态中众多的数据I/O工具，满足了我们对数据高效读写的大部分需求。
+
+```{r}
+#| label: fig-rio
+#| fig-cap: "rio包的六边形标志符"
+#| echo: false
+knitr::include_graphics("fig/rio-logo.png")
+```
+
+## 速度至上
+
+我们不妨试想一个场景，如果我们在计算机中刚生成了一份珍贵的数据，它非常大。咱们突然被告知，实验室大楼将会在半小时后停电，我们现在需要把数据从R环境中尽快地写出来保存好。在这种条件下，写出数据的速度越快，对我们越有利，这时候我们应该如何操作呢？
+
+我们不妨来尝试一下，首先我们生成一份数据。
+
+```{r}
+#| eval: false
+
+library(pacman)
+p_load(pryr,rio)
+nr_of_rows <- 5e7
+
+df <- data.frame(
+    Logical = sample(c(TRUE, FALSE, NA), prob = c(0.85, 0.1, 0.05), nr_of_rows, replace = TRUE),
+    Integer = sample(1L:100L, nr_of_rows, replace = TRUE),
+    Real = sample(sample(1:10000, 20) / 100, nr_of_rows, replace = TRUE),
+    Factor = as.factor(sample(labels(UScitiesD), nr_of_rows, replace = TRUE))
+  )
+
+object_size(df)
+
+## 1.00 GB
+```
+
+在上面的操作中，我们随机生成了一份变量名为df的数据框，包含5千万条数据，4列，大致占用内存1 GB。导出什么文件格式才能让速度最快地读出呢？这是我们下面的探索的问题。在R语言生态中，当前导出数据框最快的方法有**data.table**包的`fwrite`函数、**fst**包的`write_fst`函数、**arrow**包的`write_feather`函数和`write_parquet`函数，以及**qs**包的`qsave`函数。下面我们将对这些方案进行比较，看看哪一种方案数据的写出速度最快。
+
+```{r}
+#| eval: false
+p_load(bench)
+
+# 测试函数的定义
+test_write_speed = function(){
+  
+  # 创建临时文件
+  tempfile(fileext = ".csv") -> csv_file
+  tempfile(fileext = ".fst") -> fst_file
+  tempfile(fileext = ".feather") -> feather_file
+  tempfile(fileext = ".parquet") -> parquet_file
+  tempfile(fileext = ".qs") -> qs_file
+  
+  # 声明在函数结束的时候删掉临时文件
+  on.exit(file.remove(csv_file,fst_file,feather_file,parquet_file,qs_file))
+  
+  # 测速
+  mark(
+    export(df,csv_file),
+    export(df,fst_file),
+    export(df,feather_file),
+    export(df,parquet_file),
+    export(df,qs_file),
+    check = F
+  )
+}
+
+res = test_write_speed()
+
+res %>% 
+  select(expression,median)
+
+# expression	median
+# export(df, csv_file)	  1.53s
+# export(df, fst_file)	193.82ms
+# export(df, feather_file)	  1.95s
+# export(df, parquet_file)	  3.22s
+# export(df, qs_file)	  4.93s
+```
+
+结果表示，当导出为fst格式的文件时，导出速度最快，观察中位数发现，只需要193.82微秒（即不到0.2秒的时间）就完成了数据导出。事实上，这还没有考虑到压缩比率的问题，这些函数还可以设置参数，来对压缩算法和压缩比例进行调整，从而达到更快的导出速度。这个过程留待读者进行进一步尝试。
+
+除了写出速度以外，读入速度也非常重要。试想另一个场景，我们现在需要对一份数据进行高频读入（多个组员都需要用，而且每一天都需要读入该数据），那么如果能够减少读入的时间，就可以大大提高效率。在这个场景下，应该把文件存成什么格式合适呢？
+
+这里我们还是以上一份数据为例，测试当它存为不同格式的文件时，读入的时间大概是多少。试验代码如下：
+
+```{r}
+#| eval: false
+# 测试函数的定义
+test_read_speed = function(){
+  
+  # 创建临时文件
+  tempfile(fileext = ".csv") -> csv_file
+  tempfile(fileext = ".fst") -> fst_file
+  tempfile(fileext = ".feather") -> feather_file
+  tempfile(fileext = ".parquet") -> parquet_file
+  tempfile(fileext = ".qs") -> qs_file
+  
+  # 声明在函数结束的时候删掉临时文件
+  on.exit(file.remove(csv_file,fst_file,feather_file,parquet_file,qs_file))
+  
+  # 写出文件为不同文件格式
+  export(df,csv_file)
+  export(df,fst_file)
+  export(df,feather_file)
+  export(df,parquet_file)
+  export(df,qs_file)
+  
+  # 测速
+  mark(
+    import(csv_file),
+    import(fst_file),
+    import(feather_file),
+    import(parquet_file),
+    import(qs_file),
+    check = F
+  )
+}
+
+res2 = test_read_speed()
+
+# 展示结果
+res2 %>% 
+  arrange(median) %>% 
+  select(expression,median)
+
+# expression	median
+# import(fst_file)	565.43ms
+# import(feather_file)	770.19ms
+# import(parquet_file)	  1.13s
+# import(qs_file)	  1.66s
+# import(csv_file)	  2.47s
+
+
+```
+
+结果显示，从读入时间来看，依然是fst格式最快，不超过0.6秒。 综合来说，如果需要对一个数据框进行最快的读写，只考虑速度快慢的情况下，应该优先考虑把数据保存为fst格式，并使用**fst**包的`read_fst`和`write_fst`函数进行读取和写出（本例中，**rio**包直接对这些函数进行了调用）。
+
+## 极限压缩
+
+现在，让我们来设想另一个场景。你有幸进入一个研究小组开展关于某一个专题的大数据研究，平时数据都在超级计算机上，可以自由进行探索分析。这份数据你需要经常使用，而且处于安全性的考虑你无法把它放到云计算平台进行分析，你只能把数据存储到硬盘上。那么究竟使用什么方法才能够让硬盘承载最多的数据呢？
+
+在前面一个章节中，我们探讨了如何用最快的速度来读写一份表格文件。那么在本节，我们将会探讨如何才能把数据表的体积压缩到最小，从而提高存储的效率。下面我们依然生成一份数据来进行测试：
+
+```{r}
+#| eval: false
+
+library(pacman)
+p_load(pryr,rio,tidyverse)
+nr_of_rows <- 5e7
+
+df <- data.frame(
+    Logical = sample(c(TRUE, FALSE, NA), prob = c(0.85, 0.1, 0.05), nr_of_rows, replace = TRUE),
+    Integer = sample(1L:100L, nr_of_rows, replace = TRUE),
+    Real = sample(sample(1:10000, 20) / 100, nr_of_rows, replace = TRUE),
+    Factor = as.factor(sample(labels(UScitiesD), nr_of_rows, replace = TRUE))
+  )
+
+object_size(df)
+
+## 1.00 GB
+```
+
+我们将利用不同的方式导出上面这份数据，然后对比文件的体积大小，从而确定最佳的导出方式。我们要测试的导出文件格式包括：1、rds：rds是R语言专用的二进制文件格式，用于保存单个R对象，支持高效的读写和压缩；2、qs：qs是一个快速、压缩率高的R对象序列化格式，适合高性能的数据存储和读取；3、fst：fst是一个高效的R数据框保存格式，支持快速的读写和高压缩率；4、Feather：Feather是一种跨平台的二进制文件格式，基于Apache Arrow，专为高效读写和数据交换设计；5、Parquet：Parquet是一种列式存储格式，广泛应用于大数据处理，具有出色的压缩和查询性能；6、csv：csv是一种简单的文本文件格式，用于存储表格数据，每行一条记录，字段间以逗号分隔，易于阅读和编写，但压缩效果较差。比较代码如下：
+
+```{r}
+#| eval: false
+test_size = function(){
+  # 创建临时文件
+  tempfile(fileext = ".rds") -> rds_file
+  tempfile(fileext = ".csv") -> csv_file
+  tempfile(fileext = ".fst") -> fst_file
+  tempfile(fileext = ".feather") -> feather_file
+  tempfile(fileext = ".parquet") -> parquet_file
+  tempfile(fileext = ".qs") -> qs_file
+  
+  # 声明在函数结束的时候删掉临时文件
+  on.exit(file.remove(rds_file,csv_file,fst_file,feather_file,parquet_file,qs_file))
+  
+  export(df,rds_file,compress = "xz") # 使用xz压缩方法，保证高压缩比率
+  export(df,csv_file)
+  export(df,fst_file,compress = 100) # 设置压缩比例为100
+  export(df,feather_file,compression = "zstd") # 设置使用zstd压缩算法
+  export(df,parquet_file,compression = "zstd") # 设置使用zstd压缩算法
+  export(df,qs_file,preset = "high") # 设置高压缩率
+  
+  file_sizes <- data.frame(
+    Format = c("qs", "fst", "rds", "feather", "parquet", "csv"),
+    Size = c(
+      file.size(qs_file),
+      file.size(fst_file),
+      file.size(rds_file),
+      file.size(feather_file),
+      file.size(parquet_file),
+      file.size(qs_file)
+    )
+  )
+}
+
+
+test_size() -> res
+res %>% 
+  arrange(Size) %>% 
+  mutate(Size = Size / 1024^2) %>% 
+  mutate(Size = str_c(round(Size)," MB"))
+
+# Format	Size
+# parquet	97 MB
+# rds	98 MB
+# fst	132 MB
+# feather	150 MB
+# qs	240 MB
+# csv	240 MB
+```
+
+我们在上述操作中，尽量使用压缩比率较高的方案，这样的话有时候可能会需要更长的写出时间。从结果来看，导出为Parquet格式的时候，获得的文件最小，仅为97 MB；其次是R的原生方法，存储为rds文件的时候文件大小为98 MB；而csv和qs格式的文件相对来说体积最大，均为240 MB。因此可以认为，当使用zstd算法（全称为Zstandard，是一种由Facebook开发的快速、无损的数据压缩算法）进行压缩时，把我们的目标文件保存为Parquet文件格式具有最好的压缩比率。
+
+## 通用交流
+
+在我们的书中，主要使用R语言作为大数据分析的工具。R语言既支持多种数据格式的读入，也支持多种数据格式的写出。在写出的时候，需要注意写出文件的用途。如果仅仅是保存下来以便后续使用，那么写出什么格式都可以，因为R语言写出的格式基本都可以再用R环境读入。但是如果需要把写出的数据交给其他不会使用R语言的成员进行协作，那么就必须确保写出的数据格式能够有效地被伙伴所利用。
+
+举个例子，如果在一个数据团队中，只有你懂得如何使用R语言，其他成员只会使用Excel。那么你在使用R语言处理完数据后，得到的结果要给其他成员查阅的话，一般需要生成xlsx或csv格式，这样才能够确保其他伙伴能够在Excel中打开并进行再次加工。
+
+我们在前面两个章节中使用了R语言生态中的一些大数据方案，需要明确的是，如果使用`qs::qsave`和`saveRDS`函数所写出的文件，只有R环境才能再次进行读取，使用其他软件则一般没有通用接口可以读入。而我们在“速度至上”章节中发现的最快格式fst，当前也只是在R中比较流行，这种格式在其他软件平台（如Python）还没有接口能够读入。
+
+在这个背景下，如果生成的数据结果不是特别大，可以优先数据接口的通用性。R语言的**rio**包支持导出多种格式的数据文件，包括而不限于：1、xls/xlsx（Excel软件通用格式）；2、sas/sas7bdat（SAS软件通用格式）；3、sav/spss/zsav（SPSS软件通用格式）；4、mat/matlab（Matlab软件通用格式）。此外，**rio**还可以直接导出压缩文件等其他多种格式，详细的支持文件格式列表可以查阅官方链接：<https://cran.r-project.org/web/packages/rio/vignettes/rio.html>。
+
+如果导出的数据非常大，那么应该优先选择的数据格式是Apache Arrow所定义的数据格式，即Parquet和Feather。Parquet 和 Feather 是两种用于存储数据的文件格式，它们在设计和用途上有所不同，各自适用于不同的场景和需求。下面我们简单对两种文件格式进行介绍：（1）Parquet：Parquet 文件格式被设计用于最大化存储空间的利用率，采用了先进的压缩和编码技术。它非常适合在存储大量数据时尽量减少磁盘使用空间。Parquet 文件通常比较小，因为它使用了列式存储和高效的压缩策略。然而，读取 Parquet 文件需要相对复杂的解码过程，并且数据不能直接操作，而是需要以大块进行解码。因此，Parquet 文件适合于长期存储和归档目的，即使在未来几年也能被广泛支持的系统读取。（2）Feather：Feather 文件格式最初是为了在 Arrow 文件格式开发之前，简化存储 Arrow 格式的一部分数据而设计的。现在，“Feather version 2” 实际上就是 Arrow IPC 文件格式。Feather 文件格式保留了 Feather 名称和 API 以确保向后兼容性。与 Parquet 相比，Feather 文件更注重数据的直接读写和处理效率。Feather 文件格式中的数据与内存中的数据表示相同，因此读取 Feather 文件时无需解码，可以直接进行访问，从而提高了读写速度和操作效率。一言以蔽之，Parquet 适合长期存储和归档，而 Feather 则更适用于数据的直接读写和操作，特别是在计算任务中的实时数据处理。
+
+## 小结
+
+本章聚焦于大数据的读写性能，介绍了大数据读写中需要考虑的三个要素：（1）读写速度；（2）内存占用；（3）文件格式通用性。在R平台中进行测试，发现读写速度最快的文件格式是fst，而存储效率最高的是Parquet格式，在考虑通用交流的时候则需靠考虑团队成员能够读取什么格式的文件。
