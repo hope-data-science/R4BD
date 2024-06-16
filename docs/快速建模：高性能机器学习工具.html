@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>大数据分析——基于R语言 - 7&nbsp; 快速建模：高性能机器学习工具</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./化整为零：对文件进行批处理.html" rel="next">
+<link href="./快速绘图：大数据可视化工具.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./快速建模：高性能机器学习工具.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">快速建模：高性能机器学习工具</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">大数据分析——基于R语言</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./大数据基本概念.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">大数据基本概念</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./R语言编程入门.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">R语言编程入门</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./数据处理效能的衡量.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">数据处理效能的衡量</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速读写：大数据的导入与导出.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">快速读写：大数据的导入与导出</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速整理：基于data.table的数据处理工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">快速整理：基于data.table的数据处理工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速绘图：大数据可视化工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">快速绘图：大数据可视化工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速建模：高性能机器学习工具.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">快速建模：高性能机器学习工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./化整为零：对文件进行批处理.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">化整为零：对文件进行批处理</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./跨语言召唤术：在R中调用其他编程工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">跨语言召唤术：在R中调用其他编程工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./时间换空间：大数据流式计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">时间换空间：大数据流式计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./空间换时间：大数据并行计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">空间换时间：大数据并行计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./从内存到外存：用数据库管理数据.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">从内存到外存：用数据库管理数据</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./从本地到集群：大数据分布式计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">从本地到集群：大数据分布式计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./参考资料.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">参考资料</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#机器学习基本流程" id="toc-机器学习基本流程" class="nav-link active" data-scroll-target="#机器学习基本流程"><span class="header-section-number">7.1</span> 机器学习基本流程</a>
+  <ul class="collapse">
+  <li><a href="#明确问题" id="toc-明确问题" class="nav-link" data-scroll-target="#明确问题"><span class="header-section-number">7.1.1</span> 明确问题</a></li>
+  <li><a href="#数据采集" id="toc-数据采集" class="nav-link" data-scroll-target="#数据采集"><span class="header-section-number">7.1.2</span> 数据采集</a></li>
+  <li><a href="#特征工程" id="toc-特征工程" class="nav-link" data-scroll-target="#特征工程"><span class="header-section-number">7.1.3</span> 特征工程</a></li>
+  <li><a href="#模型训练" id="toc-模型训练" class="nav-link" data-scroll-target="#模型训练"><span class="header-section-number">7.1.4</span> 模型训练</a></li>
+  <li><a href="#模型评估" id="toc-模型评估" class="nav-link" data-scroll-target="#模型评估"><span class="header-section-number">7.1.5</span> 模型评估</a></li>
+  </ul></li>
+  <li><a href="#机器学习中可加速的环节" id="toc-机器学习中可加速的环节" class="nav-link" data-scroll-target="#机器学习中可加速的环节"><span class="header-section-number">7.2</span> 机器学习中可加速的环节</a></li>
+  <li><a href="#基于mlr3的高性能机器学习" id="toc-基于mlr3的高性能机器学习" class="nav-link" data-scroll-target="#基于mlr3的高性能机器学习"><span class="header-section-number">7.3</span> 基于mlr3的高性能机器学习</a>
+  <ul class="collapse">
+  <li><a href="#基本实现" id="toc-基本实现" class="nav-link" data-scroll-target="#基本实现"><span class="header-section-number">7.3.1</span> 基本实现</a></li>
+  <li><a href="#特征选择" id="toc-特征选择" class="nav-link" data-scroll-target="#特征选择"><span class="header-section-number">7.3.2</span> 特征选择</a></li>
+  <li><a href="#模型比较" id="toc-模型比较" class="nav-link" data-scroll-target="#模型比较"><span class="header-section-number">7.3.3</span> 模型比较</a></li>
+  <li><a href="#参数调节" id="toc-参数调节" class="nav-link" data-scroll-target="#参数调节"><span class="header-section-number">7.3.4</span> 参数调节</a></li>
+  <li><a href="#综合实践" id="toc-综合实践" class="nav-link" data-scroll-target="#综合实践"><span class="header-section-number">7.3.5</span> 综合实践</a></li>
+  </ul></li>
+  <li><a href="#小结" id="toc-小结" class="nav-link" data-scroll-target="#小结"><span class="header-section-number">7.4</span> 小结</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">快速建模：高性能机器学习工具</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>在当今数据驱动的世界中，快速而高效地构建和部署机器学习模型变得至关重要。无论是初学者还是经验丰富的数据科学家，都需要掌握一些强大而高效的工具，以应对日益增长的数据量和复杂的分析需求。本章将介绍一些能够显著提升建模速度和性能的机器学习工具和框架，帮助读者在最短的时间内完成整个机器学习流程。通过这些高性能工具，你不仅可以加速模型开发，还能提升模型的预测能力和稳定性，使得数据科学工作更加高效。</p>
+<section id="机器学习基本流程" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="机器学习基本流程"><span class="header-section-number">7.1</span> 机器学习基本流程</h2>
+<p>机器学习是一种通过算法和统计模型，使计算机系统从数据中自动学习和改进的技术。它包括监督学习、无监督学习、半监督学习和强化学习四种主要类型。机器学习广泛应用于图像识别、自然语言处理、医疗诊断和金融预测等领域。通过从大量数据中提取模式和特征，机器学习在解决复杂问题方面展现了强大的能力。</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-ml_process" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ml_process-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/ml_process.jpg" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ml_process-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.1: 机器学习基本流程
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>机器学习的基本步骤包括五个基本环节（见图<a href="#fig-ml_process" class="quarto-xref">Figure&nbsp;<span>7.1</span></a>），分别是明确问题、数据采集、特征工程、模型训练和模型评估。下面我们对这些环节进行简要的介绍：</p>
+<section id="明确问题" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="明确问题"><span class="header-section-number">7.1.1</span> 明确问题</h3>
+<p>在机器学习项目的开始阶段，明确问题是至关重要的。这一步涉及以下几个方面：</p>
+<ul>
+<li>定义目标：明确要解决的问题和目标，例如预测房价、分类垃圾邮件、推荐商品等。</li>
+<li>确定任务类型：根据问题的性质确定机器学习任务类型，例如分类、回归、聚类等。</li>
+<li>理解业务需求：了解业务背景和需求，确保机器学习解决方案能够实际应用并带来价值。</li>
+<li>设定评价标准：确定评估模型性能的标准和指标，例如准确率、均方误差、F1分数等。</li>
+</ul>
+</section>
+<section id="数据采集" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="数据采集"><span class="header-section-number">7.1.2</span> 数据采集</h3>
+<p>数据采集是机器学习的基础，数据的质量直接影响模型的性能。这一步包括：</p>
+<ul>
+<li>数据来源：确定数据的来源，可以是数据库、文件系统、网络爬虫等。</li>
+<li>数据收集：从各种来源收集所需的数据，确保数据量足够且具有代表性。</li>
+<li>数据整合：将来自不同来源的数据整合在一起，形成一个统一的数据集。</li>
+<li>数据存储：将数据存储在合适的存储系统中，例如数据库、数据仓库等，以便后续处理。</li>
+</ul>
+</section>
+<section id="特征工程" class="level3" data-number="7.1.3">
+<h3 data-number="7.1.3" class="anchored" data-anchor-id="特征工程"><span class="header-section-number">7.1.3</span> 特征工程</h3>
+<p>特征工程是提高模型性能的关键步骤，包括对数据进行处理和转换，以提取有用的特征，这个过程包括：</p>
+<ul>
+<li>数据清洗：处理缺失值、异常值和重复数据，确保数据的质量。</li>
+<li>特征选择：选择对预测结果有显著影响的特征，减少特征数量以提高模型效率。</li>
+<li>特征提取：从原始数据中提取新的特征，例如将日期拆分为年、月、日等。</li>
+<li>特征转换：对特征进行转换，例如标准化、归一化、编码分类变量等，以适应模型输入要求。</li>
+</ul>
+</section>
+<section id="模型训练" class="level3" data-number="7.1.4">
+<h3 data-number="7.1.4" class="anchored" data-anchor-id="模型训练"><span class="header-section-number">7.1.4</span> 模型训练</h3>
+<p>模型训练是机器学习的核心步骤，通过使用训练数据调整模型的参数，使其能够最好地拟合数据，相关的步骤包括：</p>
+<ul>
+<li>选择算法：根据任务类型和数据特点选择合适的机器学习算法，例如线性回归、决策树、神经网络等。</li>
+<li>模型构建：使用选定的算法构建初始模型。</li>
+<li>训练模型：将训练数据输入模型，调整参数以最小化误差或最大化某种评估指标。</li>
+<li>超参数调优：通过调整模型的超参数（例如学习率、正则化参数等）进一步优化模型性能。</li>
+</ul>
+</section>
+<section id="模型评估" class="level3" data-number="7.1.5">
+<h3 data-number="7.1.5" class="anchored" data-anchor-id="模型评估"><span class="header-section-number">7.1.5</span> 模型评估</h3>
+<p>模型评估是检测模型性能的关键步骤，通过使用测试数据来评估模型的泛化能力，评估流程包括：</p>
+<ul>
+<li>划分数据：将数据集划分为训练集和测试集，确保模型评估的独立性，评估阶段会使用测试集的数据。</li>
+<li>选择评估指标：根据问题和任务类型选择合适的评估指标，例如分类任务中的准确率、精确率、召回率，回归任务中的均方误差、R方等。</li>
+<li>评估模型：使用测试数据计算评估指标，评估模型在未见数据上的表现。</li>
+<li>验证和调整：通过交叉验证等方法进一步验证模型的稳定性，必要时调整模型参数或特征工程。</li>
+</ul>
+<p>通过这五个环节，机器学习项目能够系统地进行，从明确问题到最终评估模型，每一步都为构建一个高性能的机器学习模型奠定基础。</p>
+</section>
+</section>
+<section id="机器学习中可加速的环节" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="机器学习中可加速的环节"><span class="header-section-number">7.2</span> 机器学习中可加速的环节</h2>
+<p>在机器学习过程中，加速某些环节可以显著提高整个机器学习的效率。本节我们会讨论我们能够从哪些环节进行优化，从而让机器学习的实现更加快捷。</p>
+<p>首先，在数据采集和预处理阶段，通过自动化工具和脚本可以大幅减少手动操作的时间。此外，利用多线程或分布式计算框架（如Apache Spark）可以加快大规模数据集的处理和转换。此外，高效的数据存储格式（如Parquet、Feather）和数据库系统（如PostgreSQL、MongoDB）也能显著提高数据读写速度。</p>
+<p>在特征工程阶段，批处理方法可以减少重复计算，自动特征工程工能够自动生成和选择特征，进一步提高效率。缓存特征工程过程中产生的中间结果，可以避免重复计算，从而节省时间。在模型训练过程中，使用多线程、多进程或分布式计算框架）可以并行训练模型，显著缩短训练时间。硬件加速器（如GPU或TPU）在加速深度学习模型训练方面也非常有效。此外，选择高效的优化算法能够加快模型的收敛速度，进而提高训练的整体速度。</p>
+<p>超参数调优是另一个可以加速的环节。并行搜索方法（如并行网格搜索、随机搜索）允许同时评估多个超参数组合，显著节省时间。使用贝叶斯优化、遗传算法等智能优化方法，可以更高效地搜索最佳超参数组合。此外，超参数调优过程中使用早停法（early stopping），当模型性能不再显著提升时停止训练，这样可以节省大量计算资源。</p>
+<p>在模型评估阶段，分布式计算框架可以并行计算评估指标，尤其是在处理大规模测试集时，这一方法非常有效。通过分层K折交叉验证或留一法交叉验证，可以在保证评估可靠性的同时减少计算负担。此外，预先计算一些评估指标，也能减少评估时间。</p>
+<p>在模型部署和推理阶段，可以使用模型剪枝等技术来减少模型大小，提高推理速度，这能够显著提升部署效率。对于重复请求，缓存预测结果可以减少重复计算，进一步提高响应速度。</p>
+<p>通过在这些环节中采用高效的技术和方法，能够显著加速机器学习项目的执行，提高整个流程的效率。上面描述的是我们能够加速的组分，在下一节中我们会采用R语言中<strong>mlr3</strong>工具包作为机器学习框架，描述如何在R环境高效地开展机器学习过程。</p>
+</section>
+<section id="基于mlr3的高性能机器学习" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="基于mlr3的高性能机器学习"><span class="header-section-number">7.3</span> 基于mlr3的高性能机器学习</h2>
+<p>在现代数据科学和机器学习的领域中，高效处理和分析大规模数据集是关键。为了实现这一目标，R语言中的<strong>mlr3</strong>框架以其强大的面向对象编程和模块化设计脱颖而出。本节将介绍如何利用<strong>mlr3</strong>构建高性能的机器学习模型，探索其核心功能和附加包如何协同工作，以支持并行计算和大数据处理。通过学习这一内容，您将了解如何使用<strong>mlr3</strong>优化机器学习任务的执行效率，提升模型的预测能力和可靠性，从而在实际应用中更好地应对复杂的数据分析挑战。</p>
+<section id="基本实现" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="基本实现"><span class="header-section-number">7.3.1</span> 基本实现</h3>
+<p>下面我们举一个简单的例子，来看如何使用<strong>mlr3</strong>工具包来完成一个基本的机器学习任务。 首先，我们加载必须的包：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(mlr3verse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>然后，我们来定义一个<strong>任务</strong>。这里我们提及的任务在mlr3的体系中是一个数据对象，它包含对机器学习任务进行定义的数据（即需要进行数据分析的原始数据）和元数据（比如谁是响应变量、谁是解释变量、是一个分类还是回归问题等）。在mlr3中，有一系列已经定义好的任务，可以直接进行取用。这里我们会取用“penguins”任务，这个任务试图通过企鹅的一系列特征来对企鹅的品种进行分类。任务定义代码如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>task <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"penguins"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>task</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;TaskClassif:penguins&gt; (344 x 8): Palmer Penguins
+* Target: species
+* Properties: multiclass
+* Features (7):
+  - int (3): body_mass, flipper_length, year
+  - dbl (2): bill_depth, bill_length
+  - fct (2): island, sex</code></pre>
+</div>
+</div>
+<p>随后，我们需要使用<strong>partition</strong>函数对数据进行划分：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>split <span class="ot">=</span> <span class="fu">partition</span>(task)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>split</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$train
+  [1]   1   3   4   5   8   9  11  13  15  16  17  19  20  22  23  25  26  27
+ [19]  28  29  31  32  33  34  35  36  37  39  40  41  43  44  45  47  48  49
+ [37]  50  52  53  55  56  58  59  60  62  63  66  68  69  71  72  75  77  79
+ [55]  80  82  84  85  86  88  91  92  93  94  98 102 103 104 105 107 111 113
+ [73] 114 116 117 118 119 120 121 123 124 126 128 131 132 133 134 135 136 137
+ [91] 138 139 141 142 143 145 146 147 148 149 151 152 153 154 155 156 157 159
+[109] 160 161 162 164 165 166 167 168 169 170 172 174 175 176 178 179 180 181
+[127] 182 183 184 186 187 188 190 192 193 194 196 197 199 200 201 202 203 205
+[145] 208 209 211 212 213 215 216 217 219 222 223 224 225 227 231 232 233 236
+[163] 237 238 240 241 242 243 244 248 251 252 256 257 258 260 261 263 264 265
+[181] 266 267 269 271 274 278 282 283 284 286 288 289 290 291 292 293 295 296
+[199] 298 300 301 302 303 304 306 307 308 311 313 316 317 319 320 322 323 324
+[217] 328 329 330 331 333 334 336 337 338 339 340 341 342 343 344
+
+$test
+  [1]   2   6   7  10  12  14  18  21  24  30  38  42  46  51  54  57  61  64
+ [19]  65  67  70  73  74  76  78  81  83  87  89  90  95  96  97  99 100 101
+ [37] 106 108 109 110 112 115 122 125 127 129 130 140 144 150 158 163 171 173
+ [55] 177 185 189 191 195 198 204 206 207 210 214 218 220 221 226 228 229 230
+ [73] 234 235 239 245 246 247 249 250 253 254 255 259 262 268 270 272 273 275
+ [91] 276 277 279 280 281 285 287 294 297 299 305 309 310 312 314 315 318 321
+[109] 325 326 327 332 335</code></pre>
+</div>
+</div>
+<p>上面这一步操作，将数据分为了两份，一份是训练数据，一份是测试数据。split变量是一个列表，放着的是训练集和测试集所在的行号。下一步，我们将选择机器学习的模型，制定一个学习器。我们将选用决策树算法进行训练，让其进行分类，实现方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>learner</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;LearnerClassifRpart:classif.rpart&gt;: Classification Tree
+* Model: -
+* Parameters: xval=0
+* Packages: mlr3, rpart
+* Predict Types:  [response], prob
+* Feature Types: logical, integer, numeric, factor, ordered
+* Properties: importance, missings, multiclass, selected_features,
+  twoclass, weights</code></pre>
+</div>
+</div>
+<p>如果想知道还有哪些学习器可以选择，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mlr_learners</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;DictionaryLearner&gt; with 49 stored values
+Keys: classif.cv_glmnet, classif.debug, classif.featureless,
+  classif.glmnet, classif.kknn, classif.lda, classif.log_reg,
+  classif.multinom, classif.naive_bayes, classif.nnet, classif.qda,
+  classif.ranger, classif.rpart, classif.svm, classif.xgboost,
+  clust.agnes, clust.ap, clust.cmeans, clust.cobweb, clust.dbscan,
+  clust.dbscan_fpc, clust.diana, clust.em, clust.fanny,
+  clust.featureless, clust.ff, clust.hclust, clust.hdbscan,
+  clust.kkmeans, clust.kmeans, clust.MBatchKMeans, clust.mclust,
+  clust.meanshift, clust.optics, clust.pam, clust.SimpleKMeans,
+  clust.xmeans, regr.cv_glmnet, regr.debug, regr.featureless,
+  regr.glmnet, regr.kknn, regr.km, regr.lm, regr.nnet, regr.ranger,
+  regr.rpart, regr.svm, regr.xgboost</code></pre>
+</div>
+</div>
+<p>上面给出的是mlr3内置的所有机器学习方法，其中classif作为前缀的是分类算法、clust作为前缀的是聚类算法、regr作为前缀的是回归算法。关于更多的算法参数列表，可以参考官方的文档（<a href="https://mlr-org.com/learners.html" class="uri">https://mlr-org.com/learners.html</a>）。 在下一步，我们需要对模型训练，这里我们只需要对训练集进行学习，测试集留作测试。实现方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>learner<span class="sc">$</span><span class="fu">train</span>(task, <span class="at">row_ids =</span> split<span class="sc">$</span>train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>经过训练之后，获得的模型存在learner对象的model中：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>learner<span class="sc">$</span>model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>n= 231 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+1) root 231 129 Adelie (0.441558442 0.199134199 0.359307359)  
+  2) flipper_length&lt; 207.5 146  44 Adelie (0.698630137 0.294520548 0.006849315)  
+    4) bill_length&lt; 43.3 102   2 Adelie (0.980392157 0.019607843 0.000000000) *
+    5) bill_length&gt;=43.3 44   3 Chinstrap (0.045454545 0.931818182 0.022727273) *
+  3) flipper_length&gt;=207.5 85   3 Gentoo (0.000000000 0.035294118 0.964705882) *</code></pre>
+</div>
+</div>
+<p>利用这个学习器得到的模型，我们可以对测试集的数据进行预测。我们会调用学习器learner的predict方法，然后对之前task任务数据中行号为test的测试集进行预测：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>prediction <span class="ot">=</span> learner<span class="sc">$</span><span class="fu">predict</span>(task, <span class="at">row_ids =</span> split<span class="sc">$</span>test)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>prediction</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;PredictionClassif&gt; for 113 observations:
+    row_ids     truth  response
+          2    Adelie    Adelie
+          6    Adelie    Adelie
+          7    Adelie    Adelie
+---                            
+        327 Chinstrap Chinstrap
+        332 Chinstrap Chinstrap
+        335 Chinstrap Chinstrap</code></pre>
+</div>
+</div>
+<p>最后，我们可以观察一些衡量模型好坏的参数来评估其表现，比如我们可以用准确率来进行衡量，实现方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>prediction<span class="sc">$</span><span class="fu">score</span>(<span class="fu">msr</span>(<span class="st">"classif.acc"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>classif.acc 
+   0.920354 </code></pre>
+</div>
+</div>
+<p>上面这些步骤，就是我们利用mlr3框架对一个基本任务进行机器学习的全过程。有了这个基本的概念，我们来看mlr3是如何使用其框架给我们的机器学习过程提供便捷的工具，让整个任务更加高效。</p>
+</section>
+<section id="特征选择" class="level3" data-number="7.3.2">
+<h3 data-number="7.3.2" class="anchored" data-anchor-id="特征选择"><span class="header-section-number">7.3.2</span> 特征选择</h3>
+<p>大数据中尝尝存在维度灾难的问题。维度灾难指的是在高维数据中，由于数据点变得稀疏和距离度量失效，导致传统的数据分析和机器学习方法变得无效的问题。它会导致模型过拟合、计算复杂度急剧上升和样本需求量增加。通过特征选择、特征提取和正则化等方法，可以有效缓解维度灾难，提高模型的性能和计算效率。本部分将会聚焦在特征选择这一主题，讨论在mlr3框架下如何对数据的特征进行筛选。常见的两种特征选择方法是筛选法和封装法，以下将分述之。</p>
+<section id="筛选法" class="level4" data-number="7.3.2.1">
+<h4 data-number="7.3.2.1" class="anchored" data-anchor-id="筛选法"><span class="header-section-number">7.3.2.1</span> 筛选法</h4>
+<p>筛选法是一种特征选择方法，通过独立评估每个特征的重要性，使用统计测试或评分指标（如信息增益、卡方检验或相关系数）来选择最具代表性的特征。筛选法的主要优点是计算效率高，可以快速处理大规模数据，并且不依赖于特定的机器学习算法，使其广泛适用于各种建模任务。</p>
+<p>这里，我们以信息增益法为例，描述如何在mlr3的框架下实现筛选法。信息增益法通过评估每个特征对目标变量不确定性的减少程度来衡量特征的重要性。它计算出在引入某个特征后，我们对目标变量的预测是否变得更加明确，从而确定特征的重要性。最终，选择那些显著减少目标变量不确定性的特征用于模型训练。具体实现方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 加载包</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3filters)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义筛选器的类型，使用信息增益法</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>flt_gain <span class="ot">=</span> <span class="fu">flt</span>(<span class="st">"information_gain"</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用企鹅分类的任务</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>tsk_pen <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"penguins"</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 对变量重要性的分值进行计算</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>flt_gain<span class="sc">$</span><span class="fu">calculate</span>(tsk_pen)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 对结果进行展示</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.table</span>(flt_gain)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          feature       score
+           &lt;char&gt;       &lt;num&gt;
+1: flipper_length 0.581167901
+2:    bill_length 0.544896584
+3:     bill_depth 0.538718879
+4:         island 0.520157171
+5:      body_mass 0.442879511
+6:            sex 0.007244168
+7:           year 0.000000000</code></pre>
+</div>
+</div>
+<p>需要注意的是，有的筛选法只能处理没有缺失值的数据。在这样的情况下，需要先剔除掉缺失值，然后再对重要性分值进行计算。比如如果我们要选用JMIM（ Joint Mutual Information Maximization）方法，该方法通过最大化特征与目标变量之间的联合互信息来选择特征，确保每个新添加的特征与已选特征和目标变量的联合信息量最大。它在考虑特征之间的相互依赖性和与目标变量的关系时，选择最具代表性的特征。这样的方法有效地避免了选择冗余或相关性较低的特征，从而提高模型的性能。具体实现方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义筛选器的类型，使用信息增益法</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>flt_jmim <span class="ot">=</span> <span class="fu">flt</span>(<span class="st">"jmim"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用企鹅分类的任务</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>tsk_pen <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"penguins"</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 剔除任务数据中包含缺失值的条目</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>tsk_pen<span class="sc">$</span><span class="fu">filter</span>(tsk_pen<span class="sc">$</span>row_ids[<span class="fu">complete.cases</span>(tsk_pen<span class="sc">$</span><span class="fu">data</span>())])</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 对变量重要性的分值进行计算</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>flt_jmim<span class="sc">$</span><span class="fu">calculate</span>(tsk_pen)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 对结果进行展示</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.table</span>(flt_jmim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          feature     score
+           &lt;char&gt;     &lt;num&gt;
+1: flipper_length 1.0000000
+2:    bill_length 0.8333333
+3:      body_mass 0.6666667
+4:         island 0.5000000
+5:     bill_depth 0.3333333
+6:           year 0.1666667
+7:            sex 0.0000000</code></pre>
+</div>
+</div>
+</section>
+<section id="封装法" class="level4" data-number="7.3.2.2">
+<h4 data-number="7.3.2.2" class="anchored" data-anchor-id="封装法"><span class="header-section-number">7.3.2.2</span> 封装法</h4>
+<p>封装法是一种特征筛选方法，通过直接使用特定的机器学习模型来评估和选择特征子集。它使用搜索算法生成不同的特征子集，然后对每个子集训练和评估模型，使用性能指标来衡量模型表现。通过对每个特征子集的评估，封装法能够选择出在指定模型上表现最佳的特征组合。由于这种方法直接针对特定模型进行优化，通常能够获得优越的预测性能。然而，封装法的计算成本较高，尤其是在处理大规模数据集时，因此需要更多的计算资源和时间。</p>
+<p>为了多快好省地获得最佳特征组合（或者至少是表现较为不错的特征组合），在实现封装法的时候需要遵循一定的搜索规则，从而提高搜索的效率。最常见的方法之一就是前向选择，其基本思想是从空特征集开始，逐步向前添加特征，直到达到某个预设的终止条件为止。在每一步中，选择能够带来最大性能提升的特征添加到当前特征集中，直至满足停止条件。这个过程通常会在指定的性能指标下，如准确率或其他评估指标下进行。其实现方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 加载包</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3fselect)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义任务</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>tsk_pen <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"penguins"</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义学习器，使用决策树</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>lrn_rpart <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.rpart"</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 对其中的4个特征进行筛选</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>tsk_pen<span class="sc">$</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"bill_depth"</span>, <span class="st">"bill_length"</span>, <span class="st">"body_mass"</span>,</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"flipper_length"</span>))</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 进行特征筛选</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>instance <span class="ot">=</span> <span class="fu">fselect</span>(</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">fselector =</span> <span class="fu">fs</span>(<span class="st">"sequential"</span>), <span class="co"># 筛选器设置</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">task =</span>  tsk_pen,  <span class="co"># 声明任务</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">learner =</span> lrn_rpart, <span class="co"># 学习器设置</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>), <span class="co"># 使用3折交叉验证来做重采样</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">measure =</span> <span class="fu">msr</span>(<span class="st">"classif.acc"</span>) <span class="co"># 衡量标准是分类准确率</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 结果展示</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>instance<span class="sc">$</span>result_feature_set</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>我们没有给出展示的结果，因为在实际的操作中，如果重复次数不够多，那么不同迭代中出现的结果可能会不一致，这里仅仅展示实现方法。在特征筛选之后，我们可以使用筛选的特征来进行模型训练，方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义任务</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>tsk_pen <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"penguins"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择筛选出来的特征</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>tsk_pen<span class="sc">$</span><span class="fu">select</span>(instance<span class="sc">$</span>result_feature_set)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 决策树模型训练</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>lrn_rpart<span class="sc">$</span><span class="fu">train</span>(tsk_pen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>在实际操作中，还可以针对多个目标（比如同时优化特异度和敏感度）进行优化，同时还可以加入终止条件（比如只要迭代100次就停止），相关内容可以参考官方文档（<a href="https://mlr3book.mlr-org.com/chapters/chapter6/feature_selection.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter6/feature_selection.html</a>）。</p>
+</section>
+</section>
+<section id="模型比较" class="level3" data-number="7.3.3">
+<h3 data-number="7.3.3" class="anchored" data-anchor-id="模型比较"><span class="header-section-number">7.3.3</span> 模型比较</h3>
+<p>很多时候，我们需要对同一个任务使用多个机器学习模型，并对模型进行比较；甚至有的时候，我们还需要看同一个模型在不同任务上的表现。在这种背景下，就需要构造任务组合，从而看在不同条件下创建的模型表现如何。下面我们展示在mlr3框架下如何对此进行实现：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择2个分类任务</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>tasks <span class="ot">=</span> <span class="fu">tsks</span>(<span class="fu">c</span>(<span class="st">"german_credit"</span>, <span class="st">"sonar"</span>))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择3个算法，预测类型为概率值</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>learners <span class="ot">=</span> <span class="fu">lrns</span>(<span class="fu">c</span>(<span class="st">"classif.rpart"</span>, <span class="st">"classif.ranger"</span>,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"classif.featureless"</span>), <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 设置重采样方法为5折交叉验证</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>rsmp_cv5 <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">5</span>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建训练网格</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>design <span class="ot">=</span> <span class="fu">benchmark_grid</span>(tasks, learners, rsmp_cv5)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 对模型进行训练</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(design)</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 观察模型效果</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a> bmr<span class="sc">$</span><span class="fu">aggregate</span>() [,.(task_id,learner_id,classif.ce)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>这里我们没有对结果进行展示，读者可以自行运行代码来观察，其中需要注意的细节包括：1、在使用算法的时候，“classif.rpart”使用的是决策树算法，“classif.ranger”使用的是随机森林算法，而“classif.featureless”则是一个基线模型，在分类问题上会对盲猜为多数类；2、这里默认观察模型的效果，会计算分类的错误率，错误率月低，代表模型表现越好，详见官方文档（<a href="https://mlr3.mlr-org.com/reference/mlr_measures_classif.ce.html" class="uri">https://mlr3.mlr-org.com/reference/mlr_measures_classif.ce.html</a>）；3、在对bmr对象进行观察的时候，调用了<code>aggregate</code>方法，这个方法能够对不同迭代的表现结果进行汇总；4、mlr3框架使用了<strong>data.table</strong>作为底层，因此在观察模型效果的时候，我们选择列直接用了data.table中的方法。关于更多模型比较的内容，可以参考官方文档（<a href="https://mlr3book.mlr-org.com/chapters/chapter3/evaluation_and_benchmarking.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter3/evaluation_and_benchmarking.html</a>）。</p>
+</section>
+<section id="参数调节" class="level3" data-number="7.3.4">
+<h3 data-number="7.3.4" class="anchored" data-anchor-id="参数调节"><span class="header-section-number">7.3.4</span> 参数调节</h3>
+<p>机器学习中的参数调节是优化机器学习模型性能的关键步骤。超参数是模型在训练过程中设置的参数，不会从数据中学习到，需手动设定。例如，决策树的深度、支持向量机的核函数类型或正则化参数等都是超参数。参数调节旨在找到这些超参数的最佳组合，以提高模型在新数据上的表现，常见的方法包括网格搜索、随机搜索和贝叶斯优化等。网格搜索通过遍历预定义参数组合来寻找最佳参数，但计算量大；随机搜索在预定义范围内随机选择参数组合，效率较高；贝叶斯优化利用先前评估结果构建代理模型，预测并选择最优参数组合。参数调节通常结合交叉验证进行，以确保模型的泛化能力。通过优化超参数，模型能在新数据上表现得更好，提高预测准确性和稳健性。</p>
+<p>在mlr3中，如果要对一个学习器中的参数进行调节，可以在设置学习器的时候就进行声明，而我们日常没有特殊声明的时候都会直接使用函数的默认参数来进行设置。对于不同的机器学习算法，有不同的参数可以调节，我们可以去看学习器的参数集来观察有哪些参数可以调节，而且这些参数调节的范围是什么。比如我们想对随机森林方法的参数集进行观察，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.table</span>(<span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>)<span class="sc">$</span>param_set)[,</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  .(id, class, lower, upper, nlevels)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                              id    class lower upper nlevels
+                          &lt;char&gt;   &lt;char&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;
+ 1:                        alpha ParamDbl  -Inf   Inf     Inf
+ 2:       always.split.variables ParamUty    NA    NA     Inf
+ 3:                class.weights ParamUty    NA    NA     Inf
+ 4:                      holdout ParamLgl    NA    NA       2
+ 5:                   importance ParamFct    NA    NA       4
+ 6:                   keep.inbag ParamLgl    NA    NA       2
+ 7:                    max.depth ParamInt     0   Inf     Inf
+ 8:                   min.bucket ParamInt     1   Inf     Inf
+ 9:                min.node.size ParamInt     1   Inf     Inf
+10:                      minprop ParamDbl  -Inf   Inf     Inf
+11:                         mtry ParamInt     1   Inf     Inf
+12:                   mtry.ratio ParamDbl     0     1     Inf
+13:            num.random.splits ParamInt     1   Inf     Inf
+14:                   node.stats ParamLgl    NA    NA       2
+15:                  num.threads ParamInt     1   Inf     Inf
+16:                    num.trees ParamInt     1   Inf     Inf
+17:                    oob.error ParamLgl    NA    NA       2
+18:        regularization.factor ParamUty    NA    NA     Inf
+19:      regularization.usedepth ParamLgl    NA    NA       2
+20:                      replace ParamLgl    NA    NA       2
+21:    respect.unordered.factors ParamFct    NA    NA       3
+22:              sample.fraction ParamDbl     0     1     Inf
+23:                  save.memory ParamLgl    NA    NA       2
+24: scale.permutation.importance ParamLgl    NA    NA       2
+25:                    se.method ParamFct    NA    NA       2
+26:                         seed ParamInt  -Inf   Inf     Inf
+27:         split.select.weights ParamUty    NA    NA     Inf
+28:                    splitrule ParamFct    NA    NA       3
+29:                      verbose ParamLgl    NA    NA       2
+30:                 write.forest ParamLgl    NA    NA       2
+                              id    class lower upper nlevels</code></pre>
+</div>
+</div>
+<p>在展示结果中我们发现一共有30种参数可以进行调节，其中id存放的是参数的名称，class告诉我们参数的数据类型，而lower和upper分别界定的了参数的下限和上限，nlevels则告诉我们参数有几种可以选择（一般适用于离散型变量，如逻辑型和因子型）。这里，如果我们要对随机森林中树的数量进行调节，分别尝试100、200和400棵树，可以这样进行设置：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>如果只是想测试一个范围，比如100到400课树之间，则可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="dv">100</span>,<span class="dv">400</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>不妨看一下<code>to_tune</code>函数是如何对搜索空间进行设定的：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 放入一个向量时，会进行遍历</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Tuning over:
+p_fct(levels = c("100", "200", "400"))</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 放入两个数字时，会生成一个范围</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">to_tune</span>(<span class="dv">100</span>,<span class="dv">400</span>)        </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Tuning over:
+range [100, 400]</code></pre>
+</div>
+</div>
+<p>要对函数进行更多的了解，可以通过键入<code>?to_tune</code>来参阅帮助文档进行学习。 当我们界定了搜索空间的范围时，很多时候我们没有办法进行地毯式的全面训练搜索，这时候就需要设定终止条件，比如训练一段时间后结束，或者进行100次迭代后结束等。在mlr3框架中，可以使用<code>trm</code>函数来定义一个终止条件。在知道上面我们提及的背景信息后，我们来尝试创建一个调参的对象：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义任务</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>tsk_sonar <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"sonar"</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义学习器（随机森林模型），设定需要调节的参数</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)))</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建调参的环境</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>instance <span class="ot">=</span> <span class="fu">ti</span>(</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">task =</span> tsk_sonar, <span class="co"># 设置任务</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">learner =</span> learner, <span class="co"># 设置学习器</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>), <span class="co"># 设置重采样方法：3折交叉验证</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">measures =</span> <span class="fu">msr</span>(<span class="st">"classif.ce"</span>), <span class="co"># 设置评估指标：分类错误率</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">terminator =</span> <span class="fu">trm</span>(<span class="st">"none"</span>) <span class="co"># 设置终止调节：不采用任何终止条件，全部测试</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 设定调参方法为网格搜索</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>tuner <span class="ot">=</span> <span class="fu">tnr</span>(<span class="st">"grid_search"</span>)</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 进行调参</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>tuner<span class="sc">$</span><span class="fu">optimize</span>(instance)</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 显示调参结果</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>instance<span class="sc">$</span>result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>此外，mlr3框架中实现同样的方法，还有其他更加明晰的实现方法：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>tuner <span class="ot">=</span> <span class="fu">tnr</span>(<span class="st">"grid_search"</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)))</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>rsmp_cv3 <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>msr_ce <span class="ot">=</span> <span class="fu">msr</span>(<span class="st">"classif.ce"</span>)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>terminator <span class="ot">=</span> <span class="fu">trm</span>(<span class="st">"none"</span>)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">tuner =</span> tuner,</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">task =</span> tsk_sonar,</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">learner =</span> learner,</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">resampling =</span> rsmp_cv3,</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">measures =</span> msr_ce,</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">terminator =</span> terminator</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>instance<span class="sc">$</span>result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>最后返回的结果就是本次测试中获得的最佳参数（这里没有给出，请读者自行运行尝试）。关于如何在mlr3框架中灵活地对各种参数组合进行调节，可以参考官方文档（<a href="https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html</a>）。</p>
+</section>
+<section id="综合实践" class="level3" data-number="7.3.5">
+<h3 data-number="7.3.5" class="anchored" data-anchor-id="综合实践"><span class="header-section-number">7.3.5</span> 综合实践</h3>
+<p>在本节中，将会给出一个综合的例子，描述如何在mlr3框架中进行高效的机器学习。首先我们将加载包：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3verse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>随后我们会挑选2个内置任务，这两个任务的共同点是它们都属于二分类问题：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>tasks <span class="ot">=</span> <span class="fu">tsks</span>(<span class="fu">c</span>(<span class="st">"german_credit"</span>, <span class="st">"sonar"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>而后，我们来定义学习器，并为需要调整的参数进行设置：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义随机森林学习器</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>glrn_rf_tuned <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(<span class="st">"robustify"</span>) <span class="sc">%&gt;&gt;%</span> <span class="fu">auto_tuner</span>(</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tnr</span>(<span class="st">"grid_search"</span>, <span class="at">resolution =</span> <span class="dv">5</span>), </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="dv">200</span>, <span class="dv">500</span>)),</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rsmp</span>(<span class="st">"holdout"</span>)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 为学习器进行命名，命名为RF</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>glrn_rf_tuned<span class="sc">$</span>id <span class="ot">=</span> <span class="st">"RF"</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义集成学习的学习器</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>glrn_stack <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(<span class="st">"robustify"</span>) <span class="sc">%&gt;&gt;%</span> <span class="fu">ppl</span>(<span class="st">"stacking"</span>,</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lrns</span>(<span class="fu">c</span>(<span class="st">"classif.rpart"</span>, <span class="st">"classif.kknn"</span>)),</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lrn</span>(<span class="st">"classif.log_reg"</span>)</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 为学习器进行命名，命名为Stack</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>glrn_stack<span class="sc">$</span>id <span class="ot">=</span> <span class="st">"Stack"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>上面的代码虽然很短，但是其实细节非常多：1、<code>%&gt;&gt;%</code>是mlr3框架中独特的管道操作符，用于将多个数据处理和建模步骤组合在一起，以创建一个完整的机器学习工作流（详见<a href="https://mlr3book.mlr-org.com/chapters/chapter7/sequential_pipelines.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter7/sequential_pipelines.html</a>）；2、在定义网格搜索的时候，声明<strong>resolution</strong>参数为5，即分辨率为5，这样会把搜索空间分为5等分，然后在在空间内进行尝试，这个例子中是对随机森林下限为200课树、上限为500棵树这个空间进行划分（详见<a href="https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html</a>）；3、在定义名为“Stack”的学习器，使用了集成学习方法，基本思想是使用决策树和KNN算法先训练，然后结合两者的结果再拟合一个逻辑回归对响应变量进行预测。这个方法超越了本书介绍的范畴，感兴趣的读者可以参考官方文档（<a href="https://mlr3book.mlr-org.com/chapters/chapter8/non-sequential_pipelines_and_tuning.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter8/non-sequential_pipelines_and_tuning.html</a>）中的相关部分。 定义了两个学习器之后，我们要把两者合并到一起：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>learners <span class="ot">=</span> <span class="fu">c</span>(glrn_rf_tuned, glrn_stack)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>然后，我们要对这些任务-模型组合进行训练，观察其表现。这里统一使用3折交叉验证进行重采样，实现代码如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(<span class="fu">benchmark_grid</span>(tasks, learners, <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>最后通过对所得结果的准确率进行计算并汇总，来对不同任务下不同算法效果的对比，实现代码如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>bmr<span class="sc">$</span><span class="fu">aggregate</span>(<span class="fu">msr</span>(<span class="st">"classif.acc"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>这里我们没有给出结果，请读者自行尝试。我们可以看到，mlr3框架可以让我们用短短的数行代码来实现非常复杂的机器学习操作，大大提高了我们完成机器学习任务的效率。</p>
+</section>
+</section>
+<section id="小结" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="小结"><span class="header-section-number">7.4</span> 小结</h2>
+<p>本章针对机器学习问题，描述了如果在R语言中应用mlr3框架来高效完成机器学习的各个环节。事实上，针对大数据问题，mlr3框架还提供了很多高级工具，如并行化、异常处理等（参见<a href="https://mlr3book.mlr-org.com/chapters/chapter10/advanced_technical_aspects_of_mlr3.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter10/advanced_technical_aspects_of_mlr3.html</a>）。由于本部分只是对大数据机器学习进行简单介绍，因此没有对各方面的细节进行一一解释，感兴趣的读者可以尝试系统学习mlr3框架的图书，电子版见<a href="https://mlr3book.mlr-org.com/" class="uri">https://mlr3book.mlr-org.com/</a>。希望读者在学习完本章后，能够熟悉机器学习的各个环节，并利用相关工具对每个环节进行加速，结合优秀的算法和实现工具，减轻建模者和机器可能承受的负担，进而提高机器学习的效率。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./快速绘图：大数据可视化工具.html" class="pagination-link  aria-label=" &lt;span="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">快速绘图：大数据可视化工具</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./化整为零：对文件进行批处理.html" class="pagination-link" aria-label="<span class='chapter-number'>8</span>&nbsp; <span class='chapter-title'>化整为零：对文件进行批处理</span>">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">化整为零：对文件进行批处理</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

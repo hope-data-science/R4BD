@@ -1,0 +1,2756 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>大数据分析——基于R语言 - 5&nbsp; 快速整理：基于data.table的数据处理工具</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./快速绘图：大数据可视化工具.html" rel="next">
+<link href="./快速读写：大数据的导入与导出.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./快速整理：基于data.table的数据处理工具.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">快速整理：基于data.table的数据处理工具</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">大数据分析——基于R语言</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./大数据基本概念.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">大数据基本概念</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./R语言编程入门.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">R语言编程入门</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./数据处理效能的衡量.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">数据处理效能的衡量</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速读写：大数据的导入与导出.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">快速读写：大数据的导入与导出</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速整理：基于data.table的数据处理工具.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">快速整理：基于data.table的数据处理工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速绘图：大数据可视化工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">快速绘图：大数据可视化工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速建模：高性能机器学习工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">快速建模：高性能机器学习工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./化整为零：对文件进行批处理.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">化整为零：对文件进行批处理</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./跨语言召唤术：在R中调用其他编程工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">跨语言召唤术：在R中调用其他编程工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./时间换空间：大数据流式计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">时间换空间：大数据流式计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./空间换时间：大数据并行计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">空间换时间：大数据并行计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./从内存到外存：用数据库管理数据.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">从内存到外存：用数据库管理数据</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./从本地到集群：大数据分布式计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">从本地到集群：大数据分布式计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./参考资料.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">参考资料</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#数据整理的基本操作模式" id="toc-数据整理的基本操作模式" class="nav-link active" data-scroll-target="#数据整理的基本操作模式"><span class="header-section-number">5.1</span> 数据整理的基本操作模式</a>
+  <ul class="collapse">
+  <li><a href="#创建" id="toc-创建" class="nav-link" data-scroll-target="#创建"><span class="header-section-number">5.1.1</span> 创建</a></li>
+  <li><a href="#删除" id="toc-删除" class="nav-link" data-scroll-target="#删除"><span class="header-section-number">5.1.2</span> 删除</a></li>
+  <li><a href="#检索" id="toc-检索" class="nav-link" data-scroll-target="#检索"><span class="header-section-number">5.1.3</span> 检索</a></li>
+  <li><a href="#插入" id="toc-插入" class="nav-link" data-scroll-target="#插入"><span class="header-section-number">5.1.4</span> 插入</a></li>
+  <li><a href="#排序" id="toc-排序" class="nav-link" data-scroll-target="#排序"><span class="header-section-number">5.1.5</span> 排序</a></li>
+  <li><a href="#过滤" id="toc-过滤" class="nav-link" data-scroll-target="#过滤"><span class="header-section-number">5.1.6</span> 过滤</a></li>
+  <li><a href="#汇总" id="toc-汇总" class="nav-link" data-scroll-target="#汇总"><span class="header-section-number">5.1.7</span> 汇总</a></li>
+  <li><a href="#分组" id="toc-分组" class="nav-link" data-scroll-target="#分组"><span class="header-section-number">5.1.8</span> 分组</a></li>
+  <li><a href="#连接" id="toc-连接" class="nav-link" data-scroll-target="#连接"><span class="header-section-number">5.1.9</span> 连接</a></li>
+  </ul></li>
+  <li><a href="#data.table数据处理" id="toc-data.table数据处理" class="nav-link" data-scroll-target="#data.table数据处理"><span class="header-section-number">5.2</span> data.table数据处理</a>
+  <ul class="collapse">
+  <li><a href="#data.table简介" id="toc-data.table简介" class="nav-link" data-scroll-target="#data.table简介"><span class="header-section-number">5.2.1</span> data.table简介</a></li>
+  <li><a href="#基本操作实现" id="toc-基本操作实现" class="nav-link" data-scroll-target="#基本操作实现"><span class="header-section-number">5.2.2</span> 基本操作实现</a></li>
+  <li><a href="#高级特性介绍" id="toc-高级特性介绍" class="nav-link" data-scroll-target="#高级特性介绍"><span class="header-section-number">5.2.3</span> 高级特性介绍</a></li>
+  </ul></li>
+  <li><a href="#tidyfst数据处理" id="toc-tidyfst数据处理" class="nav-link" data-scroll-target="#tidyfst数据处理"><span class="header-section-number">5.3</span> tidyfst数据处理</a>
+  <ul class="collapse">
+  <li><a href="#tidyfst简介" id="toc-tidyfst简介" class="nav-link" data-scroll-target="#tidyfst简介"><span class="header-section-number">5.3.1</span> tidyfst简介</a></li>
+  <li><a href="#基本操作实现-1" id="toc-基本操作实现-1" class="nav-link" data-scroll-target="#基本操作实现-1"><span class="header-section-number">5.3.2</span> 基本操作实现</a></li>
+  <li><a href="#便捷工具介绍" id="toc-便捷工具介绍" class="nav-link" data-scroll-target="#便捷工具介绍"><span class="header-section-number">5.3.3</span> 便捷工具介绍</a></li>
+  </ul></li>
+  <li><a href="#小结" id="toc-小结" class="nav-link" data-scroll-target="#小结"><span class="header-section-number">5.4</span> 小结</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">快速整理：基于data.table的数据处理工具</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>在实践中，我们往往需要对数据框进行复杂的清洗转化操作，包括创建、添加、删除、插入、排序、过滤、分组、汇总、连接、长宽转换等。这些操作使用频次很高，因此初学者需要在刚入门的时候就对这些操作有所熟悉，这样在需要用的时候才可以按图索骥找到答案。在R语言中，要对一张大表格进行整理，最佳的工具就是<strong>data.table</strong>工具包。本部分将先以数据操作的基本范式作为引入，然后介绍如何使用<strong>data.table</strong>包完成这些基本的数据操作，进而介绍基于<strong>data.table</strong>包构建的<strong>tidyfst</strong>包，以满足多元化的需求。</p>
+<section id="数据整理的基本操作模式" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="数据整理的基本操作模式"><span class="header-section-number">5.1</span> 数据整理的基本操作模式</h2>
+<p>对数据处理基本范式的探索最早可以追溯到1970年，当时在IBM工作的牛津大学数学家Edgar F. Codd首次提出了“关系模型”，并具体给出应该遵循的基本准则）。其后，陈品山博士在1976年提出了实体关系模型（Entity-Relationship Model），运用真实世界中事物与关系的观念，来解释数据库中抽象的数据架构。最初对于这些数据处理的实现，主要是由SQL语言来实现的，它是1974年由Boyce和Chamberlin提出的一种介于关系代数与关系演算之间的结构化查询语言，是一个通用的、功能极强的关系型数据库语言。SQL对业界的影响是极其深远的，各大软件公司都有支持SQL语言的数据库产品，比如甲骨文的Oracle和微软的SQL Server。需要明确的是，数据操作的基本范式不依赖于任何软件平台，它是一个概念模型，可以在各种软件工具中得以实现，因此在本部分我们会暂时脱离软件工具来介绍数据处理的基本范式。在介绍之前，我们目前需要有一个概念是，现在有一张二维表格，需要对表格的数据进行数据处理。基本处理方法包括创建、删除、检索、插入、排序、过滤、汇总、分组和连接，下面我们会对这些基本的数据操</p>
+<section id="创建" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="创建"><span class="header-section-number">5.1.1</span> 创建</h3>
+<p>创建的概念非常简单，就是从无到有建立一张二维表。重要的是，我们需要二维表是由什么构成的：1.行；2.列。其中，每一列可以称之为属性或者特征，在一些数据库系统中，我们创建表格的时候是需要对每一列的属性进行定义的。比如我们创建“性别”列的时候，如果里面只有“男”和“女”两种类型的数据，我们一般需要把它定义为字符型。这在不同的数据库系统中不一样，但是我们创建的时候应该对列的名称进行定义。每一行则代表一个记录，也就是在现实世界中的一个实例，比如一个人、一个商品或者是一个城市。</p>
+</section>
+<section id="删除" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="删除"><span class="header-section-number">5.1.2</span> 删除</h3>
+<p>删除就是把已经存在的表格，在环境中删除掉。</p>
+</section>
+<section id="检索" class="level3" data-number="5.1.3">
+<h3 data-number="5.1.3" class="anchored" data-anchor-id="检索"><span class="header-section-number">5.1.3</span> 检索</h3>
+<p>这里讲的检索，包括两种，即列检索与行检索。列检索，即对数据表中的列进行选择。选择列可以有很多规则，有的时候我们可以选择特定列，比如我们就像看学生期末语文成绩是多少；有的时候可以选择连续的列，比如我们要看第1到第10列的内容；有的时候可以按照规则选择列，比如我们想要检索列名称以<code>_id</code>作为后缀的列。行检索，则是根据行号对记录进行切片筛选，比如选取地100到200行的记录。如果需要按照条件来对行进行筛选，我们称之为过滤，这在后面会专门提到。</p>
+</section>
+<section id="插入" class="level3" data-number="5.1.4">
+<h3 data-number="5.1.4" class="anchored" data-anchor-id="插入"><span class="header-section-number">5.1.4</span> 插入</h3>
+<p>插入就是给表格插入一行，本质上是给总体加入一条记录。举个例子就是，如果老师有全班同学的点名册，现在有一个新的同学加入，那么这个点名册就需要再加一个同学。同时，我们也可以加入一列。比如一年级的同学只需要学习语文、数学和英语，如果到了二年级需要加一门生物课，那么就需要加入新的一列来记录学生的生物成绩。</p>
+</section>
+<section id="排序" class="level3" data-number="5.1.5">
+<h3 data-number="5.1.5" class="anchored" data-anchor-id="排序"><span class="header-section-number">5.1.5</span> 排序</h3>
+<p>排序的概念就是，当我们碰上数值型数据的时候，我们可以让这些记录按照升序或者降序排列（升序就是从小到大排列，降序就是从大到小排列）。比如乱序的1,3,5,2,4，经过升序排序可以变成1,2,3,4,5。我们知道，表格可以有很多列，排序的时候需要指定按照哪一个列排序。比如学生有语文、数学和英语成绩，我们只能够按照一种成绩排序，否则会乱成一团。不过事实上可以按照多列排序，但是需要有一定顺序，比如我们可以用学生的成绩先用语文成绩排序，然后再按照数学成绩排序。本来，有的同学本来语文成绩是相同的，因此他们的顺序是随机的；现在，如果学生的语文成绩相同，那么就会按照数学成绩的多少来进行排列。</p>
+</section>
+<section id="过滤" class="level3" data-number="5.1.6">
+<h3 data-number="5.1.6" class="anchored" data-anchor-id="过滤"><span class="header-section-number">5.1.6</span> 过滤</h3>
+<p>过滤就是按照一定的规则来筛选数据。举例说明，我们有全班同学的成绩，但是我们可以按照性别筛选出男同学的成绩；我们也可以按照数学成绩是否达到60分，来筛选出数学不及格同学的成绩。</p>
+</section>
+<section id="汇总" class="level3" data-number="5.1.7">
+<h3 data-number="5.1.7" class="anchored" data-anchor-id="汇总"><span class="header-section-number">5.1.7</span> 汇总</h3>
+<p>汇总，就是要用较少的信息来表征较多的信息。举个例子，我们现在有全班同学的身高，如果我们对这个身高计算平均值，就完成了一个汇总。我们原来的数据可能是五十多名学生的身高，现在我们只用一个平均值就可以代表总体身高的平均水平，用较少的信息表征了较多的信息。汇总的方法可以有很多种，除了求均值，我们还可以求中位数、最大值、最小值等等。</p>
+</section>
+<section id="分组" class="level3" data-number="5.1.8">
+<h3 data-number="5.1.8" class="anchored" data-anchor-id="分组"><span class="header-section-number">5.1.8</span> 分组</h3>
+<p>分组就是按照一定的规则给数据表分类，然后按照类别分别进行操作。举例说明，如果我们现在有一个班的学生，我们想知道男同学的语文成绩和女同学的语文成绩，这时候就要根据性别对表格进行分组。分组的功能是很强大的，比如我们有12个班级，要得到每个班级成绩最好的前三名同学，就可以用分组操作进行实现。</p>
+</section>
+<section id="连接" class="level3" data-number="5.1.9">
+<h3 data-number="5.1.9" class="anchored" data-anchor-id="连接"><span class="header-section-number">5.1.9</span> 连接</h3>
+<p>连接就是根据多个表都包含的共同信息，对多个表格进行合并的过程。连接分为左连接、右连接、全连接、内连接等。比如我们现在知道三个学生小明、小光和小红，有两张表A和B，分别包含了他们的体育和美术成绩。其中，小红缺考体育，小光缺考美术。两张表格信息如图<a href="#fig-tables" class="quarto-xref"><span>5.1</span></a>所示。</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-tables" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tables-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/join_tables.png" class="img-fluid figure-img" width="270">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tables-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.1: 连接表格示意图
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>现在我们需要通过一定的方式把这两张表格连接起来。下面以此为例，把表格A作为左表，表格B作为右表，分别演示如何进行内连接、左连接、右连接和全连接。</p>
+<ul>
+<li>内连接：又称为自然连接，只有两个表格中都包含的信息才会被保留。在我们例子中，只有两个表格都出现的同学小明，才会在合并的表格出现，所得结果见图<a href="#fig-inner" class="quarto-xref"><span>5.2</span></a>。</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-inner" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-inner-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/inner_join.png" class="img-fluid figure-img" width="162">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-inner-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.2: 内连接所得结果
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>左连接：只有左边的（第一个出现的）表格的信息会予以完全的保留，右边的表格只有能够匹配左表的信息的内容才会得以保留，结果见图<a href="#fig-left" class="quarto-xref"><span>5.3</span></a>。如果左表存在的信息而右表不存在，会自动填充缺失值。</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-left" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-left-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/left_join.png" class="img-fluid figure-img" width="169">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-left-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.3: 左连接所得结果
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>右连接：即左连接的逆运算，结果见图<a href="#fig-right" class="quarto-xref"><span>5.4</span></a>。</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-right" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-right-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/right_join.png" class="img-fluid figure-img" width="170">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-right-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.4: 右连接所得结果
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>全连接：左右表格的信息都会予以保留，无信息处会自动填充缺失值，结果见图<a href="#fig-full" class="quarto-xref"><span>5.5</span></a>。</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-full" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/full_join.png" class="img-fluid figure-img" width="173">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.5: 全连接所得结果
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="data.table数据处理" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="data.table数据处理"><span class="header-section-number">5.2</span> data.table数据处理</h2>
+<section id="data.table简介" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="data.table简介"><span class="header-section-number">5.2.1</span> data.table简介</h3>
+<p><strong>data.table</strong>是R语言中的高性能数据处理包，旨在提供比基础数据框（data.frame）更简洁的语法和更丰富的功能。它不仅在数据操作速度上具有显著优势，而且对内存的使用也更加经济，适合处理大规模数据集。<strong>data.table</strong>的主要功能包括快速的文件读写，通过<code>fread</code>和<code>fwrite</code>函数可以高效地读取和写入csv文件。同时，工具包的底层并行化功能使许多常见操作能够利用多个CPU线程，进一步提升数据处理效率。对于大规模数据集，<strong>data.table</strong>可以实现快速且可扩展的聚合操作，例如能够在内存中处理100GB的数据（前提是计算机的内存需要大于100GB）。</p>
+<p><strong>data.table</strong>具有强大的数据处理能力，比如在连接操作方面，<strong>data.table</strong>提供了丰富的选项，包括有序连接、重叠区间连接、非等值连接、基于连接的汇总和更新等。这些功能使得复杂数据操作变得更加简便高效。此外，<strong>data.table</strong>支持基于引用的快速列操作，允许用户快速地添加、更新或删除列，而无需复制数据。这对于大数据集尤为重要，因为它避免了不必要的内存消耗和时间开销。数据重塑功能也是<strong>data.table</strong>的一大亮点，通过<code>dcast</code>和<code>melt</code>函数，可以轻松实现数据列表的长宽转换。另一个显著优势是，<strong>data.table</strong>几乎没有外部依赖，除了基础R之外，无需其他包。这简化了生产环境中的部署和维护工作。同时，<strong>data.table</strong>兼容旧版本的R，确保了在不同系统和环境中的稳定性和一致性。</p>
+<p>总之，<strong>data.table</strong>以其高效的性能、简洁的语法和丰富的功能，成为R语言中处理和分析大规模数据的理想工具。它不仅提高了数据处理的速度和效率，还通过稳定的API和强大的社区支持，为用户提供了一个强大而可靠的解决方案。</p>
+</section>
+<section id="基本操作实现" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="基本操作实现"><span class="header-section-number">5.2.2</span> 基本操作实现</h3>
+<p>本部分将介绍如何使用<strong>data.table</strong>包来实现前一个小节提出的数据整理基本操作模式。尽管很多用户反馈<strong>data.table</strong>的语法结构非常难学，但其实熟悉了语法逻辑之后还是可以轻松掌握。首先我们将载入<strong>data.table</strong>包。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="创建-1" class="level4" data-number="5.2.2.1">
+<h4 data-number="5.2.2.1" class="anchored" data-anchor-id="创建-1"><span class="header-section-number">5.2.2.1</span> 创建</h4>
+<p><strong>data.table</strong>包中设置了一种称之为data.table的数据结构，data.table是data.frame的增强模式，它具备的特征如下：</p>
+<ul>
+<li><p>行号使用冒号（<code>:</code>）打印，以便在视觉上将行号与第一列分开。</p></li>
+<li><p>当记录个数超过n行时（默认n等于100），会自动显示前五行和后五行，不会像数据框一样无限输出。这个可以使用<code>options(datatable.print.nrows = n)</code>来设定n是多少，同时可以用<code>getOption("datatable.print.nrows")</code>来对n进行查询</p></li>
+<li><p>data.table从来不使用行名称。</p></li>
+</ul>
+<p>在我们的演示案例中，我们认为显示前2列和后2列就足够了，因此利用options函数进行设置：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">datatable.print.topn =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>要在R环境中创建data.table格式的表格，有三种形式：1.内部创建；2.强制转化；3.外部读入。我们会分别进行介绍。</p>
+<section id="内部创建" class="level5" data-number="5.2.2.1.1">
+<h5 data-number="5.2.2.1.1" class="anchored" data-anchor-id="内部创建"><span class="header-section-number">5.2.2.1.1</span> 内部创建</h5>
+<p>创建data.table其实与创建data.frame的语法完全一样。事实上，所有data.table都继承data.frame的所有属性。下面我们创建一个基本的data.table。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">=</span> <span class="fu">data.table</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ID =</span> <span class="fu">c</span>(<span class="st">"b"</span>,<span class="st">"b"</span>,<span class="st">"b"</span>,<span class="st">"a"</span>,<span class="st">"a"</span>,<span class="st">"c"</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">a =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">b =</span> <span class="dv">7</span><span class="sc">:</span><span class="dv">12</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="dv">13</span><span class="sc">:</span><span class="dv">18</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>DT</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       ID     a     b     c
+   &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+1:      b     1     7    13
+2:      b     2     8    14
+3:      b     3     9    15
+4:      a     4    10    16
+5:      a     5    11    17
+6:      c     6    12    18</code></pre>
+</div>
+</div>
+<p>让我们看看它的数据结构：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(DT)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Classes 'data.table' and 'data.frame':  6 obs. of  4 variables:
+ $ ID: chr  "b" "b" "b" "a" ...
+ $ a : int  1 2 3 4 5 6
+ $ b : int  7 8 9 10 11 12
+ $ c : int  13 14 15 16 17 18
+ - attr(*, ".internal.selfref")=&lt;externalptr&gt; </code></pre>
+</div>
+</div>
+<p>可以发现，它既是一个data.table，也是一个data.frame。</p>
+</section>
+<section id="强制转化" class="level5" data-number="5.2.2.1.2">
+<h5 data-number="5.2.2.1.2" class="anchored" data-anchor-id="强制转化"><span class="header-section-number">5.2.2.1.2</span> 强制转化</h5>
+<p>我们可以把已经有的数据框、矩阵和列表转化为data.table格式。转化函数有两个，一个是<code>as.data.table</code>函数，一个是<code>setDT</code>函数。前者与<code>as.data.frame</code>是一样的，能够随意自由转换成别的格式。<code>setDT</code>实现的功能是原位转化，转化之后不需要赋值，原始的变量直接变成了data.table。这里我们对这两个函数分别进行演示。 首先，我们的案例主要用到iris数据集，因此我们要把它转化为data.table格式，存放在iris.dt变量中。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.table</span>(iris) <span class="ot">-&gt;</span> iris.dt   </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>iris.dt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          5.1         3.5          1.4         0.2    setosa
+  2:          4.9         3.0          1.4         0.2    setosa
+ ---                                                            
+149:          6.2         3.4          5.4         2.3 virginica
+150:          5.9         3.0          5.1         1.8 virginica</code></pre>
+</div>
+</div>
+<p>然后，我们再来尝试<code>setDT</code>函数。需要明确的是，如果用<code>setDT</code>函数就不需要额外进行赋值，返回结果会自动赋值给原来的变量。我们会用mtcars数据集来举例，因为基本包内置数据集是不能随便更改的，因此我们先赋值给a。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="ot">-&gt;</span> a</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   32 obs. of  11 variables:
+ $ mpg : num  21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+ $ cyl : num  6 6 4 6 8 6 8 4 4 6 ...
+ $ disp: num  160 160 108 258 360 ...
+ $ hp  : num  110 110 93 110 175 105 245 62 95 123 ...
+ $ drat: num  3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+ $ wt  : num  2.62 2.88 2.32 3.21 3.44 ...
+ $ qsec: num  16.5 17 18.6 19.4 17 ...
+ $ vs  : num  0 0 1 1 0 1 0 1 1 1 ...
+ $ am  : num  1 1 1 0 0 0 0 0 0 0 ...
+ $ gear: num  4 4 4 3 3 3 3 4 4 4 ...
+ $ carb: num  4 4 1 1 2 1 4 2 2 4 ...</code></pre>
+</div>
+</div>
+<p>现在，让我们把a变量变成data.table格式。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setDT</span>(a)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Classes 'data.table' and 'data.frame':  32 obs. of  11 variables:
+ $ mpg : num  21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+ $ cyl : num  6 6 4 6 8 6 8 4 4 6 ...
+ $ disp: num  160 160 108 258 360 ...
+ $ hp  : num  110 110 93 110 175 105 245 62 95 123 ...
+ $ drat: num  3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+ $ wt  : num  2.62 2.88 2.32 3.21 3.44 ...
+ $ qsec: num  16.5 17 18.6 19.4 17 ...
+ $ vs  : num  0 0 1 1 0 1 0 1 1 1 ...
+ $ am  : num  1 1 1 0 0 0 0 0 0 0 ...
+ $ gear: num  4 4 4 3 3 3 3 4 4 4 ...
+ $ carb: num  4 4 1 1 2 1 4 2 2 4 ...
+ - attr(*, ".internal.selfref")=&lt;externalptr&gt; </code></pre>
+</div>
+</div>
+<p>现在，我们虽然没有再次把结果赋值给a，但是a已经变为data.table的格式了。</p>
+</section>
+<section id="外部读入" class="level5" data-number="5.2.2.1.3">
+<h5 data-number="5.2.2.1.3" class="anchored" data-anchor-id="外部读入"><span class="header-section-number">5.2.2.1.3</span> 外部读入</h5>
+<p><code>fread</code>也许是是目前R语言中读取csv格式文件最快的函数，关于它的各种高级特性，可以在官网<a href="https://github.com/Rdatatable/data.table/wiki/Convenience-features-of-fread" class="uri">https://github.com/Rdatatable/data.table/wiki/Convenience-features-of-fread</a>中进行了解。如果希望知道它有什么个性化的参数设置，可以用<code>?fread</code>进行查询。事实上它的使用是非常简便的，直接放入文件路径即可读取任意csv文件，并返回一个data.table格式的变量。 在我们的例子中，先读出一个变量到根目录下名为temp的文件夹中。<strong>data.table</strong>的<code>fwrite</code>函数一样非常有名，它是写出csv格式数据最快的函数。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fwrite</span>(iris.dt,<span class="st">"temp/iris.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>接下来，我们重新读入。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#用fread读入文件，赋值给iris.1变量</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fread</span>(<span class="st">"temp/iris.csv"</span>) <span class="ot">-&gt;</span> iris<span class="fl">.1</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#查看iris.1的数据类型</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(iris<span class="fl">.1</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.table" "data.frame"</code></pre>
+</div>
+</div>
+<p>操作实在太简便了，不过iris数据集太小了，大家看不到它的威力。如果条件允许的读者，可以拿非常大的csv进行读写尝试，使用方法是一样的，加速效果非常明显。</p>
+</section>
+</section>
+<section id="删除-1" class="level4" data-number="5.2.2.2">
+<h4 data-number="5.2.2.2" class="anchored" data-anchor-id="删除-1"><span class="header-section-number">5.2.2.2</span> 删除</h4>
+<p>表格删除在所有R环境中基本都是一样的，都是使用<code>rm</code>函数。这里我们删除掉所有的变量，但是留下iris.dt变量做演示：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list=</span><span class="fu">setdiff</span>(<span class="fu">ls</span>(), <span class="st">"iris.dt"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>此外，我们每次都在temp文件夹中写出文件，但是并没有删除它。其实我们会尝试利用R软件来管理文件夹中的文件，因此我们会对之前在temp文件夹中创建的文件进行删除。我们还记得，之前写出文件的文件名是“iris.csv”，我们用基本包的<code>file.exists</code>函数看看这个文件是否还在temp文件夹中。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">file.exists</span>(<span class="st">"temp/iris.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p>返回了一个逻辑值TRUE，说明这个文件还在temp文件夹中，下面我们用<code>file.remove</code>函数把它删除掉。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">file.remove</span>(<span class="st">"temp/iris.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p>返回值证明我们已经成功删除掉了，让我们再看它是否存在。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">file.exists</span>(<span class="st">"temp/iris.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+<p>现在我们在temp文件夹中已经找不到这个文件了。</p>
+</section>
+<section id="检索-1" class="level4" data-number="5.2.2.3">
+<h4 data-number="5.2.2.3" class="anchored" data-anchor-id="检索-1"><span class="header-section-number">5.2.2.3</span> 检索</h4>
+<p>检索是最基本的操作，但是我们需要明确的是，检索返回的一般还是一个data.table。我们需要统一返回的格式，这样有利于规范我们的数据处理范式。</p>
+<section id="行检索" class="level5" data-number="5.2.2.3.1">
+<h5 data-number="5.2.2.3.1" class="anchored" data-anchor-id="行检索"><span class="header-section-number">5.2.2.3.1</span> 行检索</h5>
+<p>因为data.table永远不会使用行名称，因此对行的检索只能够通过序号，也就是告诉程序我们要检索第几行。操作基本与基本包的data.frame类似，但是我们要永远记住，data.table的最基本格式是<code>DT[i,j,by]</code>。其中，<strong>i</strong>控制行，<strong>j</strong>控制列，<strong>by</strong>控制分组。要进行行检索，只要对<strong>i</strong>进行控制即可。尽管在语法上，data.table允许缺省其他逗号，直接对行进行检索（即<code>DT[i]</code>）。但是这里不建议这么做，而是倡导永远把所有逗号补全（即<code>DT[i,,]</code>）。自由诚可贵，规范价更高，只有规范的风格才能让我们的代码走得更长远。下面我们来举例子熟悉一下操作，比如我们要在选取数据框的第2行，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>iris.dt[<span class="dv">2</span>,,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          4.9           3          1.4         0.2  setosa</code></pre>
+</div>
+</div>
+<p>如果要选取第2-5行，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>iris.dt[<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>,,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          4.9         3.0          1.4         0.2  setosa
+2:          4.7         3.2          1.3         0.2  setosa
+3:          4.6         3.1          1.5         0.2  setosa
+4:          5.0         3.6          1.4         0.2  setosa</code></pre>
+</div>
+</div>
+<p>如果需要选取第3、5、9行，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>iris.dt[<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">9</span>),,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          4.7         3.2          1.3         0.2  setosa
+2:          5.0         3.6          1.4         0.2  setosa
+3:          4.4         2.9          1.4         0.2  setosa</code></pre>
+</div>
+</div>
+<p>去除第2到4行，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>iris.dt[<span class="sc">-</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>),,]  <span class="co">#等价于iris.dt[!2:4,,]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          5.1         3.5          1.4         0.2    setosa
+  2:          5.0         3.6          1.4         0.2    setosa
+ ---                                                            
+146:          6.2         3.4          5.4         2.3 virginica
+147:          5.9         3.0          5.1         1.8 virginica</code></pre>
+</div>
+</div>
+<p>我们可以看到，如果需要选择多行，就需要使用向量来操作。</p>
+</section>
+<section id="列检索" class="level5" data-number="5.2.2.3.2">
+<h5 data-number="5.2.2.3.2" class="anchored" data-anchor-id="列检索"><span class="header-section-number">5.2.2.3.2</span> 列检索</h5>
+<p>列检索与基本包有相似之处，但并不完全相同。我们可以根据序号和列名称来检索数据表的列。先介绍用序号来选择，因为它与数据框的操作基本是一样的，但是我们不能忘记其经典的<code>DT[i,j,by]</code>格式。比如我们要选取其中的第二列，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="dv">2</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Width
+           &lt;num&gt;
+  1:         3.5
+  2:         3.0
+ ---            
+149:         3.4
+150:         3.0</code></pre>
+</div>
+</div>
+<p>选取第2-4列，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Width Petal.Length Petal.Width
+           &lt;num&gt;        &lt;num&gt;       &lt;num&gt;
+  1:         3.5          1.4         0.2
+  2:         3.0          1.4         0.2
+ ---                                     
+149:         3.4          5.4         2.3
+150:         3.0          5.1         1.8</code></pre>
+</div>
+</div>
+<p>选取第1、3、5列，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Petal.Length   Species
+            &lt;num&gt;        &lt;num&gt;    &lt;fctr&gt;
+  1:          5.1          1.4    setosa
+  2:          4.9          1.4    setosa
+ ---                                    
+149:          6.2          5.4 virginica
+150:          5.9          5.1 virginica</code></pre>
+</div>
+</div>
+<p>去除第2到3列，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="sc">-</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>),]  <span class="co">#等价于iris.dt[,!2:3,]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Petal.Width   Species
+            &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          5.1         0.2    setosa
+  2:          4.9         0.2    setosa
+ ---                                   
+149:          6.2         2.3 virginica
+150:          5.9         1.8 virginica</code></pre>
+</div>
+</div>
+<p>现在，我们尝试利用列的名称对表格的列进行检索。尽管我们可以把列名称直接放在<code>DT[i,j,by]</code>中的j里面，即输入<code>iris.dt[,Sepal.Length,]</code>。但是这样会返回一个向量，而不是data.table，因此我们不会用这个方法。要返回data.table格式，需要在查询列名称的时候输入<code>.()</code>格式。 比如我们取出Sepal.Length列：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,.(Sepal.Length),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length
+            &lt;num&gt;
+  1:          5.1
+  2:          4.9
+ ---             
+149:          6.2
+150:          5.9</code></pre>
+</div>
+</div>
+<p>如果要取出多列，直接加上其他列名称即可，中间用逗号分隔：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,.(Sepal.Length,Sepal.Width,Species),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width   Species
+            &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          5.1         3.5    setosa
+  2:          4.9         3.0    setosa
+ ---                                   
+149:          6.2         3.4 virginica
+150:          5.9         3.0 virginica</code></pre>
+</div>
+</div>
+<p>其实，行列检索是可以同时检索的。比如我们需要提取第3到5行的第1到3列，可以这样进行编程：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>iris.dt[<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;
+1:          4.7         3.2          1.3
+2:          4.6         3.1          1.5
+3:          5.0         3.6          1.4</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="插入-1" class="level4" data-number="5.2.2.4">
+<h4 data-number="5.2.2.4" class="anchored" data-anchor-id="插入-1"><span class="header-section-number">5.2.2.4</span> 插入</h4>
+<p>因为data.table本质上还是一个data.frame，因此如果要按照行列进行合并，操作与基本包是完全一致的，依然是用<code>rbind</code>和<code>cbind</code>函数。不过data.table构造一个新列，是需要知道如何操作的。因为它跟我们之前的认识并不一致，需要用到<code>:=</code>进行赋值。比方说，我们要给iris.dt增加一个常数列，名称为new.column，所有数字均为1，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,new.column <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span>,]</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>iris.dt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species new.column
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;      &lt;num&gt;
+  1:          5.1         3.5          1.4         0.2    setosa          1
+  2:          4.9         3.0          1.4         0.2    setosa          1
+ ---                                                                       
+149:          6.2         3.4          5.4         2.3 virginica          1
+150:          5.9         3.0          5.1         1.8 virginica          1</code></pre>
+</div>
+</div>
+<p>在data.table中增加新列，是会直接进行更新（而不需要进行赋值）。也就是说，iris.dt在插入列的那一刻，它就不是它自己了，而是加入了一列的它。如果想要删除这一列，需要把空值<code>NULL</code>赋值给这一列。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,new.column <span class="sc">:</span><span class="er">=</span> <span class="cn">NULL</span>,]</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>iris.dt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          5.1         3.5          1.4         0.2    setosa
+  2:          4.9         3.0          1.4         0.2    setosa
+ ---                                                            
+149:          6.2         3.4          5.4         2.3 virginica
+150:          5.9         3.0          5.1         1.8 virginica</code></pre>
+</div>
+</div>
+<p>这样它就还原为我们最初的表格了。 很多data.table爱好者认为这是一个很优良的特性，觉得省事儿了，可以少写一个赋值语句。这其实要客观地看待，因为很多时候我们还希望重复利用原来的表格，但是这样赋值之后我们原来的表格就永远地发生了变化，原来的表格就不在了。在这种情况下，我们就可以先通过赋值做一个备份，然后使用备份进行添加列的操作，那么原始表格的数据也得以保留。</p>
+</section>
+<section id="排序-1" class="level4" data-number="5.2.2.5">
+<h4 data-number="5.2.2.5" class="anchored" data-anchor-id="排序-1"><span class="header-section-number">5.2.2.5</span> 排序</h4>
+<p>data.table的排序基本与data.frame相似，就是对变量进行排序，这需要用<code>order</code>函数。不过data.table数据格式已经进行优化，我们不需要每次都用<code>$</code>来进行取值。 举个例子，如果我们要根据Sepal.Length进行升序排列，可以这样进行操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>iris.dt[<span class="fu">order</span>(Sepal.Length),,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          4.3         3.0          1.1         0.1    setosa
+  2:          4.4         2.9          1.4         0.2    setosa
+ ---                                                            
+149:          7.7         3.0          6.1         2.3 virginica
+150:          7.9         3.8          6.4         2.0 virginica</code></pre>
+</div>
+</div>
+<p>降序排列加入负号即可：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>iris.dt[<span class="fu">order</span>(<span class="sc">-</span>Sepal.Length),,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          7.9         3.8          6.4         2.0 virginica
+  2:          7.7         3.8          6.7         2.2 virginica
+ ---                                                            
+149:          4.4         3.2          1.3         0.2    setosa
+150:          4.3         3.0          1.1         0.1    setosa</code></pre>
+</div>
+</div>
+<p>多个变量排序也与基本包一样，比如需要先对Sepal.Length进行升序排列，再对Sepal.Width进行降序排列，那么可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>iris.dt[<span class="fu">order</span>(Sepal.Length,<span class="sc">-</span>Sepal.Width),,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          4.3         3.0          1.1         0.1    setosa
+  2:          4.4         3.2          1.3         0.2    setosa
+ ---                                                            
+149:          7.7         2.6          6.9         2.3 virginica
+150:          7.9         3.8          6.4         2.0 virginica</code></pre>
+</div>
+</div>
+</section>
+<section id="过滤-1" class="level4" data-number="5.2.2.6">
+<h4 data-number="5.2.2.6" class="anchored" data-anchor-id="过滤-1"><span class="header-section-number">5.2.2.6</span> 过滤</h4>
+<p>在<strong>data.table</strong>进行过滤，主要是靠<code>DT[i,j,by]</code>中的<strong>i</strong>来进行的，也就是把条件放在<strong>i</strong>中即可。比如，我们要选择Sepal.Length等于5.1的记录：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>iris.dt[Sepal.Length <span class="sc">==</span> <span class="fl">5.1</span>,,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width    Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;     &lt;fctr&gt;
+1:          5.1         3.5          1.4         0.2     setosa
+2:          5.1         3.5          1.4         0.3     setosa
+3:          5.1         3.8          1.5         0.3     setosa
+4:          5.1         3.7          1.5         0.4     setosa
+5:          5.1         3.3          1.7         0.5     setosa
+6:          5.1         3.4          1.5         0.2     setosa
+7:          5.1         3.8          1.9         0.4     setosa
+8:          5.1         3.8          1.6         0.2     setosa
+9:          5.1         2.5          3.0         1.1 versicolor</code></pre>
+</div>
+</div>
+<p>可以通过且（&amp;）、或（|）、非（!）来进行条件控制，这一点跟基本包data.frame是一样的。比如，我们要选择Sepal.Length等于5.1且Sepal.Width大于3.5的记录，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>iris.dt[Sepal.Length <span class="sc">==</span> <span class="fl">5.1</span> <span class="sc">&amp;</span> Sepal.Width <span class="sc">&gt;</span> <span class="fl">3.5</span>,,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          5.1         3.8          1.5         0.3  setosa
+2:          5.1         3.7          1.5         0.4  setosa
+3:          5.1         3.8          1.9         0.4  setosa
+4:          5.1         3.8          1.6         0.2  setosa</code></pre>
+</div>
+</div>
+</section>
+<section id="汇总-1" class="level4" data-number="5.2.2.7">
+<h4 data-number="5.2.2.7" class="anchored" data-anchor-id="汇总-1"><span class="header-section-number">5.2.2.7</span> 汇总</h4>
+<p>我们还记得，汇总就是把一个向量变为一个数值。在<strong>data.table</strong>中汇总需要控制<code>DT[i,j,by]</code>中的j。比如说我们要得到Sepal.Length的均值：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="fu">mean</span>(Sepal.Length),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5.843333</code></pre>
+</div>
+</div>
+<p>如果想要对多个列进行求均值的操作，就需要用到<code>.SDcols</code>和<code>.SD</code>这些指定的特殊符号了。比如我们现在要求Sepal.Length和Sepal.Width的均值，需要这么操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="fu">lapply</span>(.SD, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>        .SDcols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Sepal.Length"</span>,<span class="st">"Sepal.Width"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width
+          &lt;num&gt;       &lt;num&gt;
+1:     5.843333    3.057333</code></pre>
+</div>
+</div>
+<p>这个操作中，第一步是利用<code>.SDcols</code>来指定我们想要操作的列是哪些，<code>.SD</code>则是指数据的子集，它是数据根据分组返回的若干列。尽管我们没有分组，但是这里还是必须用<code>lapply</code>这个函数才能够正确完成操作。最后，我们还在最后设置了<code>na.rm=TRUE</code>来保证忽略缺失值。不过其实我们的数据中并没有缺失值，写出来只是为了告诉大家，能够用这种方法来对函数传递额外的参数。 因此我们知道，列名称是在<code>.SDcols</code>中进行选择的，所以也可以根据列名称进行筛选。比如我们要选列名称以“Width”结尾的变量的均值，可以利用基本包中的<code>endsWith</code>函数：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="fu">lapply</span>(.SD, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>        .SDcols <span class="ot">=</span> <span class="fu">endsWith</span>(<span class="fu">names</span>(iris.dt),<span class="st">"Width"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Width Petal.Width
+         &lt;num&gt;       &lt;num&gt;
+1:    3.057333    1.199333</code></pre>
+</div>
+</div>
+<p>如果想要得到所有数值型变量的均值，需要得到数值型变量的变量名，然后放入<code>.SDcols</code>参数中即可。实现方法可以参考以下代码：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sapply按照列来做函数操作，求得列向量数据类型</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(iris.dt,class) <span class="ot">-&gt;</span> a    </span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="co">#把数据类型为数值型的列名称提取出来</span></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(a[a<span class="sc">==</span><span class="st">"numeric"</span>]) <span class="ot">-&gt;</span> numeric.names   </span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 对数值型列进行求均值，忽略缺失值</span></span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="fu">lapply</span>(.SD, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>        .SDcols <span class="ot">=</span> numeric.names]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;
+1:     5.843333    3.057333        3.758    1.199333</code></pre>
+</div>
+</div>
+<p>不过其实还有另一种捷径可以完成这一步操作，就是直接使用<code>is.numeric</code>函数，实现方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="fu">lapply</span>(.SD, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>        .SDcols <span class="ot">=</span> is.numeric]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="分组-1" class="level4" data-number="5.2.2.8">
+<h4 data-number="5.2.2.8" class="anchored" data-anchor-id="分组-1"><span class="header-section-number">5.2.2.8</span> 分组</h4>
+<p><strong>data.table</strong>中分组是通过控制<code>DT[i,j,by]</code>中的<strong>by</strong>来实现的，<strong>by</strong>可以接收一个你需要进行分组的变量。这里建议尽量在变量中加入<code>.()</code>符号，这样可以保证结果返回另一个data.table。不过在只有一个变量的时候，其实是可以缺省的。下面举个例子，我们要根据Species分组，然后对Sepal.Length求平均值。这与我们之前的汇总操作一样，只是这次增设了一个<strong>by</strong>参数而已。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="fu">mean</span>(Sepal.Length),by <span class="ot">=</span> Species]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Species    V1
+       &lt;fctr&gt; &lt;num&gt;
+1:     setosa 5.006
+2: versicolor 5.936
+3:  virginica 6.588</code></pre>
+</div>
+</div>
+<p>不过这样的话，我们的列名称不够直观，我们可以使用<code>.SDcols</code>来控制我们需要处理的列。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="fu">lapply</span>(.SD, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>), </span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>        by <span class="ot">=</span> Species,</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>        .SDcols <span class="ot">=</span> <span class="st">"Sepal.Length"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Species Sepal.Length
+       &lt;fctr&gt;        &lt;num&gt;
+1:     setosa        5.006
+2: versicolor        5.936
+3:  virginica        6.588</code></pre>
+</div>
+</div>
+<p>对多个列进行操作也大同小异，操作方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,<span class="fu">lapply</span>(.SD, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>), </span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>        by <span class="ot">=</span> Species,</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>        .SDcols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Sepal.Length"</span>,<span class="st">"Sepal.Width"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Species Sepal.Length Sepal.Width
+       &lt;fctr&gt;        &lt;num&gt;       &lt;num&gt;
+1:     setosa        5.006       3.428
+2: versicolor        5.936       2.770
+3:  virginica        6.588       2.974</code></pre>
+</div>
+</div>
+<p>事实上，<code>.SDcols</code>可以放在<code>DT[i,j,by]</code>中任意位置。但是这里建议永远把这个部分放在最后，不要破坏传统的<code>DT[i,j,by]</code>结构，这样可以提高代码的可读性。</p>
+</section>
+<section id="连接-1" class="level4" data-number="5.2.2.9">
+<h4 data-number="5.2.2.9" class="anchored" data-anchor-id="连接-1"><span class="header-section-number">5.2.2.9</span> 连接</h4>
+<p>在<strong>data.table</strong>中使用连接有以下特点：</p>
+<ol type="1">
+<li>如果两个表格都设置了主键，那么会优先基于主键进行连接。如果没有的话，跳到下一步。</li>
+<li>如果只有第一个表格设置了主键，那么会优先基于第一个表格的主键进行连接。如果没有设置，跳到下一步。</li>
+<li>基于两个表格拥有的共同列名称，对这些列进行连接。 如果需要自定义，请直接使用<code>by.x</code>和<code>by.y</code>对两个表格需要连接的列进行设置。那么会直接跳过上面三个步骤进行自定义连接。</li>
+</ol>
+<p>在<strong>data.table</strong>里面使用连接，可以使用<code>merge</code>函数。下面我们会对如何连接进行演示，首先构建顾客交易数据表：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">=</span> <span class="fu">data.table</span>(<span class="at">CustomerId =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>), <span class="at">Product =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"Oven"</span>, <span class="dv">3</span>), <span class="fu">rep</span>(<span class="st">"Television"</span>, <span class="dv">3</span>)))</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>df1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   CustomerId    Product
+        &lt;int&gt;     &lt;char&gt;
+1:          1       Oven
+2:          2       Oven
+3:          3       Oven
+4:          4 Television
+5:          5 Television
+6:          6 Television</code></pre>
+</div>
+</div>
+<p>再构建顾客地址数据表：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">=</span> <span class="fu">data.table</span>(<span class="at">CustomerId =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>), <span class="at">State =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"California"</span>, <span class="dv">2</span>), <span class="fu">rep</span>(<span class="st">"Texas"</span>, <span class="dv">1</span>)))</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>df2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   CustomerId      State
+        &lt;num&gt;     &lt;char&gt;
+1:          2 California
+2:          4 California
+3:          6      Texas</code></pre>
+</div>
+</div>
+<p>首先我们尝试进行内连接：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">merge</span>(<span class="at">x=</span>df1,<span class="at">y=</span>df2,<span class="at">by=</span><span class="st">"CustomerId"</span>)</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;CustomerId&gt;
+   CustomerId    Product      State
+        &lt;int&gt;     &lt;char&gt;     &lt;char&gt;
+1:          2       Oven California
+2:          4 Television California
+3:          6 Television      Texas</code></pre>
+</div>
+</div>
+<p>这里建议大家尽量设置<em>by</em>参数，这样能够声明我们是根据哪一个列进行合并的。 左连接可以通过设置<code>all.x = T</code>来实现：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">merge</span>(<span class="at">x=</span>df1,<span class="at">y=</span>df2,<span class="at">by=</span><span class="st">"CustomerId"</span>,<span class="at">all.x=</span>T)</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;CustomerId&gt;
+   CustomerId    Product      State
+        &lt;int&gt;     &lt;char&gt;     &lt;char&gt;
+1:          1       Oven       &lt;NA&gt;
+2:          2       Oven California
+3:          3       Oven       &lt;NA&gt;
+4:          4 Television California
+5:          5 Television       &lt;NA&gt;
+6:          6 Television      Texas</code></pre>
+</div>
+</div>
+<p>右连接则可以通过设置<code>all.y=T</code>进行实现：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">merge</span>(<span class="at">x=</span>df1,<span class="at">y=</span>df2,<span class="at">by=</span><span class="st">"CustomerId"</span>,<span class="at">all.y=</span>T)</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;CustomerId&gt;
+   CustomerId    Product      State
+        &lt;int&gt;     &lt;char&gt;     &lt;char&gt;
+1:          2       Oven California
+2:          4 Television California
+3:          6 Television      Texas</code></pre>
+</div>
+</div>
+<p>如果要实现全连接，则设置<code>all=T</code>：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">merge</span>(<span class="at">x=</span>df1,<span class="at">y=</span>df2,<span class="at">by=</span><span class="st">"CustomerId"</span>,<span class="at">all=</span>T)</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;CustomerId&gt;
+   CustomerId    Product      State
+        &lt;int&gt;     &lt;char&gt;     &lt;char&gt;
+1:          1       Oven       &lt;NA&gt;
+2:          2       Oven California
+3:          3       Oven       &lt;NA&gt;
+4:          4 Television California
+5:          5 Television       &lt;NA&gt;
+6:          6 Television      Texas</code></pre>
+</div>
+</div>
+<p>如果需要连接的列在两个表格中的列名称不一样，就要使用<code>by.x</code>和<code>by.y</code>来设置两个表格中用来连接的列。 下面举例说明，首先构造两个表格。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">copy</span>(iris.dt)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,][,id <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,][] <span class="ot">-&gt;</span> dt1</span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a><span class="fu">copy</span>(iris.dt)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>,][,id <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,][] <span class="ot">-&gt;</span> dt2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>上面的代码，使用了连锁管道操作（<code>[][]</code>），其实就是得到的data.table继续用[i,j,by]来进行操作。我们首先用<code>copy</code>函数得到iris.dt的一份拷贝，取了表格第1到3行。然后两个表格分别取了1到3列和3到5列。最后，我们给他们都加上了id标号，然后最后加上<code>[]</code>把它们取出来（这就是<code>:=</code>带来的副作用，它直接在原来的地方修改，但是原来的地方我们又没有采用变量来引用，所以我们是无法找到的，因此<code>[]</code>是必不可少的）。下面我们看看两个表格的内容：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>dt1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length    id
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt; &lt;int&gt;
+1:          5.1         3.5          1.4     1
+2:          4.9         3.0          1.4     2
+3:          4.7         3.2          1.3     3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>dt2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Petal.Length Petal.Width Species    id
+          &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt; &lt;int&gt;
+1:          1.4         0.2  setosa     1
+2:          1.4         0.2  setosa     2
+3:          1.3         0.2  setosa     3</code></pre>
+</div>
+</div>
+<p>我们可以看到，两个表格中都有Petal.Length和id两列，我们把第二个表格dt2的的这两列重新命名为“a”和“b”。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(dt2,<span class="st">"Petal.Length"</span>,<span class="st">"a"</span>) <span class="co">#把原来的Petal.Width列命名为a</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(dt2,<span class="st">"id"</span>,<span class="st">"b"</span>)           <span class="co">#把原来的id列命名为b</span></span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>dt2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       a Petal.Width Species     b
+   &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt; &lt;int&gt;
+1:   1.4         0.2  setosa     1
+2:   1.4         0.2  setosa     2
+3:   1.3         0.2  setosa     3</code></pre>
+</div>
+</div>
+<p>现在让我们使用内连接来合并dt1和dt2。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">merge</span>(dt1,dt2,<span class="at">by.x =</span> <span class="fu">c</span>(<span class="st">"Petal.Length"</span>,<span class="st">"id"</span>),<span class="at">by.y =</span> <span class="fu">c</span>(<span class="st">"a"</span>,<span class="st">"b"</span>)) <span class="ot">-&gt;</span> dt</span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>dt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;Petal.Length, id&gt;
+   Petal.Length    id Sepal.Length Sepal.Width Petal.Width Species
+          &lt;num&gt; &lt;int&gt;        &lt;num&gt;       &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          1.3     3          4.7         3.2         0.2  setosa
+2:          1.4     1          5.1         3.5         0.2  setosa
+3:          1.4     2          4.9         3.0         0.2  setosa</code></pre>
+</div>
+</div>
+<p>这样就成功完成连接了。只要<code>by.x</code>和<code>by.y</code>中的变量能够一一对应，就能够完成基于不同列名称的连接。</p>
+</section>
+</section>
+<section id="高级特性介绍" class="level3" data-number="5.2.3">
+<h3 data-number="5.2.3" class="anchored" data-anchor-id="高级特性介绍"><span class="header-section-number">5.2.3</span> 高级特性介绍</h3>
+<p>除了基本操作的实现以外，<strong>data.table</strong>包还提供了很多高级的特性，这使得该包在内存管理和高速检索等任务中具有明显的优势。尽管高级特性带来了更多的便捷，但是这也要求使用者对这些特性具有更加深入的理解。下面让我们来对这些特性进行探讨。</p>
+<section id="原位更新" class="level4" data-number="5.2.3.1">
+<h4 data-number="5.2.3.1" class="anchored" data-anchor-id="原位更新"><span class="header-section-number">5.2.3.1</span> 原位更新</h4>
+<p>在<strong>data.table</strong>包中，set家族（即以set开头的data.table函数）和<code>:=</code>可以对数据框进行原位修改，不需要再进行赋值。下面我们举个例子，还是用iris数据集，但是我们把它先赋值给iris2变量。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>iris <span class="ot">-&gt;</span> iris2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>现在，我们要把iris2的表格转化为data.table格式，正常来说，我们需要使用<code>as.data.table</code>函数：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 观察iris2的数据结构</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(iris2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.frame"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 进行转化</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.table</span>(iris2) <span class="ot">-&gt;</span> iris.dt</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 观察iris.dt的数据结构</span></span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(iris.dt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.table" "data.frame"</code></pre>
+</div>
+</div>
+<p>这样我们就把data.frame格式的iris2转化为data.table格式，并赋值给iris.dt。事实上我们还可以直接使用<code>setDT</code>函数，这时候，我们不需要再次进行赋值。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(iris2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.frame"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setDT</span>(iris2)</span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(iris2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.table" "data.frame"</code></pre>
+</div>
+</div>
+<p>这时候我们发现，iris2本身已经转化为一个data.table。 <code>:=</code>是一种赋值的符号，它的特点是会在原始的表格中进行赋值，不需要赋值给新的变量。下面我们用刚刚创建的iris.dt做例子。我们给1到3行增加一列常数列，所有数值均为0，赋值给zero。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>iris.dt[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,zero <span class="sc">:</span><span class="er">=</span> <span class="dv">0</span>,]</span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>iris.dt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species  zero
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt; &lt;num&gt;
+  1:          5.1         3.5          1.4         0.2    setosa     0
+  2:          4.9         3.0          1.4         0.2    setosa     0
+ ---                                                                  
+149:          6.2         3.4          5.4         2.3 virginica    NA
+150:          5.9         3.0          5.1         1.8 virginica    NA</code></pre>
+</div>
+</div>
+<p>除了前3行外，其他zero的值都是NA。 <code>:=</code>的用法有以下特点：1.它只是用于更新列，没有任何的返回值（需要返回值的时候，需要多加一个<code>[]</code>）；2.可以指定条件进行更新；3.更新后不需要赋值，原始表格永远发生了改变。 我们可以给zero列赋值为NULL（空值），从而删除这一列。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>iris.dt[,zero <span class="sc">:</span><span class="er">=</span> <span class="cn">NULL</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>如果不希望改变原来的表格，就需要先把变量存在其他地方，或者使用<code>copy</code>函数。其实，为了不要改变原始的iris表格，我才在最开始就把iris赋值给iris2。下面演示<code>copy</code>的用法： 先观察iris2的1到3行：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>iris2[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          5.1         3.5          1.4         0.2  setosa
+2:          4.9         3.0          1.4         0.2  setosa
+3:          4.7         3.2          1.3         0.2  setosa</code></pre>
+</div>
+</div>
+<p>对iris2表格进行拷贝，然后增加一列zero的常数列，数值都是0，最后取它的1-3行进行观察。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">copy</span>(iris2)[,zero <span class="sc">:</span><span class="er">=</span> <span class="dv">0</span>,][<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species  zero
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt; &lt;num&gt;
+1:          5.1         3.5          1.4         0.2  setosa     0
+2:          4.9         3.0          1.4         0.2  setosa     0
+3:          4.7         3.2          1.3         0.2  setosa     0</code></pre>
+</div>
+</div>
+<p>尽管<code>:=</code>总是在原位进行更新，但是我们是对iris2的拷贝进行更新，iris2本身没有发生改变。让我们再看iris2的前3行：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a>iris2[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          5.1         3.5          1.4         0.2  setosa
+2:          4.9         3.0          1.4         0.2  setosa
+3:          4.7         3.2          1.3         0.2  setosa</code></pre>
+</div>
+</div>
+<p>还是没有zero这一列，因此可以看到使用copy函数可以在不改变原始表格的条件下构造新的data.table。</p>
+</section>
+<section id="长宽数据转换" class="level4" data-number="5.2.3.2">
+<h4 data-number="5.2.3.2" class="anchored" data-anchor-id="长宽数据转换"><span class="header-section-number">5.2.3.2</span> 长宽数据转换</h4>
+<p><code>melt</code>和<code>dcast</code>两个函数首次出现于<strong>reshape2</strong>包，这个包最主要的功能就是完成长宽数据转换。但是在data.table包中，对这两个函数进行了优化。因此尽量避免在使用data.table包的时候加载<strong>reshape2</strong>包，否则很可能会造成歧义（也就是在使用这两个函数的时候，我们不知道究竟用的是reshape2的还是data.table的）。 data.table对reshape2的<code>melt</code>与<code>dcast</code>的功能升级，主要是针对多个转换同时进行的简化。但是我们在介绍这个特性之前，先介绍单个转化的完成。首先我们构造一个示例数据集：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>s2 <span class="ot">&lt;-</span> <span class="st">"family_id age_mother dob_child1 dob_child2 dob_child3 gender_child1 gender_child2 gender_child3</span></span>
+<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a><span class="st">1         30 1998-11-26 2000-01-29         NA             1             2            NA</span></span>
+<span id="cb113-3"><a href="#cb113-3" aria-hidden="true" tabindex="-1"></a><span class="st">2         27 1996-06-22         NA         NA             2            NA            NA</span></span>
+<span id="cb113-4"><a href="#cb113-4" aria-hidden="true" tabindex="-1"></a><span class="st">3         26 2002-07-11 2004-04-05 2007-09-02             2             2             1</span></span>
+<span id="cb113-5"><a href="#cb113-5" aria-hidden="true" tabindex="-1"></a><span class="st">4         32 2004-10-10 2009-08-27 2012-07-21             1             1             1</span></span>
+<span id="cb113-6"><a href="#cb113-6" aria-hidden="true" tabindex="-1"></a><span class="st">5         29 2000-12-05 2005-02-28         NA             2             1            NA"</span></span>
+<span id="cb113-7"><a href="#cb113-7" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">fread</span>(s2)</span>
+<span id="cb113-8"><a href="#cb113-8" aria-hidden="true" tabindex="-1"></a>DT</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   family_id age_mother dob_child1 dob_child2 dob_child3 gender_child1
+       &lt;int&gt;      &lt;int&gt;     &lt;IDat&gt;     &lt;IDat&gt;     &lt;IDat&gt;         &lt;int&gt;
+1:         1         30 1998-11-26 2000-01-29       &lt;NA&gt;             1
+2:         2         27 1996-06-22       &lt;NA&gt;       &lt;NA&gt;             2
+3:         3         26 2002-07-11 2004-04-05 2007-09-02             2
+4:         4         32 2004-10-10 2009-08-27 2012-07-21             1
+5:         5         29 2000-12-05 2005-02-28       &lt;NA&gt;             2
+   gender_child2 gender_child3
+           &lt;int&gt;         &lt;int&gt;
+1:             2            NA
+2:            NA            NA
+3:             2             1
+4:             1             1
+5:             1            NA</code></pre>
+</div>
+</div>
+<p>这个数据集中，包含了家庭编号（family_id）、母亲的年龄（age_mother）和家庭中每个孩子出生的日期和性别。dob是“date of birth”的缩写；而gender代表性别，其中1为女性，2为男性。这个数据集来自于官方的介绍案例，链接为：<a href="https://cloud.r-project.org/web/packages/data.table/vignettes/datatable-reshape.html" class="uri">https://cloud.r-project.org/web/packages/data.table/vignettes/datatable-reshape.html</a>。 这显然是一个宽数据，我们首先尝试把孩子的出生日期进行宽转长的变化。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="co">#构造要转化的列变量名称的向量</span></span>
+<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>colA <span class="ot">=</span> <span class="fu">paste</span>(<span class="st">"dob_child"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a><span class="co">#宽数据转化为长数据，只把dob_child1/dob_child2/dob_child3进行了转化</span></span>
+<span id="cb115-5"><a href="#cb115-5" aria-hidden="true" tabindex="-1"></a>DT.m <span class="ot">=</span> <span class="fu">melt</span>(DT, <span class="at">measure.vars =</span> <span class="fu">list</span>(colA), <span class="at">value.name =</span> <span class="fu">c</span>(<span class="st">"dob"</span>))</span>
+<span id="cb115-6"><a href="#cb115-6" aria-hidden="true" tabindex="-1"></a>DT.m</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    family_id age_mother gender_child1 gender_child2 gender_child3   variable
+        &lt;int&gt;      &lt;int&gt;         &lt;int&gt;         &lt;int&gt;         &lt;int&gt;     &lt;fctr&gt;
+ 1:         1         30             1             2            NA dob_child1
+ 2:         2         27             2            NA            NA dob_child1
+ 3:         3         26             2             2             1 dob_child1
+ 4:         4         32             1             1             1 dob_child1
+ 5:         5         29             2             1            NA dob_child1
+ 6:         1         30             1             2            NA dob_child2
+ 7:         2         27             2            NA            NA dob_child2
+ 8:         3         26             2             2             1 dob_child2
+ 9:         4         32             1             1             1 dob_child2
+10:         5         29             2             1            NA dob_child2
+11:         1         30             1             2            NA dob_child3
+12:         2         27             2            NA            NA dob_child3
+13:         3         26             2             2             1 dob_child3
+14:         4         32             1             1             1 dob_child3
+15:         5         29             2             1            NA dob_child3
+           dob
+        &lt;IDat&gt;
+ 1: 1998-11-26
+ 2: 1996-06-22
+ 3: 2002-07-11
+ 4: 2004-10-10
+ 5: 2000-12-05
+ 6: 2000-01-29
+ 7:       &lt;NA&gt;
+ 8: 2004-04-05
+ 9: 2009-08-27
+10: 2005-02-28
+11:       &lt;NA&gt;
+12:       &lt;NA&gt;
+13: 2007-09-02
+14: 2012-07-21
+15:       &lt;NA&gt;</code></pre>
+</div>
+</div>
+<p><em>measure.vars</em>可以接收一个或一组变量，即我们需要聚合的列，聚合的变量名可以用<em>variable.name</em>来定义（否则会使用默认的“variable”作为变量名称）。聚合后的值的列名称可以用<em>value.name</em>进行设置，否则会默认使用“value”作为列名（本例中使用了“dob”作为列名）。 如果要把这个长数据还原，可以使用<code>dcast</code>函数，代码如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a>DT.c <span class="ot">=</span> <span class="fu">dcast</span>(DT.m, ...<span class="sc">~</span> variable, <span class="at">value.var =</span> <span class="fu">c</span>(<span class="st">"dob"</span>))</span>
+<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a>DT.c</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;family_id, age_mother, gender_child1, gender_child2, gender_child3&gt;
+   family_id age_mother gender_child1 gender_child2 gender_child3 dob_child1
+       &lt;int&gt;      &lt;int&gt;         &lt;int&gt;         &lt;int&gt;         &lt;int&gt;     &lt;IDat&gt;
+1:         1         30             1             2            NA 1998-11-26
+2:         2         27             2            NA            NA 1996-06-22
+3:         3         26             2             2             1 2002-07-11
+4:         4         32             1             1             1 2004-10-10
+5:         5         29             2             1            NA 2000-12-05
+   dob_child2 dob_child3
+       &lt;IDat&gt;     &lt;IDat&gt;
+1: 2000-01-29       &lt;NA&gt;
+2:       &lt;NA&gt;       &lt;NA&gt;
+3: 2004-04-05 2007-09-02
+4: 2009-08-27 2012-07-21
+5: 2005-02-28       &lt;NA&gt;</code></pre>
+</div>
+</div>
+<p>这里我们要还原的列为variable，而值放在dob列中，其他变量则统统用<code>...</code>来表示。我们看到这个函数的第二个参数必须要用方程式来表示。 下面我们同时进行两个转换（dob和gender）。知道单个转化如何进行，多个的话，只要在后面加一个变量即可。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a>colA <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"dob_child"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a>colB <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"gender_child"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb119-3"><a href="#cb119-3" aria-hidden="true" tabindex="-1"></a>DT.m2 <span class="ot">=</span> <span class="fu">melt</span>(DT, <span class="at">measure.vars =</span> <span class="fu">list</span>(colA, colB), <span class="at">value.name =</span> <span class="fu">c</span>(<span class="st">"dob"</span>, <span class="st">"gender"</span>))</span>
+<span id="cb119-4"><a href="#cb119-4" aria-hidden="true" tabindex="-1"></a>DT.m2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    family_id age_mother variable        dob gender
+        &lt;int&gt;      &lt;int&gt;   &lt;fctr&gt;     &lt;IDat&gt;  &lt;int&gt;
+ 1:         1         30        1 1998-11-26      1
+ 2:         2         27        1 1996-06-22      2
+ 3:         3         26        1 2002-07-11      2
+ 4:         4         32        1 2004-10-10      1
+ 5:         5         29        1 2000-12-05      2
+ 6:         1         30        2 2000-01-29      2
+ 7:         2         27        2       &lt;NA&gt;     NA
+ 8:         3         26        2 2004-04-05      2
+ 9:         4         32        2 2009-08-27      1
+10:         5         29        2 2005-02-28      1
+11:         1         30        3       &lt;NA&gt;     NA
+12:         2         27        3       &lt;NA&gt;     NA
+13:         3         26        3 2007-09-02      1
+14:         4         32        3 2012-07-21      1
+15:         5         29        3       &lt;NA&gt;     NA</code></pre>
+</div>
+</div>
+<p>它的逆运算也非常简便：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb121"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a>DT.c2 <span class="ot">=</span> <span class="fu">dcast</span>(DT.m2, family_id <span class="sc">+</span> age_mother <span class="sc">~</span> variable, <span class="at">value.var =</span> <span class="fu">c</span>(<span class="st">"dob"</span>, <span class="st">"gender"</span>))</span>
+<span id="cb121-2"><a href="#cb121-2" aria-hidden="true" tabindex="-1"></a>DT.c2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;family_id, age_mother&gt;
+   family_id age_mother      dob_1      dob_2      dob_3 gender_1 gender_2
+       &lt;int&gt;      &lt;int&gt;     &lt;IDat&gt;     &lt;IDat&gt;     &lt;IDat&gt;    &lt;int&gt;    &lt;int&gt;
+1:         1         30 1998-11-26 2000-01-29       &lt;NA&gt;        1        2
+2:         2         27 1996-06-22       &lt;NA&gt;       &lt;NA&gt;        2       NA
+3:         3         26 2002-07-11 2004-04-05 2007-09-02        2        2
+4:         4         32 2004-10-10 2009-08-27 2012-07-21        1        1
+5:         5         29 2000-12-05 2005-02-28       &lt;NA&gt;        2        1
+   gender_3
+      &lt;int&gt;
+1:       NA
+2:       NA
+3:        1
+4:        1
+5:       NA</code></pre>
+</div>
+</div>
+<p>有一个小问题就是，总是需要构造变量名称，然后放在colA和colB中，这样不是特别方便。我们可以用pattern函数来识别列名称的模式，从而简化这个工作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a>DT.m2 <span class="ot">=</span> <span class="fu">melt</span>(DT, <span class="at">measure.vars =</span> <span class="fu">patterns</span>(<span class="st">"^dob"</span>, <span class="st">"^gender"</span>), <span class="at">value.name =</span> <span class="fu">c</span>(<span class="st">"dob"</span>, <span class="st">"gender"</span>))</span>
+<span id="cb123-2"><a href="#cb123-2" aria-hidden="true" tabindex="-1"></a>DT.m2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    family_id age_mother variable        dob gender
+        &lt;int&gt;      &lt;int&gt;   &lt;fctr&gt;     &lt;IDat&gt;  &lt;int&gt;
+ 1:         1         30        1 1998-11-26      1
+ 2:         2         27        1 1996-06-22      2
+ 3:         3         26        1 2002-07-11      2
+ 4:         4         32        1 2004-10-10      1
+ 5:         5         29        1 2000-12-05      2
+ 6:         1         30        2 2000-01-29      2
+ 7:         2         27        2       &lt;NA&gt;     NA
+ 8:         3         26        2 2004-04-05      2
+ 9:         4         32        2 2009-08-27      1
+10:         5         29        2 2005-02-28      1
+11:         1         30        3       &lt;NA&gt;     NA
+12:         2         27        3       &lt;NA&gt;     NA
+13:         3         26        3 2007-09-02      1
+14:         4         32        3 2012-07-21      1
+15:         5         29        3       &lt;NA&gt;     NA</code></pre>
+</div>
+</div>
+<p>这样一来，我们就把以“dob”开头和“gender”开头的变量分为两组，作为需要进行变换的列。</p>
+</section>
+</section>
+</section>
+<section id="tidyfst数据处理" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="tidyfst数据处理"><span class="header-section-number">5.3</span> tidyfst数据处理</h2>
+<section id="tidyfst简介" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="tidyfst简介"><span class="header-section-number">5.3.1</span> tidyfst简介</h3>
+<p><strong>tidyfst</strong>是一个R语言包，结合了<strong>data.table</strong>的高性能和<strong>dplyr</strong>的简洁语法，提供高效易用的数据处理工具。它支持管道操作和丰富的操作函数，如过滤、选择、分组、汇总、排序和变形，使用户能够以简洁的方式进行复杂的数据处理。<strong>tidyfst</strong>的设计师法<strong>tidyverse</strong>，使用户能够无缝地与<strong>dplyr</strong>、<strong>ggplot2</strong>等包结合使用，从而利用<strong>tidyverse</strong>的丰富生态系统，同时享受<strong>data.table</strong>带来的性能提升。</p>
+<p><strong>tidyfst</strong> 包利用了 <strong>data.table</strong>高效的数据处理能力，在处理大规模数据集时具有出色的表现。<strong>data.table</strong>的内部优化确保了数据操作的速度和内存效率，使得数据清洗、分析和导出更加便捷和高效。这特别适合处理大数据和复杂的分析任务，为大数据操作提供了便捷的高性能处理工具。</p>
+<p>总体而言，<strong>tidyfst</strong>包为数据科学家和分析师提供了一个强大而灵活的工具。它在简洁的语法和高效性能之间找到了良好的平衡，是处理大规模数据的理想选择。无论是数据清洗、分析还是结果导出，<strong>tidyfst</strong> 都能显著提升工作效率和效果。</p>
+</section>
+<section id="基本操作实现-1" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="基本操作实现-1"><span class="header-section-number">5.3.2</span> 基本操作实现</h3>
+<p>由于<strong>tidyfst</strong>包是基于<strong>data.table</strong>所构建的，因此很多操作与上一节讲述<strong>data.table</strong>的内容相似。在本部分只聚焦于<strong>tidyfst</strong>包的特色函数进行介绍，以让读者能够快速掌握大数据便捷操作的方法。</p>
+<section id="单表操作" class="level4" data-number="5.3.2.1">
+<h4 data-number="5.3.2.1" class="anchored" data-anchor-id="单表操作"><span class="header-section-number">5.3.2.1</span> 单表操作</h4>
+<p>所谓单表操作，也就是基于单个表格进行的数据操作，包括检索、筛选、排序、汇总等。下面，我们将会以<strong>tidyfst</strong>包作为主要工具，介绍如何在R中完成这些单表操作。</p>
+<section id="检索-2" class="level5" data-number="5.3.2.1.1">
+<h5 data-number="5.3.2.1.1" class="anchored" data-anchor-id="检索-2"><span class="header-section-number">5.3.2.1.1</span> 检索</h5>
+<p>检索是针对用户的需求，来提取总数据集一部分进行查阅，一般可以分为行检索与列检索。 在行检索中，一般是根据数据条目所在位置进行检索。比如我们想要查看iris数据表的第3行，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb125-2"><a href="#cb125-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(tidyfst)</span>
+<span id="cb125-3"><a href="#cb125-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-4"><a href="#cb125-4" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span>  <span class="fu">slice_dt</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          4.7         3.2          1.3         0.2  setosa</code></pre>
+</div>
+</div>
+<p>如果想要查看多列，可以使用向量作为检索内容。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb127"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看第4和第6列</span></span>
+<span id="cb127-2"><a href="#cb127-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">slice_dt</span>(<span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          4.6         3.1          1.5         0.2  setosa
+2:          5.4         3.9          1.7         0.4  setosa</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看第4到第6列</span></span>
+<span id="cb129-2"><a href="#cb129-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">slice_dt</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          4.6         3.1          1.5         0.2  setosa
+2:          5.0         3.6          1.4         0.2  setosa
+3:          5.4         3.9          1.7         0.4  setosa</code></pre>
+</div>
+</div>
+<p>对列进行检索，则具有更多灵活的选择。首先，与行检索类似，可以根据列所在的位置，来对列进行检索。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看第1列</span></span>
+<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length
+            &lt;num&gt;
+  1:          5.1
+  2:          4.9
+ ---             
+149:          6.2
+150:          5.9</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看第1和第3列</span></span>
+<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(<span class="dv">1</span>,<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Petal.Length
+            &lt;num&gt;        &lt;num&gt;
+  1:          5.1          1.4
+  2:          4.9          1.4
+ ---                          
+149:          6.2          5.4
+150:          5.9          5.1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看第1到3列</span></span>
+<span id="cb135-2"><a href="#cb135-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;
+  1:          5.1         3.5          1.4
+  2:          4.9         3.0          1.4
+ ---                                      
+149:          6.2         3.4          5.4
+150:          5.9         3.0          5.1</code></pre>
+</div>
+</div>
+<p>其次，还可以通过变量的名称，直接对其中的一个或多个变量进行检索。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择Species列</span></span>
+<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(Species)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Species
+        &lt;fctr&gt;
+  1:    setosa
+  2:    setosa
+ ---          
+149: virginica
+150: virginica</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择Sepal.Length和Sepal.Width列</span></span>
+<span id="cb139-2"><a href="#cb139-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(Sepal.Length,Sepal.Width)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width
+            &lt;num&gt;       &lt;num&gt;
+  1:          5.1         3.5
+  2:          4.9         3.0
+ ---                         
+149:          6.2         3.4
+150:          5.9         3.0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择从Sepal.Length列到Petal.Length列中的所有列</span></span>
+<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(Sepal.Length<span class="sc">:</span>Petal.Length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;
+  1:          5.1         3.5          1.4
+  2:          4.9         3.0          1.4
+ ---                                      
+149:          6.2         3.4          5.4
+150:          5.9         3.0          5.1</code></pre>
+</div>
+</div>
+<p>如果要按照名称选择多列，还可以使用正则表达式的方法。比如我们要选择列名称中包含“Pe”的列，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(<span class="st">"Pe"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Petal.Length Petal.Width
+            &lt;num&gt;       &lt;num&gt;
+  1:          1.4         0.2
+  2:          1.4         0.2
+ ---                         
+149:          5.4         2.3
+150:          5.1         1.8</code></pre>
+</div>
+</div>
+<p>与此同时，我们还可以根据数据类型来选择列，比如我们如果需要选择所有的因子变量，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb145"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(is.factor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Species
+        &lt;fctr&gt;
+  1:    setosa
+  2:    setosa
+ ---          
+149: virginica
+150: virginica</code></pre>
+</div>
+</div>
+<p>如果要去除某些列，在前面加负号（“-“）即可：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb147"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb147-1"><a href="#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 去除Sepal.Length列</span></span>
+<span id="cb147-2"><a href="#cb147-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(<span class="sc">-</span>Sepal.Length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Width Petal.Length Petal.Width   Species
+           &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:         3.5          1.4         0.2    setosa
+  2:         3.0          1.4         0.2    setosa
+ ---                                               
+149:         3.4          5.4         2.3 virginica
+150:         3.0          5.1         1.8 virginica</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb149"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb149-1"><a href="#cb149-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 去除第1列</span></span>
+<span id="cb149-2"><a href="#cb149-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(<span class="sc">-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Width Petal.Length Petal.Width   Species
+           &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:         3.5          1.4         0.2    setosa
+  2:         3.0          1.4         0.2    setosa
+ ---                                               
+149:         3.4          5.4         2.3 virginica
+150:         3.0          5.1         1.8 virginica</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb151"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb151-1"><a href="#cb151-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 去除列名称包含“Se”的列</span></span>
+<span id="cb151-2"><a href="#cb151-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(<span class="sc">-</span><span class="st">"Se"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Petal.Length Petal.Width   Species
+            &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          1.4         0.2    setosa
+  2:          1.4         0.2    setosa
+ ---                                   
+149:          5.4         2.3 virginica
+150:          5.1         1.8 virginica</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb153"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb153-1"><a href="#cb153-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 去除数据类型为因子型的列</span></span>
+<span id="cb153-2"><a href="#cb153-2" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">select_dt</span>(<span class="sc">-</span>is.factor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;
+  1:          5.1         3.5          1.4         0.2
+  2:          4.9         3.0          1.4         0.2
+ ---                                                  
+149:          6.2         3.4          5.4         2.3
+150:          5.9         3.0          5.1         1.8</code></pre>
+</div>
+</div>
+</section>
+<section id="筛选" class="level5" data-number="5.3.2.1.2">
+<h5 data-number="5.3.2.1.2" class="anchored" data-anchor-id="筛选"><span class="header-section-number">5.3.2.1.2</span> 筛选</h5>
+<p>筛选操作就是要把数据框中符合条件的行筛选出来，在<strong>tidyfst</strong>包中可以使用<code>filter_dt</code>函数进行实现。比如我们要筛选iris数据框中Sepal.Length列大于7的条目，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb155"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb155-1"><a href="#cb155-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">filter_dt</span>(Sepal.Length <span class="sc">&gt;</span> <span class="dv">7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+           &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+ 1:          7.1         3.0          5.9         2.1 virginica
+ 2:          7.6         3.0          6.6         2.1 virginica
+ 3:          7.3         2.9          6.3         1.8 virginica
+ 4:          7.2         3.6          6.1         2.5 virginica
+ 5:          7.7         3.8          6.7         2.2 virginica
+ 6:          7.7         2.6          6.9         2.3 virginica
+ 7:          7.7         2.8          6.7         2.0 virginica
+ 8:          7.2         3.2          6.0         1.8 virginica
+ 9:          7.2         3.0          5.8         1.6 virginica
+10:          7.4         2.8          6.1         1.9 virginica
+11:          7.9         3.8          6.4         2.0 virginica
+12:          7.7         3.0          6.1         2.3 virginica</code></pre>
+</div>
+</div>
+<p>在筛选条件中，可以使用且（&amp;）、或（|）和非（!）三种逻辑运算符，来表达复杂的条件关系。举个例子，比如我们想要筛选Sepal.Length大于7且Sepal.Width大于3的条目,可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb157"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb157-1"><a href="#cb157-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">filter_dt</span>(Sepal.Length <span class="sc">&gt;</span> <span class="dv">7</span> <span class="sc">&amp;</span> Sepal.Width <span class="sc">&gt;</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+1:          7.2         3.6          6.1         2.5 virginica
+2:          7.7         3.8          6.7         2.2 virginica
+3:          7.2         3.2          6.0         1.8 virginica
+4:          7.9         3.8          6.4         2.0 virginica</code></pre>
+</div>
+</div>
+</section>
+<section id="排序-2" class="level5" data-number="5.3.2.1.3">
+<h5 data-number="5.3.2.1.3" class="anchored" data-anchor-id="排序-2"><span class="header-section-number">5.3.2.1.3</span> 排序</h5>
+<p>在数据框的操作中，可以根据一个或多个变量对行进行排序。<strong>tidyfst</strong>包中，可以利用<code>arrange_dt</code>函数对排序进行实现。比如，如果我们想要根据Sepal.Length进行排序，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb159"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb159-1"><a href="#cb159-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">arrange_dt</span>(Sepal.Length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          4.3         3.0          1.1         0.1    setosa
+  2:          4.4         2.9          1.4         0.2    setosa
+ ---                                                            
+149:          7.7         3.0          6.1         2.3 virginica
+150:          7.9         3.8          6.4         2.0 virginica</code></pre>
+</div>
+</div>
+<p>从结果中我们可以获知，默认的排序是升序排列。如果需要降序排列，那么需要在变量前面加上负号：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb161"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb161-1"><a href="#cb161-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">arrange_dt</span>(<span class="sc">-</span>Sepal.Length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          7.9         3.8          6.4         2.0 virginica
+  2:          7.7         3.8          6.7         2.2 virginica
+ ---                                                            
+149:          4.4         3.2          1.3         0.2    setosa
+150:          4.3         3.0          1.1         0.1    setosa</code></pre>
+</div>
+</div>
+<p>同时，可以加入多个变量，从而在第一个变量相同的情况下，根据第二个变量进行排列：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb163"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb163-1"><a href="#cb163-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">arrange_dt</span>(Sepal.Length,Sepal.Width) <span class="sc">%&gt;%</span> </span>
+<span id="cb163-2"><a href="#cb163-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="co"># 只观察结果的前6行</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          4.3         3.0          1.1         0.1  setosa
+2:          4.4         2.9          1.4         0.2  setosa
+3:          4.4         3.0          1.3         0.2  setosa
+4:          4.4         3.2          1.3         0.2  setosa
+5:          4.5         2.3          1.3         0.3  setosa
+6:          4.6         3.1          1.5         0.2  setosa</code></pre>
+</div>
+</div>
+<p>我们可以看到，当Sepal.Length都等于4.4的时候，条目是根据Sepal.Width进行升序排列的。</p>
+</section>
+<section id="更新" class="level5" data-number="5.3.2.1.4">
+<h5 data-number="5.3.2.1.4" class="anchored" data-anchor-id="更新"><span class="header-section-number">5.3.2.1.4</span> 更新</h5>
+<p>本节提到的更新，具体是指对某一列进行数据的更新，或者通过计算获得一个新的数据列。在<strong>tidyfst</strong>包中，可以使用<code>mutate_dt</code>函数来对列进行更新。举例来说，比如我们想要让iris数据框中的Sepal.Length列全部加1，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb165"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb165-1"><a href="#cb165-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> </span>
+<span id="cb165-2"><a href="#cb165-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_dt</span>(<span class="at">Sepal.Length =</span> Sepal.Length <span class="sc">+</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;
+  1:          6.1         3.5          1.4         0.2    setosa
+  2:          5.9         3.0          1.4         0.2    setosa
+ ---                                                            
+149:          7.2         3.4          5.4         2.3 virginica
+150:          6.9         3.0          5.1         1.8 virginica</code></pre>
+</div>
+</div>
+<p>我们也可以新增一列，比如我们想要新增一个名称为one的列，这一列的数据为常数1。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb167"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb167-1"><a href="#cb167-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">mutate_dt</span>(<span class="at">one =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species   one
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt; &lt;num&gt;
+  1:          5.1         3.5          1.4         0.2    setosa     1
+  2:          4.9         3.0          1.4         0.2    setosa     1
+ ---                                                                  
+149:          6.2         3.4          5.4         2.3 virginica     1
+150:          5.9         3.0          5.1         1.8 virginica     1</code></pre>
+</div>
+</div>
+<p>如果我们在更新之后，只想保留更新的那些列，可以使用<code>transmute_dt</code>函数。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb169"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb169-1"><a href="#cb169-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> </span>
+<span id="cb169-2"><a href="#cb169-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute_dt</span>(<span class="at">one =</span> <span class="dv">1</span>,</span>
+<span id="cb169-3"><a href="#cb169-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">Sepal.Length =</span> Sepal.Length <span class="sc">+</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       one Sepal.Length
+     &lt;num&gt;        &lt;num&gt;
+  1:     1          6.1
+  2:     1          5.9
+ ---                   
+149:     1          7.2
+150:     1          6.9</code></pre>
+</div>
+</div>
+<p>上面的例子中，我们就仅保留了更新后的两列。 如果需要分组更新，可以使用<em>by</em>参数定义分组信息。比如，我们想要把iris数据框中，根据物种进行分组，然后把Sepal.Length的平均值求出来，附在名为“sp_avg_sl”列中。操作方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb171"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb171-1"><a href="#cb171-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">mutate_dt</span>(<span class="at">sp_avg_sl =</span> <span class="fu">mean</span>(Sepal.Length),<span class="at">by =</span> Species)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species sp_avg_sl
+            &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;    &lt;fctr&gt;     &lt;num&gt;
+  1:          5.1         3.5          1.4         0.2    setosa     5.006
+  2:          4.9         3.0          1.4         0.2    setosa     5.006
+ ---                                                                      
+149:          6.2         3.4          5.4         2.3 virginica     6.588
+150:          5.9         3.0          5.1         1.8 virginica     6.588</code></pre>
+</div>
+</div>
+</section>
+<section id="汇总-2" class="level5" data-number="5.3.2.1.5">
+<h5 data-number="5.3.2.1.5" class="anchored" data-anchor-id="汇总-2"><span class="header-section-number">5.3.2.1.5</span> 汇总</h5>
+<p>汇总，即对一系列数据进行概括的数据操作。求和、求均值、最大值、最小值，均可以视为汇总操作。比如，我们想求iris数据框中Sepal.Length的均值，可以使用<strong>tidyfst</strong>包的<code>summarise_dt</code>函数。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb173"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb173-1"><a href="#cb173-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">summarise_dt</span>(<span class="at">avg =</span> <span class="fu">mean</span>(Sepal.Length))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        avg
+      &lt;num&gt;
+1: 5.843333</code></pre>
+</div>
+</div>
+<p>在上面的操作中，我们把最终输出的列名称设定为“avg”。在实际应用中，我们往往需要进行分组汇总操作，这可以通过设定<em>by</em>参数进行实现。比如我们想知道每个物种Sepal.Length的均值，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb175"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb175-1"><a href="#cb175-1" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">summarise_dt</span>(<span class="at">avg =</span> <span class="fu">mean</span>(Sepal.Length),<span class="at">by =</span> Species)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Species   avg
+       &lt;fctr&gt; &lt;num&gt;
+1:     setosa 5.006
+2: versicolor 5.936
+3:  virginica 6.588</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="多表操作" class="level4" data-number="5.3.2.2">
+<h4 data-number="5.3.2.2" class="anchored" data-anchor-id="多表操作"><span class="header-section-number">5.3.2.2</span> 多表操作</h4>
+<p>在实际工作中，很多时候我们不仅是要对一个表格进行操作，而是要进行多个表格数据的整合归并。在<strong>tidyfst</strong>的工作流中，有三种处理多表操作的模式，包括更新型连接、过滤型连接和集合运算操作，下面将一一进行介绍。</p>
+<section id="更新型连接" class="level5" data-number="5.3.2.2.1">
+<h5 data-number="5.3.2.2.1" class="anchored" data-anchor-id="更新型连接"><span class="header-section-number">5.3.2.2.1</span> 更新型连接</h5>
+<p>更新型连接（Mutating joins）是根据两个表格中的共有列进行匹配，然后完成合并的过程，可以分为内连接、外连接、左连接和右连接四种。下面，我们将会构造一个数据集来对四种连接进行说明。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb177"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb177-1"><a href="#cb177-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb177-2"><a href="#cb177-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(tidyfst)</span>
+<span id="cb177-3"><a href="#cb177-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb177-4"><a href="#cb177-4" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">CustomerId =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>), <span class="at">Product =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"洗衣机"</span>, <span class="dv">3</span>), <span class="fu">rep</span>(<span class="st">"微波炉"</span>, <span class="dv">3</span>)))</span>
+<span id="cb177-5"><a href="#cb177-5" aria-hidden="true" tabindex="-1"></a>df1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  CustomerId Product
+1          1  洗衣机
+2          2  洗衣机
+3          3  洗衣机
+4          4  微波炉
+5          5  微波炉
+6          6  微波炉</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb179"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb179-1"><a href="#cb179-1" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">CustomerId =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>), <span class="at">Province =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"广东"</span>, <span class="dv">2</span>), <span class="fu">rep</span>(<span class="st">"北京"</span>, <span class="dv">1</span>)))</span>
+<span id="cb179-2"><a href="#cb179-2" aria-hidden="true" tabindex="-1"></a>df2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  CustomerId Province
+1          2     广东
+2          4     广东
+3          6     北京</code></pre>
+</div>
+</div>
+<p>在上面的代码中，我们构造了两个数据框（df1和df2）。其中，df1中有消费者的ID号和他们买了什么产品；df2中则包含了消费者ID号和他们所在的地点（省份）。 内连接又称为自然连接，是根据两个表格某一列或多列共有的部分，进行连接的过程。下面，我们来对之前构造的两个表格进行内连接，这可以使用<code>inner_join_dt</code>函数完成。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb181"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb181-1"><a href="#cb181-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="sc">%&gt;%</span> <span class="fu">inner_join_dt</span>(df2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining by: CustomerId</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;CustomerId&gt;
+   CustomerId Product Province
+        &lt;int&gt;  &lt;char&gt;   &lt;char&gt;
+1:          2  洗衣机     广东
+2:          4  微波炉     广东
+3:          6  微波炉     北京</code></pre>
+</div>
+</div>
+<p>通过上面的结果，我们可以看到，如果没有设定连接的列，那么<code>inner_join_dt</code>会自动识别两个数据框中的同名列进行匹配。在内连接中，会找到df1和df2同名列CustomerId中完全匹配的条目，进行连接。如果希望直接设定合并的列，可以使用<em>by</em>参数来特殊指定。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb184"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb184-1"><a href="#cb184-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="sc">%&gt;%</span> <span class="fu">inner_join_dt</span>(df2,<span class="at">by =</span> <span class="st">"CustomerId"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;CustomerId&gt;
+   CustomerId Product Province
+        &lt;int&gt;  &lt;char&gt;   &lt;char&gt;
+1:          2  洗衣机     广东
+2:          4  微波炉     广东
+3:          6  微波炉     北京</code></pre>
+</div>
+</div>
+<p>在进行内连接的时候，我们可以看到，如果不匹配的条目，会全部消失。如果想要保留这些条目，可以使用全连接，它会保留两个表格中所有的条目。而没有数值的地方，会自动填充缺失值。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb186"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb186-1"><a href="#cb186-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="sc">%&gt;%</span> <span class="fu">full_join_dt</span>(df2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining by: CustomerId</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;CustomerId&gt;
+   CustomerId Product Province
+        &lt;int&gt;  &lt;char&gt;   &lt;char&gt;
+1:          1  洗衣机     &lt;NA&gt;
+2:          2  洗衣机     广东
+3:          3  洗衣机     &lt;NA&gt;
+4:          4  微波炉     广东
+5:          5  微波炉     &lt;NA&gt;
+6:          6  微波炉     北京</code></pre>
+</div>
+</div>
+<p>在上面的结果中，我们可以看到，在df2中没有消费者1、3、5的地区数据，因此填充了缺失值NA。 左连接和右连接是互为逆运算的两个操作，左连接会保留左边数据框的所有信息，但是对于右边的数据框，则只有匹配的数据得以保留，不匹配的部分会填入缺失值。下面我们来进行演示：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb189"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb189-1"><a href="#cb189-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="sc">%&gt;%</span> <span class="fu">left_join_dt</span>(df2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining by: CustomerId</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;CustomerId&gt;
+   CustomerId Product Province
+        &lt;int&gt;  &lt;char&gt;   &lt;char&gt;
+1:          1  洗衣机     &lt;NA&gt;
+2:          2  洗衣机     广东
+3:          3  洗衣机     &lt;NA&gt;
+4:          4  微波炉     广东
+5:          5  微波炉     &lt;NA&gt;
+6:          6  微波炉     北京</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb192"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb192-1"><a href="#cb192-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="sc">%&gt;%</span> <span class="fu">right_join_dt</span>(df2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining by: CustomerId</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;CustomerId&gt;
+   CustomerId Product Province
+        &lt;int&gt;  &lt;char&gt;   &lt;char&gt;
+1:          2  洗衣机     广东
+2:          4  微波炉     广东
+3:          6  微波炉     北京</code></pre>
+</div>
+</div>
+<p>有的时候，我们需要根据两个或以上的列进行连接，那么将需要通过设置<em>by</em>参数来完成。下面我们举个例子：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb195"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb195-1"><a href="#cb195-1" aria-hidden="true" tabindex="-1"></a>workers <span class="ot">=</span> <span class="fu">fread</span>(<span class="st">"</span></span>
+<span id="cb195-2"><a href="#cb195-2" aria-hidden="true" tabindex="-1"></a><span class="st">    name company</span></span>
+<span id="cb195-3"><a href="#cb195-3" aria-hidden="true" tabindex="-1"></a><span class="st">    Nick Acme</span></span>
+<span id="cb195-4"><a href="#cb195-4" aria-hidden="true" tabindex="-1"></a><span class="st">    John Ajax</span></span>
+<span id="cb195-5"><a href="#cb195-5" aria-hidden="true" tabindex="-1"></a><span class="st">    Daniela Ajax</span></span>
+<span id="cb195-6"><a href="#cb195-6" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span>
+<span id="cb195-7"><a href="#cb195-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb195-8"><a href="#cb195-8" aria-hidden="true" tabindex="-1"></a>positions <span class="ot">=</span> <span class="fu">fread</span>(<span class="st">"</span></span>
+<span id="cb195-9"><a href="#cb195-9" aria-hidden="true" tabindex="-1"></a><span class="st">    name position</span></span>
+<span id="cb195-10"><a href="#cb195-10" aria-hidden="true" tabindex="-1"></a><span class="st">    John designer</span></span>
+<span id="cb195-11"><a href="#cb195-11" aria-hidden="true" tabindex="-1"></a><span class="st">    Daniela engineer</span></span>
+<span id="cb195-12"><a href="#cb195-12" aria-hidden="true" tabindex="-1"></a><span class="st">    Cathie manager</span></span>
+<span id="cb195-13"><a href="#cb195-13" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span>
+<span id="cb195-14"><a href="#cb195-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb195-15"><a href="#cb195-15" aria-hidden="true" tabindex="-1"></a>positions2 <span class="ot">=</span> <span class="fu">setNames</span>(positions, <span class="fu">c</span>(<span class="st">"worker"</span>, <span class="st">"position"</span>)) </span>
+<span id="cb195-16"><a href="#cb195-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb195-17"><a href="#cb195-17" aria-hidden="true" tabindex="-1"></a>workers</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      name company
+    &lt;char&gt;  &lt;char&gt;
+1:    Nick    Acme
+2:    John    Ajax
+3: Daniela    Ajax</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb197"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb197-1"><a href="#cb197-1" aria-hidden="true" tabindex="-1"></a>positions2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    worker position
+    &lt;char&gt;   &lt;char&gt;
+1:    John designer
+2: Daniela engineer
+3:  Cathie  manager</code></pre>
+</div>
+</div>
+<p>在上面的代码中，我们获得了workers和position2两个数据框。其中，workers数据框中的name为工人名称，而position2数据框中的worker列为数据名称，因此两者合并的时候需要根据名称不同的列进行匹配：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb199"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb199-1"><a href="#cb199-1" aria-hidden="true" tabindex="-1"></a>workers <span class="sc">%&gt;%</span> <span class="fu">inner_join_dt</span>(positions2, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"name"</span> <span class="ot">=</span> <span class="st">"worker"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;name&gt;
+      name company position
+    &lt;char&gt;  &lt;char&gt;   &lt;char&gt;
+1: Daniela    Ajax engineer
+2:    John    Ajax designer</code></pre>
+</div>
+</div>
+<p>得到的结果会保留第一个出现的数据框的名称，即workers数据框中的name，而第二个数据框position2的worker列则会消失。</p>
+</section>
+<section id="过滤型连接" class="level5" data-number="5.3.2.2.2">
+<h5 data-number="5.3.2.2.2" class="anchored" data-anchor-id="过滤型连接"><span class="header-section-number">5.3.2.2.2</span> 过滤型连接</h5>
+<p>过滤型连接（Filtering joins）是根据两个表格中是否有匹配内容来决定一个表格中的观测是否得以保留的操作，在<strong>tidyfst</strong>包中可以使用<code>anti_join_dt</code>和<code>semi_join_dt</code>实现。其中，<code>anti_join_dt</code>会保留第一个表格有而第二个表格中没有匹配的内容，而<code>semi_join_dt</code>则会保留第一个表格有且第二个表格也有的内容。但是，第二个表格中非匹配列的其他数据不会并入生成表格中。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb201"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb201-1"><a href="#cb201-1" aria-hidden="true" tabindex="-1"></a>workers <span class="sc">%&gt;%</span> <span class="fu">anti_join_dt</span>(positions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining by: name</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     name company
+   &lt;char&gt;  &lt;char&gt;
+1:   Nick    Acme</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb204"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb204-1"><a href="#cb204-1" aria-hidden="true" tabindex="-1"></a>workers <span class="sc">%&gt;%</span> <span class="fu">semi_join_dt</span>(positions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining by: name</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      name company
+    &lt;char&gt;  &lt;char&gt;
+1:    John    Ajax
+2: Daniela    Ajax</code></pre>
+</div>
+</div>
+</section>
+<section id="集合运算操作" class="level5" data-number="5.3.2.2.3">
+<h5 data-number="5.3.2.2.3" class="anchored" data-anchor-id="集合运算操作"><span class="header-section-number">5.3.2.2.3</span> 集合运算操作</h5>
+<p>在R中，每个向量都可以视为一个集合，基本包提供了intersect/union/setdiff来求集合的交集、并集和补集，并可以使用<code>setequal</code>函数来查看两个向量是否全等。我们可以做一个简单的演示：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb207"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb207-1"><a href="#cb207-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span></span>
+<span id="cb207-2"><a href="#cb207-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">6</span></span>
+<span id="cb207-3"><a href="#cb207-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb207-4"><a href="#cb207-4" aria-hidden="true" tabindex="-1"></a><span class="fu">union</span>(x, y) <span class="co">#并集</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 2 3 4 5 6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb209"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb209-1"><a href="#cb209-1" aria-hidden="true" tabindex="-1"></a><span class="fu">intersect</span>(x, y) <span class="co">#交集</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3 4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb211"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb211-1"><a href="#cb211-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(x, y) <span class="co">#补集，x有而y没有部分</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb213"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb213-1"><a href="#cb213-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(y, x) <span class="co">#补集，y有而x没有部分</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5 6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb215"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb215-1"><a href="#cb215-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setequal</span>(x, y) <span class="co"># x与y是否相等</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+<p>而在<strong>tidyfst</strong>中，利用了<strong>data.table</strong>的集合运算函数，可以直接对数据框进行对应的集合运算操作。需要注意的是，所求数据框需要有相同的列名称。下面我们利用iris的前3列来做一个简单的演示：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb217"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb217-1"><a href="#cb217-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> iris[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,]</span>
+<span id="cb217-2"><a href="#cb217-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> iris[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>,] </span>
+<span id="cb217-3"><a href="#cb217-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-4"><a href="#cb217-4" aria-hidden="true" tabindex="-1"></a><span class="fu">union_dt</span>(x, y) <span class="co">#并集</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          5.1         3.5          1.4         0.2  setosa
+2:          4.9         3.0          1.4         0.2  setosa
+3:          4.7         3.2          1.3         0.2  setosa</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb219"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb219-1"><a href="#cb219-1" aria-hidden="true" tabindex="-1"></a><span class="fu">intersect_dt</span>(x, y) <span class="co">#交集</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          4.9           3          1.4         0.2  setosa</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb221"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb221-1"><a href="#cb221-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff_dt</span>(x, y) <span class="co">#补集，x有而y没有部分</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          5.1         3.5          1.4         0.2  setosa</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb223"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb223-1"><a href="#cb223-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff_dt</span>(y, x) <span class="co">#补集，y有而x没有部分</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          4.7         3.2          1.3         0.2  setosa</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb225"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb225-1"><a href="#cb225-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setequal_dt</span>(x, y) <span class="co"># x与y是否相等</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+<p>这些函数都有<em>all</em>参数，可以调节其对重复值的处理。比如，如果我们取并集的时候，不需要去重，那么可以设置“all = TRUE”。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb227"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb227-1"><a href="#cb227-1" aria-hidden="true" tabindex="-1"></a><span class="fu">union_dt</span>(x,y,<span class="at">all =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;num&gt;       &lt;num&gt;        &lt;num&gt;       &lt;num&gt;  &lt;fctr&gt;
+1:          5.1         3.5          1.4         0.2  setosa
+2:          4.9         3.0          1.4         0.2  setosa
+3:          4.9         3.0          1.4         0.2  setosa
+4:          4.7         3.2          1.3         0.2  setosa</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="便捷工具介绍" class="level3" data-number="5.3.3">
+<h3 data-number="5.3.3" class="anchored" data-anchor-id="便捷工具介绍"><span class="header-section-number">5.3.3</span> 便捷工具介绍</h3>
+<section id="缺失值处理" class="level4" data-number="5.3.3.1">
+<h4 data-number="5.3.3.1" class="anchored" data-anchor-id="缺失值处理"><span class="header-section-number">5.3.3.1</span> 缺失值处理</h4>
+<p>在数据处理的时候，难免会遇到数据集包含缺失值的情况。这有可能是因为人工失误引起的，也可能是系统故障导致的。根据缺失值分布的特征，通常可以把缺失情况分为三类：完全随机缺失（missing completely at random,MCAR）、随机缺失（missing at random,MAR）、非随机缺失（missing not at random,MNAR）。我们常常需要根据数据缺失的分布特征，来推断数据缺失的真实原因，从而考虑如何来处理这些缺失值。一般而言，缺失值的处理有三种手段：1、删除；2、替换；3、插值。下面，我们将会介绍如何利用<strong>tidyfst</strong>包在R中实现这3种缺失值处理。</p>
+<section id="缺失值删除" class="level5" data-number="5.3.3.1.1">
+<h5 data-number="5.3.3.1.1" class="anchored" data-anchor-id="缺失值删除"><span class="header-section-number">5.3.3.1.1</span> 缺失值删除</h5>
+<p>删除缺失值可能是缺失值处理中最为简单粗暴的方法，在样本量非常大的时候，直接删除往往对结果影响不大，而实现的成本又较低。在<strong>tidyfst</strong>包中，有三个函数能够对包含缺失值的数据进行直接删除：</p>
+<ul>
+<li><p><code>drop_na_dt</code>：行删除操作，如果一列或多列中包含任意缺失值，将整个观测删除。</p></li>
+<li><p><code>delete_na_cols</code>：列删除操作，如果数据框中任意列的缺失值比例或数量超过一个阈值，将整个列删除掉。</p></li>
+<li><p><code>delete_na_rows</code>：行删除操作，如果数据框中任意行的缺失值比例或数量超过一个阈值，将整个列删除掉。</p>
+<p>下面，我们将举个例子对上述操作进行演示。首先我们要构建一个缺失值数据框。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb229"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb229-1"><a href="#cb229-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb229-2"><a href="#cb229-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(tidyfst)</span>
+<span id="cb229-3"><a href="#cb229-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb229-4"><a href="#cb229-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">col1 =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="cn">NA</span>),</span>
+<span id="cb229-5"><a href="#cb229-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">col2 =</span> <span class="fu">c</span>(<span class="st">"this"</span>, <span class="cn">NA</span>,<span class="cn">NA</span>, <span class="st">"text"</span>), </span>
+<span id="cb229-6"><a href="#cb229-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">col3 =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>), </span>
+<span id="cb229-7"><a href="#cb229-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">col4 =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">3.2</span>, <span class="cn">NA</span>))</span>
+<span id="cb229-8"><a href="#cb229-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb229-9"><a href="#cb229-9" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  col1 col2  col3 col4
+1    1 this  TRUE   NA
+2    2 &lt;NA&gt; FALSE   NA
+3    3 &lt;NA&gt;  TRUE  3.2
+4   NA text  TRUE   NA</code></pre>
+</div>
+</div>
+<p>所构造的数据框中，第一、二、三、四列分别有1、2、0和3个缺失值。我们如果想要删除col2中包含缺失值的条目，可以使用<code>drop_na_dt</code>函数。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb231"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb231-1"><a href="#cb231-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">drop_na_dt</span>(col2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col2   col3  col4
+   &lt;int&gt; &lt;char&gt; &lt;lgcl&gt; &lt;num&gt;
+1:     1   this   TRUE    NA
+2:    NA   text   TRUE    NA</code></pre>
+</div>
+</div>
+<p>如果想要删除缺失值大于等于2个或缺失比例大于等于50%的列，则可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb233"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb233-1"><a href="#cb233-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 删除缺失值大于等于2个的列</span></span>
+<span id="cb233-2"><a href="#cb233-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">delete_na_cols</span>(<span class="at">n =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col3
+   &lt;int&gt; &lt;lgcl&gt;
+1:     1   TRUE
+2:     2  FALSE
+3:     3   TRUE
+4:    NA   TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb235"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb235-1"><a href="#cb235-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 删除缺失比例大于等于50%的列</span></span>
+<span id="cb235-2"><a href="#cb235-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">delete_na_cols</span>(<span class="at">prop =</span> <span class="fl">0.5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col3
+   &lt;int&gt; &lt;lgcl&gt;
+1:     1   TRUE
+2:     2  FALSE
+3:     3   TRUE
+4:    NA   TRUE</code></pre>
+</div>
+</div>
+<p>如果想要删除缺失值大于等于2个或缺失比例大于等于50%的行，则可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb237"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb237-1"><a href="#cb237-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 删除缺失值大于等于2个的行</span></span>
+<span id="cb237-2"><a href="#cb237-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">delete_na_rows</span>(<span class="at">n =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col2   col3  col4
+   &lt;int&gt; &lt;char&gt; &lt;lgcl&gt; &lt;num&gt;
+1:     1   this   TRUE    NA
+2:     3   &lt;NA&gt;   TRUE   3.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb239"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb239-1"><a href="#cb239-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 删除缺失比例大于等于50%的行</span></span>
+<span id="cb239-2"><a href="#cb239-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">delete_na_rows</span>(<span class="at">prop =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col2   col3  col4
+   &lt;int&gt; &lt;char&gt; &lt;lgcl&gt; &lt;num&gt;
+1:     1   this   TRUE    NA
+2:     3   &lt;NA&gt;   TRUE   3.2</code></pre>
+</div>
+</div></li>
+</ul>
+</section>
+<section id="缺失值替换" class="level5" data-number="5.3.3.1.2">
+<h5 data-number="5.3.3.1.2" class="anchored" data-anchor-id="缺失值替换"><span class="header-section-number">5.3.3.1.2</span> 缺失值替换</h5>
+<p>缺失值替换就是把缺失的部分用指定数据进行替代的过程，在<strong>tidyfst</strong>中可以使用<code>replace_na_dt</code>进行实现。比如，我们要将上面所构造数据框的col1列缺失值替换为-99，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb241"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb241-1"><a href="#cb241-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb241-2"><a href="#cb241-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replace_na_dt</span>(col1,<span class="at">to =</span> <span class="sc">-</span><span class="dv">99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col2   col3  col4
+   &lt;int&gt; &lt;char&gt; &lt;lgcl&gt; &lt;num&gt;
+1:     1   this   TRUE    NA
+2:     2   &lt;NA&gt;  FALSE    NA
+3:     3   &lt;NA&gt;   TRUE   3.2
+4:   -99   text   TRUE    NA</code></pre>
+</div>
+</div>
+<p>也可以同时对col1和col4同时进行这项操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb243"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb243-1"><a href="#cb243-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb243-2"><a href="#cb243-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replace_na_dt</span>(col1,col4,<span class="at">to =</span> <span class="sc">-</span><span class="dv">99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col2   col3  col4
+   &lt;int&gt; &lt;char&gt; &lt;lgcl&gt; &lt;num&gt;
+1:     1   this   TRUE -99.0
+2:     2   &lt;NA&gt;  FALSE -99.0
+3:     3   &lt;NA&gt;   TRUE   3.2
+4:   -99   text   TRUE -99.0</code></pre>
+</div>
+</div>
+<p>如果不设定替换列，默认替换所有的列。但需要注意的是，每一个列的类型都不一样，因此在替换的时候需要保证替换列数据类型的一致性。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb245"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb245-1"><a href="#cb245-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb245-2"><a href="#cb245-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_vars</span>(<span class="at">.func =</span> as.character) <span class="sc">%&gt;%</span> <span class="co">#将有所列转化为字符型</span></span>
+<span id="cb245-3"><a href="#cb245-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replace_na_dt</span>(<span class="at">to =</span> <span class="st">"missing"</span>) <span class="co">#将缺失值替换为“missing”</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      col1    col2   col3    col4
+    &lt;char&gt;  &lt;char&gt; &lt;char&gt;  &lt;char&gt;
+1:       1    this   TRUE missing
+2:       2 missing  FALSE missing
+3:       3 missing   TRUE     3.2
+4: missing    text   TRUE missing</code></pre>
+</div>
+</div>
+</section>
+<section id="缺失值插值" class="level5" data-number="5.3.3.1.3">
+<h5 data-number="5.3.3.1.3" class="anchored" data-anchor-id="缺失值插值"><span class="header-section-number">5.3.3.1.3</span> 缺失值插值</h5>
+<p>与替换不同，缺失值的插值需要根据列中数据的关系来对要插入的值进行一定的计算，然后再填入到缺失的部分。在<strong>tidyfst</strong>包中，可以完成插值的函数包括：</p>
+<ul>
+<li><p><code>fill_na_dt</code>：把缺失值替换为其最临近的上一个或下一个观测值</p></li>
+<li><p><code>impute_dt</code>：根据列汇总数据（平均值、中位数、众数或其他）来对缺失值进行插补</p>
+<p>我们先对<code>fill_na_dt</code>函数进行讲解，它的原理非常简单，我们直接进行演示。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb247"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb247-1"><a href="#cb247-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 对col2向下进行插补</span></span>
+<span id="cb247-2"><a href="#cb247-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">fill_na_dt</span>(col2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col2   col3  col4
+   &lt;int&gt; &lt;char&gt; &lt;lgcl&gt; &lt;num&gt;
+1:     1   this   TRUE    NA
+2:     2   this  FALSE    NA
+3:     3   this   TRUE   3.2
+4:    NA   text   TRUE    NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb249"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb249-1"><a href="#cb249-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 对col2向上进行插补</span></span>
+<span id="cb249-2"><a href="#cb249-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">fill_na_dt</span>(col2,<span class="at">direction =</span> <span class="st">"up"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col2   col3  col4
+   &lt;int&gt; &lt;char&gt; &lt;lgcl&gt; &lt;num&gt;
+1:     1   this   TRUE    NA
+2:     2   text  FALSE    NA
+3:     3   text   TRUE   3.2
+4:    NA   text   TRUE    NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb251"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb251-1"><a href="#cb251-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 对数值型列进行向下插补</span></span>
+<span id="cb251-2"><a href="#cb251-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">fill_na_dt</span>(is.numeric)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col2   col3  col4
+   &lt;int&gt; &lt;char&gt; &lt;lgcl&gt; &lt;num&gt;
+1:     1   this   TRUE    NA
+2:     2   &lt;NA&gt;  FALSE    NA
+3:     3   &lt;NA&gt;   TRUE   3.2
+4:     3   text   TRUE   3.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb253"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb253-1"><a href="#cb253-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 对所有列进行向上插补</span></span>
+<span id="cb253-2"><a href="#cb253-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">fill_na_dt</span>(<span class="at">direction =</span> <span class="st">"up"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col2   col3  col4
+   &lt;int&gt; &lt;char&gt; &lt;lgcl&gt; &lt;num&gt;
+1:     1   this   TRUE   3.2
+2:     2   text  FALSE   3.2
+3:     3   text   TRUE   3.2
+4:    NA   text   TRUE    NA</code></pre>
+</div>
+</div>
+<p>有的时候，我们会尝试用均值来对数值型的变量进行插值，那么我们可以使用<code>impute_dt</code>函数进行操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb255"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb255-1"><a href="#cb255-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">impute_dt</span>(is.numeric,<span class="at">.func =</span> <span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    col1   col2   col3  col4
+   &lt;num&gt; &lt;char&gt; &lt;lgcl&gt; &lt;num&gt;
+1:     1   this   TRUE   3.2
+2:     2   &lt;NA&gt;  FALSE   3.2
+3:     3   &lt;NA&gt;   TRUE   3.2
+4:     2   text   TRUE   3.2</code></pre>
+</div>
+</div>
+<p>如果把.func设置为“mode”和“median”，我们就可以利用其众数或中位数进行插值。</p></li>
+</ul>
+</section>
+</section>
+<section id="长宽数据转换-1" class="level4" data-number="5.3.3.2">
+<h4 data-number="5.3.3.2" class="anchored" data-anchor-id="长宽数据转换-1"><span class="header-section-number">5.3.3.2</span> 长宽数据转换</h4>
+<p>表格的长宽转换是一个经典的数据操作，它可以自由地改变二维表的结构。比如我们之前熟悉的iris数据框，其实就可以转化为任意的其他结构。举个例子，我们给每一朵花都进行编号，然后直接转为长表格式。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb257"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb257-1"><a href="#cb257-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb257-2"><a href="#cb257-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(tidyfst)</span>
+<span id="cb257-3"><a href="#cb257-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb257-4"><a href="#cb257-4" aria-hidden="true" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> </span>
+<span id="cb257-5"><a href="#cb257-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_vars</span>(<span class="at">.func =</span> as.character) <span class="sc">%&gt;%</span>  <span class="co">#所有数据转化为字符型</span></span>
+<span id="cb257-6"><a href="#cb257-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_dt</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span>.N) <span class="sc">%&gt;%</span>  <span class="co"># 给所有花进行编号</span></span>
+<span id="cb257-7"><a href="#cb257-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">longer_dt</span>(id) <span class="co"># 以编号id作为分组变量，转化为长表</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        id         name     value
+     &lt;int&gt;       &lt;fctr&gt;    &lt;char&gt;
+  1:     1 Sepal.Length       5.1
+  2:     2 Sepal.Length       4.9
+ ---                             
+749:   149      Species virginica
+750:   150      Species virginica</code></pre>
+</div>
+</div>
+<p>在输出的结果中，我们可以看到三列，分别为id、name和value。以第一行为例，它表示id为1的花朵的Sepal.Length属性值为5.1。这种长宽变换能够让我们自如地对数据框结构进行重塑，从而获得满足分析要求的数据结构。</p>
+<section id="宽表转长表" class="level5" data-number="5.3.3.2.1">
+<h5 data-number="5.3.3.2.1" class="anchored" data-anchor-id="宽表转长表"><span class="header-section-number">5.3.3.2.1</span> 宽表转长表</h5>
+<p>在<strong>tidyfst</strong>包中，可以使用<code>longer_dt</code>函数来把宽表转化为长表，需要定义的核心参数是数据框和分组列。分组列就是不参与长宽变换的列，而其他列名称将会统统聚合起来成为一列。下面我们进行一个简单的演示。首先，我们先进行数据准备：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb259"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb259-1"><a href="#cb259-1" aria-hidden="true" tabindex="-1"></a>stocks <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb259-2"><a href="#cb259-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> <span class="fu">as.Date</span>(<span class="st">'2009-01-01'</span>) <span class="sc">+</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>,</span>
+<span id="cb259-3"><a href="#cb259-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">X =</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb259-4"><a href="#cb259-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">0</span>, <span class="dv">2</span>),</span>
+<span id="cb259-5"><a href="#cb259-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Z =</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">0</span>, <span class="dv">4</span>)</span>
+<span id="cb259-6"><a href="#cb259-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb259-7"><a href="#cb259-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb259-8"><a href="#cb259-8" aria-hidden="true" tabindex="-1"></a>stocks</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         time           X          Y          Z
+1  2009-01-01 -0.41951421 -4.0696697  1.1862528
+2  2009-01-02 -1.95653982  1.2851513 -4.3121715
+3  2009-01-03 -0.18057417  0.2530406  1.4529063
+4  2009-01-04  1.53254389  2.5200584  1.2337196
+5  2009-01-05 -0.40798547 -3.1497638 -2.6830911
+6  2009-01-06  2.09614174  4.4814026  2.1697771
+7  2009-01-07 -0.39973265 -0.4680301  1.6492286
+8  2009-01-08  0.33918122 -2.1085464  1.9916131
+9  2009-01-09  0.25558423  2.7826645  0.3446163
+10 2009-01-10 -0.09429387 -0.9727120 -1.4884806</code></pre>
+</div>
+</div>
+<p>观察数据，我们知道这是一个10行4列的数据框，一列为时间time，其余三列为数值列。现在，我们要把它转化为长表。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb261"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb261-1"><a href="#cb261-1" aria-hidden="true" tabindex="-1"></a>stocks <span class="sc">%&gt;%</span> </span>
+<span id="cb261-2"><a href="#cb261-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">longer_dt</span>(time) <span class="ot">-&gt;</span> longer_table</span>
+<span id="cb261-3"><a href="#cb261-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb261-4"><a href="#cb261-4" aria-hidden="true" tabindex="-1"></a>longer_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          time   name       value
+        &lt;Date&gt; &lt;fctr&gt;       &lt;num&gt;
+ 1: 2009-01-01      X -0.41951421
+ 2: 2009-01-02      X -1.95653982
+ 3: 2009-01-03      X -0.18057417
+ 4: 2009-01-04      X  1.53254389
+ 5: 2009-01-05      X -0.40798547
+ 6: 2009-01-06      X  2.09614174
+ 7: 2009-01-07      X -0.39973265
+ 8: 2009-01-08      X  0.33918122
+ 9: 2009-01-09      X  0.25558423
+10: 2009-01-10      X -0.09429387
+11: 2009-01-01      Y -4.06966965
+12: 2009-01-02      Y  1.28515135
+13: 2009-01-03      Y  0.25304059
+14: 2009-01-04      Y  2.52005836
+15: 2009-01-05      Y -3.14976381
+16: 2009-01-06      Y  4.48140262
+17: 2009-01-07      Y -0.46803013
+18: 2009-01-08      Y -2.10854639
+19: 2009-01-09      Y  2.78266455
+20: 2009-01-10      Y -0.97271195
+21: 2009-01-01      Z  1.18625279
+22: 2009-01-02      Z -4.31217152
+23: 2009-01-03      Z  1.45290630
+24: 2009-01-04      Z  1.23371964
+25: 2009-01-05      Z -2.68309108
+26: 2009-01-06      Z  2.16977710
+27: 2009-01-07      Z  1.64922855
+28: 2009-01-08      Z  1.99161315
+29: 2009-01-09      Z  0.34461627
+30: 2009-01-10      Z -1.48848060
+          time   name       value</code></pre>
+</div>
+</div>
+<p>可以发现，列名称X/Y/Z都在name列中，其值则在value列中。这些列名称可以通过更改<em>name</em>和<em>value</em>参数重新被定义。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb263"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb263-1"><a href="#cb263-1" aria-hidden="true" tabindex="-1"></a>stocks <span class="sc">%&gt;%</span> </span>
+<span id="cb263-2"><a href="#cb263-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">longer_dt</span>(time,</span>
+<span id="cb263-3"><a href="#cb263-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">name =</span> <span class="st">"var"</span>,</span>
+<span id="cb263-4"><a href="#cb263-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">value =</span> <span class="st">"val"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          time    var         val
+        &lt;Date&gt; &lt;fctr&gt;       &lt;num&gt;
+ 1: 2009-01-01      X -0.41951421
+ 2: 2009-01-02      X -1.95653982
+ 3: 2009-01-03      X -0.18057417
+ 4: 2009-01-04      X  1.53254389
+ 5: 2009-01-05      X -0.40798547
+ 6: 2009-01-06      X  2.09614174
+ 7: 2009-01-07      X -0.39973265
+ 8: 2009-01-08      X  0.33918122
+ 9: 2009-01-09      X  0.25558423
+10: 2009-01-10      X -0.09429387
+11: 2009-01-01      Y -4.06966965
+12: 2009-01-02      Y  1.28515135
+13: 2009-01-03      Y  0.25304059
+14: 2009-01-04      Y  2.52005836
+15: 2009-01-05      Y -3.14976381
+16: 2009-01-06      Y  4.48140262
+17: 2009-01-07      Y -0.46803013
+18: 2009-01-08      Y -2.10854639
+19: 2009-01-09      Y  2.78266455
+20: 2009-01-10      Y -0.97271195
+21: 2009-01-01      Z  1.18625279
+22: 2009-01-02      Z -4.31217152
+23: 2009-01-03      Z  1.45290630
+24: 2009-01-04      Z  1.23371964
+25: 2009-01-05      Z -2.68309108
+26: 2009-01-06      Z  2.16977710
+27: 2009-01-07      Z  1.64922855
+28: 2009-01-08      Z  1.99161315
+29: 2009-01-09      Z  0.34461627
+30: 2009-01-10      Z -1.48848060
+          time    var         val</code></pre>
+</div>
+</div>
+</section>
+<section id="长表转宽表" class="level5" data-number="5.3.3.2.2">
+<h5 data-number="5.3.3.2.2" class="anchored" data-anchor-id="长表转宽表"><span class="header-section-number">5.3.3.2.2</span> 长表转宽表</h5>
+<p>长表转为宽表是宽表转长表的逆运算，因此需要定义的核心参数也有相仿之处，需要知道数据框、分组列的信息，同时需要知道名称列（name）和数值列（value）分别来自哪里。以上面生成的longer_table为例，我们尝试把它进行还原。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb265"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb265-1"><a href="#cb265-1" aria-hidden="true" tabindex="-1"></a>longer_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          time   name       value
+        &lt;Date&gt; &lt;fctr&gt;       &lt;num&gt;
+ 1: 2009-01-01      X -0.41951421
+ 2: 2009-01-02      X -1.95653982
+ 3: 2009-01-03      X -0.18057417
+ 4: 2009-01-04      X  1.53254389
+ 5: 2009-01-05      X -0.40798547
+ 6: 2009-01-06      X  2.09614174
+ 7: 2009-01-07      X -0.39973265
+ 8: 2009-01-08      X  0.33918122
+ 9: 2009-01-09      X  0.25558423
+10: 2009-01-10      X -0.09429387
+11: 2009-01-01      Y -4.06966965
+12: 2009-01-02      Y  1.28515135
+13: 2009-01-03      Y  0.25304059
+14: 2009-01-04      Y  2.52005836
+15: 2009-01-05      Y -3.14976381
+16: 2009-01-06      Y  4.48140262
+17: 2009-01-07      Y -0.46803013
+18: 2009-01-08      Y -2.10854639
+19: 2009-01-09      Y  2.78266455
+20: 2009-01-10      Y -0.97271195
+21: 2009-01-01      Z  1.18625279
+22: 2009-01-02      Z -4.31217152
+23: 2009-01-03      Z  1.45290630
+24: 2009-01-04      Z  1.23371964
+25: 2009-01-05      Z -2.68309108
+26: 2009-01-06      Z  2.16977710
+27: 2009-01-07      Z  1.64922855
+28: 2009-01-08      Z  1.99161315
+29: 2009-01-09      Z  0.34461627
+30: 2009-01-10      Z -1.48848060
+          time   name       value</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb267"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb267-1"><a href="#cb267-1" aria-hidden="true" tabindex="-1"></a>longer_table <span class="sc">%&gt;%</span> </span>
+<span id="cb267-2"><a href="#cb267-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wider_dt</span>(time,<span class="at">name =</span> <span class="st">"name"</span>,<span class="at">value =</span> <span class="st">"value"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key: &lt;time&gt;
+          time           X          Y          Z
+        &lt;Date&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;
+ 1: 2009-01-01 -0.41951421 -4.0696697  1.1862528
+ 2: 2009-01-02 -1.95653982  1.2851513 -4.3121715
+ 3: 2009-01-03 -0.18057417  0.2530406  1.4529063
+ 4: 2009-01-04  1.53254389  2.5200584  1.2337196
+ 5: 2009-01-05 -0.40798547 -3.1497638 -2.6830911
+ 6: 2009-01-06  2.09614174  4.4814026  2.1697771
+ 7: 2009-01-07 -0.39973265 -0.4680301  1.6492286
+ 8: 2009-01-08  0.33918122 -2.1085464  1.9916131
+ 9: 2009-01-09  0.25558423  2.7826645  0.3446163
+10: 2009-01-10 -0.09429387 -0.9727120 -1.4884806</code></pre>
+</div>
+</div>
+<p>在上面的操作中，我们把time定义为分组列，然后以字符形式来定义哪一列是名称列，哪一列是数值列。在宽表转长表的时候，<em>name</em>和<em>value</em>如果不自定义，就会自动给名称列命名为“name”，给数值列命名为“value”；但是在长表转为宽表的时候，则必须手动进行定义，否则计算机无法自动识别。</p>
+</section>
+</section>
+</section>
+</section>
+<section id="小结" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="小结"><span class="header-section-number">5.4</span> 小结</h2>
+<p>本章聚焦于如何利用<strong>data.table</strong>以及衍生工具包<strong>tidyfst</strong>来对大规模数据进行整理。通过学习，我们知道<strong>data.table</strong>的数据处理效率非常高，但是语法结构相对来说比较复杂，因此有时候难以记忆，需要多花时间来熟悉。另一方面，<strong>tidyfst</strong>包底层用<strong>data.table</strong>来构建，而语法结构相对来说比较简单，很多复杂的操作也被集成在该工具包中，可以简单地进行调用。利用这些工具，我们可以在R环境中对海量数据高效地进行整理和清洗。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./快速读写：大数据的导入与导出.html" class="pagination-link  aria-label=" &lt;span="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">快速读写：大数据的导入与导出</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./快速绘图：大数据可视化工具.html" class="pagination-link" aria-label="<span class='chapter-number'>6</span>&nbsp; <span class='chapter-title'>快速绘图：大数据可视化工具</span>">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">快速绘图：大数据可视化工具</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

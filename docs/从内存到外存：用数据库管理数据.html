@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>大数据分析——基于R语言 - 12&nbsp; 从内存到外存：用数据库管理数据</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./从本地到集群：大数据分布式计算.html" rel="next">
+<link href="./空间换时间：大数据并行计算.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./从内存到外存：用数据库管理数据.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">从内存到外存：用数据库管理数据</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">大数据分析——基于R语言</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./大数据基本概念.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">大数据基本概念</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./R语言编程入门.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">R语言编程入门</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./数据处理效能的衡量.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">数据处理效能的衡量</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速读写：大数据的导入与导出.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">快速读写：大数据的导入与导出</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速整理：基于data.table的数据处理工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">快速整理：基于data.table的数据处理工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速绘图：大数据可视化工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">快速绘图：大数据可视化工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速建模：高性能机器学习工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">快速建模：高性能机器学习工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./化整为零：对文件进行批处理.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">化整为零：对文件进行批处理</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./跨语言召唤术：在R中调用其他编程工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">跨语言召唤术：在R中调用其他编程工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./时间换空间：大数据流式计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">时间换空间：大数据流式计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./空间换时间：大数据并行计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">空间换时间：大数据并行计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./从内存到外存：用数据库管理数据.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">从内存到外存：用数据库管理数据</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./从本地到集群：大数据分布式计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">从本地到集群：大数据分布式计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./参考资料.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">参考资料</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#磁盘数据处理" id="toc-磁盘数据处理" class="nav-link active" data-scroll-target="#磁盘数据处理"><span class="header-section-number">12.1</span> 磁盘数据处理</a></li>
+  <li><a href="#数据库操作以duckdb为例" id="toc-数据库操作以duckdb为例" class="nav-link" data-scroll-target="#数据库操作以duckdb为例"><span class="header-section-number">12.2</span> 数据库操作——以duckdb为例</a>
+  <ul class="collapse">
+  <li><a href="#基本环境配置" id="toc-基本环境配置" class="nav-link" data-scroll-target="#基本环境配置"><span class="header-section-number">12.2.1</span> 基本环境配置</a></li>
+  <li><a href="#数据库的连接" id="toc-数据库的连接" class="nav-link" data-scroll-target="#数据库的连接"><span class="header-section-number">12.2.2</span> 数据库的连接</a></li>
+  <li><a href="#数据操作基础" id="toc-数据操作基础" class="nav-link" data-scroll-target="#数据操作基础"><span class="header-section-number">12.2.3</span> 数据操作基础</a></li>
+  </ul></li>
+  <li><a href="#基于arrow的大数据处理平台" id="toc-基于arrow的大数据处理平台" class="nav-link" data-scroll-target="#基于arrow的大数据处理平台"><span class="header-section-number">12.3</span> 基于Arrow的大数据处理平台</a></li>
+  <li><a href="#小结" id="toc-小结" class="nav-link" data-scroll-target="#小结"><span class="header-section-number">12.4</span> 小结</a></li>
+  <li><a href="#练习" id="toc-练习" class="nav-link" data-scroll-target="#练习"><span class="header-section-number">12.5</span> 练习</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">从内存到外存：用数据库管理数据</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>在现代数据分析和处理过程中，随着数据量的不断增加，单纯依赖内存来存储和处理数据已经变得不再现实。数据库作为一种高效的外存储解决方案，能够应对大规模数据管理的需求，为数据的存储、检索和处理提供了可靠保障。本章节将详细介绍如何通过数据库来管理和操作数据，从而实现数据持久化、快速查询和高效分析。通过学习数据库管理的基本概念、SQL语言的使用技巧以及数据库与R语言的无缝集成，可以掌握在大数据时代下，高效管理和利用数据的方法。同时，我们还会探讨另一种外存储数据处理方案，即基于Arrow的大数据系统，从而通过内存高效的数据交换格式和跨语言的互操作性来提升数据处理性能和灵活性。</p>
+<section id="磁盘数据处理" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="磁盘数据处理"><span class="header-section-number">12.1</span> 磁盘数据处理</h2>
+<p>磁盘数据处理（On-Disk Data Processing）是一种在数据处理过程中主要依赖磁盘等外部存储设备来存储和处理数据的技术。当数据集的规模超出内存容量时，这种方法尤其有效，因为它能够利用磁盘的大容量来存储大量数据。磁盘数据处理通过将数据分块存储在磁盘上，并在需要时逐块读取和处理，从而避免了内存不足的问题。</p>
+<p>这种方法的一个显著优势是其可扩展性，能够处理比内存容量大得多的数据集，非常适合大数据分析和处理任务。例如，数据库管理系统（如MySQL、PostgreSQL）、分布式文件系统（如Hadoop HDFS）以及流式处理框架（如Apache Kafka）都广泛使用磁盘数据处理技术。然而，由于磁盘的读写速度相对较慢，磁盘数据处理可能会面临较高的I/O延迟。为了优化性能，通常会采用高速缓存、数据预取和并行I/O操作等技术。</p>
+<p>总的来说，磁盘数据处理通过有效利用外部存储设备，为大规模数据处理提供了一种解决方案。尽管存在I/O速度较慢的挑战，但通过适当的优化，可以在大数据环境中实现高效的数据处理和分析。在本章中，我们会描述如何在R环境中调用数据库资源，同时还会介绍另一种新兴的大数据处理系统——Apache Arrow。通过对这些工具的介绍，我们可以有效地利用计算机的磁盘资源来对比内存大的数据进行高效处理。</p>
+</section>
+<section id="数据库操作以duckdb为例" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="数据库操作以duckdb为例"><span class="header-section-number">12.2</span> 数据库操作——以duckdb为例</h2>
+<p>在实际应用中，大量数据存储在数据库，因此掌握如何访问这些数据至关重要。如果每次访问数据都需要请求数据库管理人员，这样会非常麻烦，因此在保障数据安全的前提下，最佳的方案是我们能够直接对数据库的数据进行自由访问。本部分会介绍如何使用 DBI 包连接到数据库，并通过SQL查询检索数据。SQL（Structured Query Language），即结构化查询语言，是数据库的通用语言，是所有数据科学家都需要掌握的重要工具。然而，在R语言中对数据库进行访问可以跳过对SQL的学习（如果你尚未掌握SQL的话），直接使用<strong>dplyr</strong>的核心函数来直接对数据进行筛选、排序、分组汇总等各式操作，因为底层能够借助<strong>dbplyr</strong>工具包把<strong>dplyr</strong>的代码转为SQL代码，从而完成对数据库的控制。下面我们将会循序渐进地介绍如何在R中对数据库的资源进行访问和处理。</p>
+<section id="基本环境配置" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="基本环境配置"><span class="header-section-number">12.2.1</span> 基本环境配置</h3>
+<p>在本部分，我们会加载需要的R包。其中，<strong>DBI</strong>包负责对数据库进行连接并执行SQL语句，<strong>dbplyr</strong>负责把dplyr语句转换为SQL语句，而<strong>tidyverse</strong>包则包含了各种数据处理的基本操作函数。这里我们会以控制DuckDB 数据库为例，因此同时会加载<strong>duckdb</strong>包。执行代码如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(DBI,dbplyr,tidyverse,duckdb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>这里我们稍微对DuckDB 数据库进行一个介绍（标识见图<a href="#fig-duckdb" class="quarto-xref"><span>12.1</span></a>），DuckDB 是一个嵌入式的 SQL 数据库管理系统，旨在提供高效的数据查询和处理功能。它设计用于数据分析和应用程序中的嵌入式数据库需求，支持标准的 SQL 查询语言，同时具备优秀的性能和低延迟。DuckDB 的特点包括内存友好型设计，支持在内存中处理大规模数据集，同时具备与多核处理器和并行计算环境的良好集成能力。它还提供了与许多流行数据分析工具的集成接口，如 R和Python，使得用户可以轻松地在其数据分析工作流中使用 DuckDB 进行快速和高效的数据查询与处理。</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-duckdb" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-duckdb-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/duckdb.png" class="img-fluid figure-img" width="210">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-duckdb-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.1: DuckDB数据库Logo
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="数据库的连接" class="level3" data-number="12.2.2">
+<h3 data-number="12.2.2" class="anchored" data-anchor-id="数据库的连接"><span class="header-section-number">12.2.2</span> 数据库的连接</h3>
+<p>完事开头难，对数据库操作的第一步就是必须让R环境与数据库连接起来。在R中要与数据库连接，一般需要两个包：其一是<strong>DBI</strong>，这个包提供了用于数据库连接、数据传输、执行查询的通用函数；其二是针对用户连接数据库系统的定制包，这些包能够把<strong>DBI</strong>命令转化为特定数据库系统能够解读的命令，比如要使用SQLite就需要<strong>RSQLite</strong>包，使用PostgreSQL就需要使用<strong>PostgreSQL</strong>包。对于咱们的试验来说，需要使用<strong>duckdb</strong>包来完成这个操作，实现方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">=</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>需要注意的是，这里我们创建的是一个虚拟临时数据库，因此当我们推出R环境的时候数据库就会自动被清楚，非常适合用来进行一次性的试验。如果需要连接一个已经存在的数据库，或者创建一个新的数据库，只需要对相关的参数（<em>dbdir</em>）进行设置即可。如果要连接不同的数据库，那么连接的时候需要的参数也会有所不同，相关说明可以参阅<a href="https://dbi.r-dbi.org/reference/dbConnect.html">DBI::dbConnect函数的帮助文档</a>。</p>
+</section>
+<section id="数据操作基础" class="level3" data-number="12.2.3">
+<h3 data-number="12.2.3" class="anchored" data-anchor-id="数据操作基础"><span class="header-section-number">12.2.3</span> 数据操作基础</h3>
+<p>在创建了数据库连接后，首先我们可以对这个数据库载入数据，这可以使用<code>dbWriteTable</code>函数进行实现：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 把iris数据集载入到数据库中</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="st">"iris"</span>, iris)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 把ggplot2中的diamonds数据集载入到数据库中</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="st">"diamonds"</span>, diamonds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>在上面的函数中，我们知道在函数中需要声明3个要素，分别是数据库连接、表名称和数据。载入之后，我们可以观察一下数据库中都有哪些表：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbListTables</span>(con)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "diamonds" "iris"    </code></pre>
+</div>
+</div>
+<p>如果要取出里面的表格，比如我们想要取出iris数据集，有两种方法：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 方法1：使用dbReadTable</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>con <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dbReadTable</span>(<span class="st">"iris"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 150 × 5
+   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;  
+ 1          5.1         3.5          1.4         0.2 setosa 
+ 2          4.9         3            1.4         0.2 setosa 
+ 3          4.7         3.2          1.3         0.2 setosa 
+ 4          4.6         3.1          1.5         0.2 setosa 
+ 5          5           3.6          1.4         0.2 setosa 
+ 6          5.4         3.9          1.7         0.4 setosa 
+ 7          4.6         3.4          1.4         0.3 setosa 
+ 8          5           3.4          1.5         0.2 setosa 
+ 9          4.4         2.9          1.4         0.2 setosa 
+10          4.9         3.1          1.5         0.1 setosa 
+# ℹ 140 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 方法2：使用tbl</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl</span>(con,<span class="st">"iris"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 150 × 5
+   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;  
+ 1          5.1         3.5          1.4         0.2 setosa 
+ 2          4.9         3            1.4         0.2 setosa 
+ 3          4.7         3.2          1.3         0.2 setosa 
+ 4          4.6         3.1          1.5         0.2 setosa 
+ 5          5           3.6          1.4         0.2 setosa 
+ 6          5.4         3.9          1.7         0.4 setosa 
+ 7          4.6         3.4          1.4         0.3 setosa 
+ 8          5           3.4          1.5         0.2 setosa 
+ 9          4.4         2.9          1.4         0.2 setosa 
+10          4.9         3.1          1.5         0.1 setosa 
+# ℹ 140 more rows</code></pre>
+</div>
+</div>
+<p>在上面两种方法中，方法1的<code>as_tibble</code>其实可以去除，我们只是为了显示方便，所以进行这一步操作，但是即使没有这样操作也可以得到传统的数据框结构。在方法2中，则必须使用<code>as_tibble</code>表示对数据进行调用，事实上也可以使用<code>collect</code>函数对数据进行提取。当然， 还有一种方案就是直接写SQL语句对数据进行查询，方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT *</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM iris</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(<span class="fu">dbGetQuery</span>(con, sql))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 150 × 5
+   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+          &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;  
+ 1          5.1         3.5          1.4         0.2 setosa 
+ 2          4.9         3            1.4         0.2 setosa 
+ 3          4.7         3.2          1.3         0.2 setosa 
+ 4          4.6         3.1          1.5         0.2 setosa 
+ 5          5           3.6          1.4         0.2 setosa 
+ 6          5.4         3.9          1.7         0.4 setosa 
+ 7          4.6         3.4          1.4         0.3 setosa 
+ 8          5           3.4          1.5         0.2 setosa 
+ 9          4.4         2.9          1.4         0.2 setosa 
+10          4.9         3.1          1.5         0.1 setosa 
+# ℹ 140 more rows</code></pre>
+</div>
+</div>
+<p>使用<code>dbGetQuery</code>函数能够直接对数据库传SQL语句并进行执行。 现在，我们就可以自由地使用dplyr中的动词对数据进行各式操作。比如我们想要对diamond表进行一系列操作，方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>diamonds_db <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"diamonds"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>diamonds_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Source:   table&lt;diamonds&gt; [?? x 10]
+# Database: DuckDB v0.10.2 [Admin@Windows 10 x64:R 4.4.0/:memory:]
+   carat cut       color clarity depth table price     x     y     z
+   &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt; &lt;fct&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1  0.23 Ideal     E     SI2      61.5    55   326  3.95  3.98  2.43
+ 2  0.21 Premium   E     SI1      59.8    61   326  3.89  3.84  2.31
+ 3  0.23 Good      E     VS1      56.9    65   327  4.05  4.07  2.31
+ 4  0.29 Premium   I     VS2      62.4    58   334  4.2   4.23  2.63
+ 5  0.31 Good      J     SI2      63.3    58   335  4.34  4.35  2.75
+ 6  0.24 Very Good J     VVS2     62.8    57   336  3.94  3.96  2.48
+ 7  0.24 Very Good I     VVS1     62.3    57   336  3.95  3.98  2.47
+ 8  0.26 Very Good H     SI1      61.9    55   337  4.07  4.11  2.53
+ 9  0.22 Fair      E     VS2      65.1    61   337  3.87  3.78  2.49
+10  0.23 Very Good H     VS1      59.4    61   338  4     4.05  2.39
+# ℹ more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>big_diamonds_db <span class="ot">&lt;-</span> diamonds_db <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(price <span class="sc">&gt;</span> <span class="dv">15000</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(carat<span class="sc">:</span>clarity, price)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>big_diamonds_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Source:   SQL [?? x 5]
+# Database: DuckDB v0.10.2 [Admin@Windows 10 x64:R 4.4.0/:memory:]
+   carat cut       color clarity price
+   &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt; &lt;fct&gt;   &lt;int&gt;
+ 1  1.54 Premium   E     VS2     15002
+ 2  1.19 Ideal     F     VVS1    15005
+ 3  2.1  Premium   I     SI1     15007
+ 4  1.69 Ideal     D     SI1     15011
+ 5  1.5  Very Good G     VVS2    15013
+ 6  1.73 Very Good G     VS1     15014
+ 7  2.02 Premium   G     SI2     15014
+ 8  2.05 Very Good F     SI2     15017
+ 9  1.5  Very Good F     VS1     15022
+10  1.82 Very Good G     SI1     15025
+# ℹ more rows</code></pre>
+</div>
+</div>
+<p>需要注意的是，我们在这些操作中都没有对数据进行采集，因此这些赋值对象都还是一个数据连接，而不是R中的数据框。如果需要转化为数据框，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>diamonds_db <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 53,940 × 10
+   carat cut       color clarity depth table price     x     y     z
+   &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt; &lt;fct&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1  0.23 Ideal     E     SI2      61.5    55   326  3.95  3.98  2.43
+ 2  0.21 Premium   E     SI1      59.8    61   326  3.89  3.84  2.31
+ 3  0.23 Good      E     VS1      56.9    65   327  4.05  4.07  2.31
+ 4  0.29 Premium   I     VS2      62.4    58   334  4.2   4.23  2.63
+ 5  0.31 Good      J     SI2      63.3    58   335  4.34  4.35  2.75
+ 6  0.24 Very Good J     VVS2     62.8    57   336  3.94  3.96  2.48
+ 7  0.24 Very Good I     VVS1     62.3    57   336  3.95  3.98  2.47
+ 8  0.26 Very Good H     SI1      61.9    55   337  4.07  4.11  2.53
+ 9  0.22 Fair      E     VS2      65.1    61   337  3.87  3.78  2.49
+10  0.23 Very Good H     VS1      59.4    61   338  4     4.05  2.39
+# ℹ 53,930 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>big_diamonds_db <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,655 × 5
+   carat cut       color clarity price
+   &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt; &lt;fct&gt;   &lt;int&gt;
+ 1  1.54 Premium   E     VS2     15002
+ 2  1.19 Ideal     F     VVS1    15005
+ 3  2.1  Premium   I     SI1     15007
+ 4  1.69 Ideal     D     SI1     15011
+ 5  1.5  Very Good G     VVS2    15013
+ 6  1.73 Very Good G     VS1     15014
+ 7  2.02 Premium   G     SI2     15014
+ 8  2.05 Very Good F     SI2     15017
+ 9  1.5  Very Good F     VS1     15022
+10  1.82 Very Good G     SI1     15025
+# ℹ 1,645 more rows</code></pre>
+</div>
+</div>
+<p>我们还需要知道的是，凡是能够用dplyr方法进行访问的操作，事实上都已经成功地把dplyr操作转化为了相对应的SQL语句，如果我们想看SQL语句转化的情况，可以使用<code>show_query</code>函数，实现方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>big_diamonds_db <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;SQL&gt;
+SELECT carat, cut, color, clarity, price
+FROM diamonds
+WHERE (price &gt; 15000.0)</code></pre>
+</div>
+</div>
+<p>基于这些操作，我们可以在磁盘上对数据库进行分析，然后把内存能够轻松容纳的结果导入到R环境中，进行进一步的分析和展示。在数据库使用完毕后，可以使用<code>dbDisconnect</code>函数关闭数据库连接：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="基于arrow的大数据处理平台" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="基于arrow的大数据处理平台"><span class="header-section-number">12.3</span> 基于Arrow的大数据处理平台</h2>
+<p>Apache Arrow是一个跨语言的开发平台，用于高性能数据分析，提供了一种内存中的数据格式，旨在高效地共享数据而无需额外的序列化和反序列化步骤。它的设计目标是加速大数据处理和分析，使在处理和传输大规模数据集时表现出色。Arrow支持多种编程语言，包括C++, Java, Python, R等，使得不同语言之间的数据交换变得非常高效。其列式内存格式使数据在内存中的表示非常紧凑和高效，不仅减少了内存使用，还提升了CPU缓存命中率，从而加速数据处理。此外，通过Arrow的内存格式，不同进程和系统之间可以实现零拷贝的数据共享，大幅减少数据传输的开销。Arrow还与许多大数据系统（如Apache Parquet、Apache Spark、DuckDB等）无缝集成，支持高效的数据存储和处理。除了基本的数据类型，Arrow还支持复杂的数据结构和操作，如嵌套数据、时间戳和向量化操作。因此，Apache Arrow通过提供高效的内存格式和跨语言支持，为大数据处理和分析提供了一个强大而灵活的基础设施，极大地提升了数据密集型应用的性能。</p>
+<p>本部分聚焦的是如何利用Arrow来进行内存外的计算，在R包<strong>arrow</strong>中，<code>open_dataset</code>函数能够在不把数据载入到R环境的情况下对数据（可以是一份文件包含的数据，也可以是分散在多个文件中的数据；数据格式可以是CSV，也可以是parquet）进行查询操作，用户可以使用<strong>dplyr</strong>包提供的函数来对数据自由进行操作。在条件允许的情况下，我们推荐使用parquet来存储数据，然后再利用<strong>arrow</strong>包对其进行访问，因为Parquet格式有以下优点：</p>
+<ul>
+<li>作为一种专门为大数据需求设计的自定义二进制格式，Parquet文件通常比等效的CSV文件更小。Parquet依赖于高效的编码来减少文件大小，并支持文件压缩。这有助于加快parquet文件的速度，因为从磁盘到内存的数据量更少。</li>
+<li>Parquet文件是列式存储的，这意味着它们是按列组织的，非常类似于R的数据框。这通常比按行组织的CSV文件在数据分析任务中表现更好。</li>
+<li>Parquet文件是分块的，因此支持并行操作。而且，如果分组恰当的话，可以为数据操作节省很多时间。</li>
+</ul>
+<p>我们可以尝试把一份大数据集保存为分块的parquet文件，这可以利用<strong>arrow</strong>包的<code>write_dataset</code>函数进行实现。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 构造数据框</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>nr_of_rows <span class="ot">&lt;-</span> <span class="fl">1e7</span> <span class="co"># 构造1千万行数据</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Logical =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span>), <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.1</span>, <span class="fl">0.05</span>), nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Integer =</span> <span class="fu">sample</span>(<span class="dv">1</span>L<span class="sc">:</span><span class="dv">100</span>L, nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Real =</span> <span class="fu">sample</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span>, <span class="dv">20</span>) <span class="sc">/</span> <span class="dv">100</span>, nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Factor =</span> <span class="fu">as.factor</span>(<span class="fu">sample</span>(<span class="fu">labels</span>(UScitiesD), nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 根据Factor进行分组，然后把数据写出到data文件夹中的test_parquet子文件夹</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Factor) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_dataset</span>(<span class="st">"data/test_parquet"</span>,<span class="at">format =</span> <span class="st">"parquet"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>我们可以观察一下文件夹中的文件信息：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(arrow)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>pq_path <span class="ot">=</span> <span class="st">"data/test_parquet"</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">files =</span> <span class="fu">list.files</span>(pq_path, <span class="at">recursive =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_MB =</span> <span class="fu">file.size</span>(<span class="fu">file.path</span>(pq_path, files)) <span class="sc">/</span> <span class="dv">1024</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   files                               size_MB
+   &lt;chr&gt;                                 &lt;dbl&gt;
+ 1 Factor=Atlanta/part-0.parquet          2.02
+ 2 Factor=Chicago/part-0.parquet          2.03
+ 3 Factor=Denver/part-0.parquet           2.03
+ 4 Factor=Houston/part-0.parquet          2.02
+ 5 Factor=LosAngeles/part-0.parquet       2.02
+ 6 Factor=Miami/part-0.parquet            2.03
+ 7 Factor=NewYork/part-0.parquet          2.03
+ 8 Factor=SanFrancisco/part-0.parquet     2.03
+ 9 Factor=Seattle/part-0.parquet          2.03
+10 Factor=Washington.DC/part-0.parquet    2.02</code></pre>
+</div>
+</div>
+<p>可以看到每一个文件大概2 MB左右，文件名是采用键值对方法进行命名的。现在，我们可以把数据从我们的环境中清除掉，然后使用另一种方式对其进行访问：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 清除构建的数据集</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rm(df): object 'df' not found</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 对保存的parquet数据集进行连接</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>df_pq <span class="ot">=</span> <span class="fu">open_dataset</span>(pq_path)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 观察数据信息</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>df_pq</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>FileSystemDataset with 10 Parquet files
+Logical: bool
+Integer: int32
+Real: double
+Factor: string</code></pre>
+</div>
+</div>
+<p>通过观察，我们知道<code>open_dataset</code>函数没有返回数据本身，但是能够探知数据每一列是什么类型的。下面让我们使用dplyr的函数来对其进行查询：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 构建查询</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>query <span class="ot">=</span> df_pq <span class="sc">%&gt;%</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Factor <span class="sc">==</span> <span class="st">"Atlanta"</span>,Real <span class="sc">&gt;</span> <span class="dv">50</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Logical) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg =</span> <span class="fu">mean</span>(Integer)) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>avg)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 观察查询</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>query</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>FileSystemDataset (query)
+Logical: bool
+avg: double
+
+* Sorted by negate_checked(avg) [asc]
+See $.data for the source Arrow object</code></pre>
+</div>
+</div>
+<p>这一步不会直接执行，只会先记录我们需要执行什么内容。如果我们需要把内容收集起来，可以使用<code>collect</code>函数：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>query <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  Logical   avg
+  &lt;lgl&gt;   &lt;dbl&gt;
+1 NA       50.5
+2 TRUE     50.5
+3 FALSE    50.3</code></pre>
+</div>
+</div>
+<p>这种数据处理的速度相当的快，如果我们使用<code>open_dataset</code>对CSV文件进行操作，也是能够实现的，但是速度会慢很多，读者不妨进行尝试。 最后需要提及的是，Arrow对DuckDB具有很好的支持，因为数据都是列式存储的，因此不需要进行内存赋值就可以直接进行类型转换，方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>df_pq <span class="sc">%&gt;%</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_duckdb</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Factor <span class="sc">==</span> <span class="st">"Atlanta"</span>,Real <span class="sc">&gt;</span> <span class="dv">50</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Logical) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg =</span> <span class="fu">mean</span>(Integer)) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>avg) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  Logical   avg
+  &lt;lgl&gt;   &lt;dbl&gt;
+1 NA       50.5
+2 TRUE     50.5
+3 FALSE    50.3</code></pre>
+</div>
+</div>
+<p>在这种背景下，使用parquet对数据进行存储是非常诱人的，因为这样能够让我们轻松地使用dplyr函数来对存储在磁盘的数据进行操作。</p>
+</section>
+<section id="小结" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="小结"><span class="header-section-number">12.4</span> 小结</h2>
+<p>本章介绍了如何在数据分析中有效地使用数据库管理数据，并讨论如何使用Arrow来对存在磁盘的数据进行高效处理。通过学习使用<strong>DBI</strong>包连接数据库、执行SQL查询，以及借助<strong>dbplyr</strong>包将<strong>dplyr</strong>代码翻译成SQL，我们能够在R中直接操作和查询数据库中的数据。这种方法不仅提高了数据处理的效率，还减少了对中间文件（如CSV）的依赖，避免了繁琐的数据导入导出步骤。此外，我们还学习了Apache Arrow， 它所提供的Parquet内存格式减少了数据在不同系统间转换的开销，这对于需要处理大量数据的应用程序来说尤为重要。</p>
+</section>
+<section id="练习" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="练习"><span class="header-section-number">12.5</span> 练习</h2>
+<ul>
+<li>尝试使用duckdb方法构建一个数据库，然后实现所有数据库的日常操作，比如对某一列创建索引</li>
+<li>请比较一下是数据库操作快，还是使用Arrow对数据进行操作快，注意使用同样数据进行比较，同时对数据操作的时间和数据占据的内存进行比较。</li>
+<li>请比较一下，在内存允许的情况下，究竟是在内存中对数据进行处理快，还是使用磁盘进行数据处理速度快。</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./空间换时间：大数据并行计算.html" class="pagination-link  aria-label=" &lt;span="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">空间换时间：大数据并行计算</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./从本地到集群：大数据分布式计算.html" class="pagination-link" aria-label="<span class='chapter-number'>13</span>&nbsp; <span class='chapter-title'>从本地到集群：大数据分布式计算</span>">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">从本地到集群：大数据分布式计算</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

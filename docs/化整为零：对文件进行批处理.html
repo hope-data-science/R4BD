@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>大数据分析——基于R语言 - 8&nbsp; 化整为零：对文件进行批处理</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./跨语言召唤术：在R中调用其他编程工具.html" rel="next">
+<link href="./快速建模：高性能机器学习工具.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./化整为零：对文件进行批处理.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">化整为零：对文件进行批处理</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">大数据分析——基于R语言</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./大数据基本概念.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">大数据基本概念</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./R语言编程入门.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">R语言编程入门</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./数据处理效能的衡量.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">数据处理效能的衡量</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速读写：大数据的导入与导出.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">快速读写：大数据的导入与导出</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速整理：基于data.table的数据处理工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">快速整理：基于data.table的数据处理工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速绘图：大数据可视化工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">快速绘图：大数据可视化工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./快速建模：高性能机器学习工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">快速建模：高性能机器学习工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./化整为零：对文件进行批处理.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">化整为零：对文件进行批处理</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./跨语言召唤术：在R中调用其他编程工具.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">跨语言召唤术：在R中调用其他编程工具</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./时间换空间：大数据流式计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">时间换空间：大数据流式计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./空间换时间：大数据并行计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">空间换时间：大数据并行计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./从内存到外存：用数据库管理数据.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">从内存到外存：用数据库管理数据</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./从本地到集群：大数据分布式计算.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">从本地到集群：大数据分布式计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./参考资料.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">参考资料</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#文件系统操作" id="toc-文件系统操作" class="nav-link active" data-scroll-target="#文件系统操作"><span class="header-section-number">8.1</span> 文件系统操作</a></li>
+  <li><a href="#文件压缩操作" id="toc-文件压缩操作" class="nav-link" data-scroll-target="#文件压缩操作"><span class="header-section-number">8.2</span> 文件压缩操作</a></li>
+  <li><a href="#excel文件批处理" id="toc-excel文件批处理" class="nav-link" data-scroll-target="#excel文件批处理"><span class="header-section-number">8.3</span> Excel文件批处理</a></li>
+  <li><a href="#综合实践" id="toc-综合实践" class="nav-link" data-scroll-target="#综合实践"><span class="header-section-number">8.4</span> 综合实践</a>
+  <ul class="collapse">
+  <li><a href="#环境配置与数据生成" id="toc-环境配置与数据生成" class="nav-link" data-scroll-target="#环境配置与数据生成"><span class="header-section-number">8.4.1</span> 环境配置与数据生成</a></li>
+  <li><a href="#数据的保存" id="toc-数据的保存" class="nav-link" data-scroll-target="#数据的保存"><span class="header-section-number">8.4.2</span> 数据的保存</a></li>
+  <li><a href="#文件的压缩" id="toc-文件的压缩" class="nav-link" data-scroll-target="#文件的压缩"><span class="header-section-number">8.4.3</span> 文件的压缩</a></li>
+  <li><a href="#文件的移动" id="toc-文件的移动" class="nav-link" data-scroll-target="#文件的移动"><span class="header-section-number">8.4.4</span> 文件的移动</a></li>
+  <li><a href="#保存为excel文件" id="toc-保存为excel文件" class="nav-link" data-scroll-target="#保存为excel文件"><span class="header-section-number">8.4.5</span> 保存为Excel文件</a></li>
+  <li><a href="#文件的删除" id="toc-文件的删除" class="nav-link" data-scroll-target="#文件的删除"><span class="header-section-number">8.4.6</span> 文件的删除</a></li>
+  </ul></li>
+  <li><a href="#小结" id="toc-小结" class="nav-link" data-scroll-target="#小结"><span class="header-section-number">8.5</span> 小结</a></li>
+  <li><a href="#练习" id="toc-练习" class="nav-link" data-scroll-target="#练习"><span class="header-section-number">8.6</span> 练习</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">化整为零：对文件进行批处理</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>在数据处理和分析过程中，常常需要对大量文件进行操作，如批量创建、复制、移动和删除文件等。为了提高效率并避免手动处理的繁琐和易错，使用脚本进行批处理是一个极其有效的方法。在本章中，我们将探讨如何利用R语言脚本来实现文件的批处理操作。具体内容包括如何批量创建文件、复制和移动文件、删除不需要的文件，以及使用如<strong>openxlsx2</strong>等工具对Excel文件进行操作。最后，我们还将介绍如何对文件进行压缩，以便更方便地存储和传输。通过这些实用的示例，读者将能够掌握使用R语言进行高效文件管理的技巧，大大简化日常数据处理任务。</p>
+<section id="文件系统操作" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="文件系统操作"><span class="header-section-number">8.1</span> 文件系统操作</h2>
+<p>文件系统操作涉及对计算机存储系统中的文件和目录进行管理和操控，包括创建、删除、复制、移动和重命名文件和目录，以及获取文件的属性信息和列出目录内容等。文件系统操作是数据管理和处理过程中不可或缺的一部分，通过有效地组织和维护文件，可以提高工作效率和数据处理的可靠性。</p>
+<p>在R语言中，<strong>fs</strong>包提供了一组功能强大且易于使用的函数，用于执行各种文件系统操作。<strong>fs</strong>包的设计注重简洁性和一致性，使得用户可以更直观和高效地进行文件和目录管理。其核心功能包括：</p>
+<ul>
+<li><p>创建目录： <code>dir_create</code>函数可以方便地创建新目录。这在组织和分类数据文件时非常有用。</p></li>
+<li><p>创建文件： 使用 <code>file_create</code> 函数可以创建新的文件。这对于初始化新的数据文件或日志文件非常实用。</p></li>
+<li><p>复制文件： <code>file_copy</code> 函数用于复制文件，将文件从一个位置复制到另一个位置。这在备份文件或将文件分发到不同目录时非常有用。</p></li>
+<li><p>移动或重命名文件： <code>file_move</code> 函数用于移动文件或重命名文件。移动文件可以改变文件的存储位置，而重命名文件可以使文件名更加有意义或符合命名规范。</p></li>
+<li><p>删除文件或目录： <code>file_delete</code>/<code>dir_delete</code> 函数用于删除不需要的文件或目录，帮助用户清理和管理存储空间。</p></li>
+<li><p>列出目录内容： 使用 <code>dir_ls</code> 函数可以列出目录中的所有文件和子目录。这对于检查目录内容或批量处理文件时非常有用。</p></li>
+<li><p>获取文件信息： <code>file_info</code>函数提供文件的详细信息，如文件大小、创建时间、修改时间等。这些信息在文件管理和分析时非常重要。</p></li>
+<li><p>检查文件或目录是否存在： 使用 <code>file_exists</code>/<code>dir_exists</code> 函数可以方便地检查文件或目录是否存在，帮助用户避免文件操作中的错误。</p></li>
+<li><p>文件路径操作： <strong>fs</strong>包还提供了处理文件路径的功能，包括路径组合、路径拆分和获取路径组件等。这些功能使得文件路径操作更加灵活和便捷。</p></li>
+</ul>
+<p>通过使用 <strong>fs</strong>包，R语言用户可以高效地执行各种文件系统操作，从而简化文件管理任务，提升数据处理的效率和可靠性。<strong>fs</strong>包的函数设计简洁一致，使得文件和目录的创建、复制、移动、删除等操作变得直观和容易实现。无论是进行简单的文件操作还是复杂的批量处理，<strong>fs</strong> 包都提供了强大的支持，使用户能够更加专注于数据分析和处理本身。本介绍只提及了部分<strong>fs</strong>包的功能，更多相关信息可以参考官方文档（<a href="https://fs.r-lib.org/" class="uri">https://fs.r-lib.org/</a>），我们将会在后续的实践中对其中实用的功能进行运用和讲解。</p>
+</section>
+<section id="文件压缩操作" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="文件压缩操作"><span class="header-section-number">8.2</span> 文件压缩操作</h2>
+<p>文件压缩操作是一种通过减少文件大小来优化存储和传输效率的技术。它涉及将数据重新编码以占用更少的空间，从而节省存储资源、提高传输速度并增强数据的安全性。压缩文件在数据备份、传输和归档过程中尤为重要，因为它能够显著减少文件的存储需求，并加快通过网络传输的速度。常见的压缩格式包括 zip、tar、rar、gzip、bzip2 和 7-zip 等，每种格式都有其特定的应用场景和优势。</p>
+<p><strong>archive</strong> 包是 R 语言中的一个强大工具，用于处理多种压缩格式的文件。这个包提供了统一的接口，可以轻松地对各种类型的压缩文件进行创建、解压和查看操作。与其他专注于单一压缩格式的包不同，<strong>archive</strong>包支持多种格式，这使其在处理不同类型的压缩文件时更加灵活和强大。<strong>archive</strong> 包的主要特点包括：</p>
+<ul>
+<li>多格式支持：能够处理常见的压缩格式，如 zip、tar、rar、gzip、bzip2、xz 和 7-zip，适用于不同需求的压缩和解压操作。</li>
+<li>统一接口：提供了一套统一的函数接口，使用户能够方便地对不同格式的压缩文件进行操作，而无需为每种格式学习不同的命令。</li>
+<li>高效处理：能够高效地创建和解压大文件，适用于大规模数据处理和备份任务。</li>
+<li>灵活操作：支持列出压缩文件中的内容，方便用户查看压缩包内的文件结构和信息。</li>
+</ul>
+<p>通过 <strong>archive</strong> 包，用户可以轻松地进行压缩和解压操作。例如，使用 <code>archive_write_files</code>/<code>archive_write_dir</code> 函数可以创建一个新的压缩文件，将多个文件压缩到一起；使用 <code>archive</code> 函数可以列出压缩文件中的内容，查看其中包含的文件列表和结构；使用 <code>archive_extract</code> 函数可以将压缩文件解压到指定的目录，方便后续的文件处理和使用。</p>
+<p>总的来说，<strong>archive</strong> 包为 R 用户提供了一个灵活、高效的工具，能够处理多种压缩格式的文件，简化了文件压缩和解压的工作流程，使数据存储和传输更加方便和高效。无论是在数据备份、传输还是归档过程中，<strong>archive</strong> 包都能提供强大的支持，更多相关的信息可参考官方文档（<a href="https://archive.r-lib.org/" class="uri">https://archive.r-lib.org/</a>）。</p>
+<p>值得一提的是，当我们把多个文件进行打包的时候，并不总是必须对文件进行压缩（即把文件的总容量减小），有的时候我们甚至会把文件变大，但是压缩依然有意义。我们可以把这个过程看做是把很多小物件放进一个容器中（容器可以是塑料袋、收纳盒或集装箱）。有的物件具有弹性，因此我们可以用力压，让它的体积更小；有的东西则弹性不大，只能直接放进容器中。但是无论如何，只要我们把东西归置到一起，就会便于我们管理，而且在对这一群东西进行移动的时候会更加方便。举一个通俗的例子，如果现在我们有6瓶矿泉水，一个人一双手要把这些水移动到操场将会非常困难。但是如果我们再提供一个背包，把6瓶矿泉水都放进去，尽管背包和矿泉水的容积可能没有变小，但是移动这些矿泉水就会非常便捷。因此压缩文件格式其实就是一定组织形式的容器，在大数据传输中还会使用<a href="https://www.hdfgroup.org/solutions/hdf5/">hdf5</a>等其他形式的打包管理工具，而且在R中也有便捷的接口可以调用（比如hdf5可以使用<a href="https://hhoeflin.github.io/hdf5r/">hdf5r</a>包进行调用），感兴趣的读者可以根据需要自行学习和了解。</p>
+</section>
+<section id="excel文件批处理" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="excel文件批处理"><span class="header-section-number">8.3</span> Excel文件批处理</h2>
+<p>Excel 文件批处理是指对多个Excel文件进行一系列自动化操作，以提高效率和减少手动工作，这些操作包括创建、读取、修改、复制、移动和删除Excel文件。在数据处理和分析过程中，批处理操作可以显著节省时间，尤其是当需要处理大量结构类似的文件时。</p>
+<p><strong>openxlsx2</strong>是一个现代化的R包，用于处理Excel文件，提供了简洁的接口和丰富的功能，可以轻松创建、读取和编辑Excel工作表，支持多种Excel文件格式，包括xlsx、xlsm和xlsb格式，使得处理Excel文件变得更加高效和灵活。<strong>openxlsx2</strong>是对<strong>openxlsx</strong>（出现得更早的Excel数据处理包）的改进，通过整合pugixml库解决了在解析XML文件方面的问题，并提供了更强大的样式管理、图表支持和数据处理功能，使得创建、编辑和修改xlsx文件变得更加简单和可靠。</p>
+<p>openxlsx2的核心功能包括： 1. XML解析改进：通过整合pugixml库，解决了在解析XML文件方面的问题。 2. 样式管理：提供了更强大的样式管理功能，包括对字体、背景颜色、数字格式等的灵活控制。 3. 图表支持：支持原生图表的创建和编辑，使得在xlsx文件中插入图表变得更加简单。 4. 数据处理：提供了丰富的数据处理功能，包括数据验证、条件格式、小图标等，提高了数据处理的灵活性和效率。</p>
+<p>其中，常用的函数包括：</p>
+<ul>
+<li><p><code>wb_load</code>：加载xlsx文件为工作簿对象。</p></li>
+<li><p><code>wb_add_worksheet</code>：添加工作表到工作簿。</p></li>
+<li><p><code>wb_add_data</code>：将数据添加到工作表中。</p></li>
+<li><p><code>wb_save</code>：保存工作簿为xlsx文件。</p></li>
+<li><p><code>wb_to_df</code>：将工作表转换为数据框。</p></li>
+</ul>
+<p>这里我们不会浪费篇幅来介绍工具包的技术细节，感兴趣的读者可以参考官方文档（<a href="https://janmarvin.github.io/openxlsx2/" class="uri">https://janmarvin.github.io/openxlsx2/</a>）进行学习。下面我们将会直接在实践中对综合运用本章介绍的工具，从而对文件进行高效的批处理。</p>
+</section>
+<section id="综合实践" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="综合实践"><span class="header-section-number">8.4</span> 综合实践</h2>
+<p>在本部分，会首先生成一个数据集，然后模拟现实情况的需求，对数据进行各式各样的批处理，从而展示如何利用R语言各种工具包对各种文件进行高效的操作。</p>
+<section id="环境配置与数据生成" class="level3" data-number="8.4.1">
+<h3 data-number="8.4.1" class="anchored" data-anchor-id="环境配置与数据生成"><span class="header-section-number">8.4.1</span> 环境配置与数据生成</h3>
+<p>首先，我们会加载必要的工具包：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(fs,openxlsx2,archive,tidyfst,tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>然后，我们来生成相关的数据集：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>nr_of_rows <span class="ot">&lt;-</span> <span class="fl">1e7</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.table</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Logical =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span>), <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.1</span>, <span class="fl">0.05</span>), nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Integer =</span> <span class="fu">sample</span>(<span class="dv">1</span>L<span class="sc">:</span><span class="dv">100</span>L, nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Real =</span> <span class="fu">sample</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span>, <span class="dv">20</span>) <span class="sc">/</span> <span class="dv">100</span>, nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Factor =</span> <span class="fu">as.factor</span>(<span class="fu">sample</span>(<span class="fu">labels</span>(UScitiesD), nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>经过观察，我们知道数据集一共有4列，分别是逻辑型、整数型、数值型和因子型数据。我们不妨来检测一下数据的大小：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">object_size</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="数据的保存" class="level3" data-number="8.4.2">
+<h3 data-number="8.4.2" class="anchored" data-anchor-id="数据的保存"><span class="header-section-number">8.4.2</span> 数据的保存</h3>
+<p>在这一部分，我们需要根据需求来对目标数据进行保存。我们的诉求和实现代码如下所示。 1. 在根目录下创建temp文件夹，实现代码如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir_create</span>(<span class="st">"temp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="2" type="1">
+<li>在temp文件夹下创建csv文件夹，把数据根据Integer分组，保存在不同的csv文件中，实现代码如下：</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir_create</span>(<span class="st">"temp/csv"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">split</span>(<span class="at">by =</span> <span class="st">"Integer"</span>) <span class="sc">%&gt;%</span>  <span class="co"># 根据Integer列进行分组</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">walk</span>(\(x){ <span class="co"># 使用walk函数进行迭代</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    fn <span class="ot">=</span> x <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(Integer)  <span class="co"># 根据Integer创建文件名</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fwrite</span>(x,<span class="fu">path</span>(<span class="st">"temp"</span>,<span class="st">"csv"</span>,fn,<span class="at">ext =</span> <span class="st">"csv"</span>)) <span class="co"># 写出文件</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="3" type="1">
+<li>在temp文件夹下创建fst文件夹，把数据根据Integer分组，保存在不同的fst文件中，实现代码如下：</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir_create</span>(<span class="st">"temp/fst"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">split</span>(<span class="at">by =</span> <span class="st">"Integer"</span>) <span class="sc">%&gt;%</span>  <span class="co"># 根据Integer列进行分组</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">walk</span>(\(x){ <span class="co"># 使用walk函数进行迭代</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    fn <span class="ot">=</span> x <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(Integer)  <span class="co"># 根据Integer创建文件名</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">export_fst</span>(x,<span class="fu">path</span>(<span class="st">"temp"</span>,<span class="st">"fst"</span>,fn,<span class="at">ext =</span> <span class="st">"fst"</span>)) <span class="co"># 写出文件</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="文件的压缩" class="level3" data-number="8.4.3">
+<h3 data-number="8.4.3" class="anchored" data-anchor-id="文件的压缩"><span class="header-section-number">8.4.3</span> 文件的压缩</h3>
+<p>在本部分中，我们会对先前生成的数据进行打包压缩。由于Excel文件已经是一整个文件，因此不需要再进行压缩操作。我们首先把csv文件都打包为zip文件：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">archive_write_dir</span>(<span class="at">archive =</span> <span class="st">"temp/csv.zip"</span>,<span class="at">dir =</span> <span class="st">"temp/csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>另一方面，我们把fst文件都打包为tar文件：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">archive_write_dir</span>(<span class="at">archive =</span> <span class="st">"temp/fst.tar"</span>,<span class="at">dir =</span> <span class="st">"temp/fst"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="文件的移动" class="level3" data-number="8.4.4">
+<h3 data-number="8.4.4" class="anchored" data-anchor-id="文件的移动"><span class="header-section-number">8.4.4</span> 文件的移动</h3>
+<p>我们知道，文件打包后，移动会更加快。我们不妨来进行尝试，在temp中再建立一个dest文件夹，然后分别把csv文件夹和csv压缩包移动进去，并测试移动时间：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir_create</span>(<span class="st">"temp/dest"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pst</span>(<span class="fu">file_move</span>(<span class="st">"temp/csv"</span>,<span class="st">"temp/dest/csv"</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">pst</span>(<span class="fu">file_move</span>(<span class="st">"temp/csv.zip"</span>,<span class="st">"temp/dest/csv.zip"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>如果效果不明显，可以尝试增加文件数量。</p>
+</section>
+<section id="保存为excel文件" class="level3" data-number="8.4.5">
+<h3 data-number="8.4.5" class="anchored" data-anchor-id="保存为excel文件"><span class="header-section-number">8.4.5</span> 保存为Excel文件</h3>
+<p>在这一步中，我们会把fst中的1到3号文件转存在一个Excel文件中（命名为“1-3.xlsx”），分成不同的工作簿进行保存，实现方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(<span class="fu">path</span>(<span class="st">"temp"</span>,<span class="st">"fst"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="at">ext =</span> <span class="st">"fst"</span>),import_fst) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_xlsx</span>(<span class="fu">path</span>(<span class="st">"temp"</span>,<span class="st">"1-3"</span>,<span class="at">ext =</span> <span class="st">"xlsx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="文件的删除" class="level3" data-number="8.4.6">
+<h3 data-number="8.4.6" class="anchored" data-anchor-id="文件的删除"><span class="header-section-number">8.4.6</span> 文件的删除</h3>
+<p>下面我们尝试删除temp文件夹，操作方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">file_delete</span>(<span class="st">"temp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="小结" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="小结"><span class="header-section-number">8.5</span> 小结</h2>
+<p>本章介绍了如何在R语言中利用<strong>fs</strong>、<strong>archive</strong>和<strong>openxlsx2</strong>这些工具包，从而对文件进行批处理操作。当我们有海量文件的时候，我们就能够利用命令行对其进行移动、删除、复制等操作，并可以对多个文件进行压缩打包以便于传输、存储和管理。尽管本章没有对各个工具包的特性细节进行介绍（比如<strong>openxlsx2</strong>能够进行图片插入、表格格式设置、样式的更改等），这些内容笔者认为应该在读者需要的时候自行查询帮助文档，进而进行实现。通过本章的学习，相信读者可以了解并熟悉在R语言中如何利用脚本对多个文件进行批处理。</p>
+</section>
+<section id="练习" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="练习"><span class="header-section-number">8.6</span> 练习</h2>
+<ul>
+<li>请设计一套代码，来测试各种压缩方法的特点（压缩比率、压缩时间），并对压缩后文件传输的速度进行测试。</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./快速建模：高性能机器学习工具.html" class="pagination-link  aria-label=" &lt;span="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">快速建模：高性能机器学习工具</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./跨语言召唤术：在R中调用其他编程工具.html" class="pagination-link" aria-label="<span class='chapter-number'>9</span>&nbsp; <span class='chapter-title'>跨语言召唤术：在R中调用其他编程工具</span>">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">跨语言召唤术：在R中调用其他编程工具</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
