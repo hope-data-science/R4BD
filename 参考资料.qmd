@@ -7,3 +7,5 @@
 (@) [Larger-Than-Memory Data Workflows with Apache Arrow](https://arrow-user2022.netlify.app/)
 (@) [Apache Arrow R Cookbook](https://arrow.apache.org/cookbook/r/index.html)
 (@) [R interface to Apache Spark](https://spark.posit.co/)
+(@) [An Introduction to Polars from R](https://pola-rs.github.io/r-polars/vignettes/polars.html)
+(@) [tidypolars](https://tidypolars.etiennebacher.com/)

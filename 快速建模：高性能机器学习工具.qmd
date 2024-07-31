@@ -2,6 +2,13 @@
 
 在当今数据驱动的世界中，快速而高效地构建和部署机器学习模型变得至关重要。无论是初学者还是经验丰富的数据科学家，都需要掌握一些强大而高效的工具，以应对日益增长的数据量和复杂的分析需求。本章将介绍一些能够显著提升建模速度和性能的机器学习工具和框架，帮助读者在最短的时间内完成整个机器学习流程。通过这些高性能工具，你不仅可以加速模型开发，还能提升模型的预测能力和稳定性，使得数据科学工作更加高效。
 
+```{r}
+#| include: false
+lgr::get_logger("mlr3")$set_threshold("warn")
+lgr::get_logger("bbotk")$set_threshold("warn")
+```
+
+
 ## 机器学习基本流程
 
 机器学习是一种通过算法和统计模型，使计算机系统从数据中自动学习和改进的技术。它包括监督学习、无监督学习、半监督学习和强化学习四种主要类型。机器学习广泛应用于图像识别、自然语言处理、医疗诊断和金融预测等领域。通过从大量数据中提取模式和特征，机器学习在解决复杂问题方面展现了强大的能力。
@@ -198,7 +205,6 @@ as.data.table(flt_jmim)
 为了多快好省地获得最佳特征组合（或者至少是表现较为不错的特征组合），在实现封装法的时候需要遵循一定的搜索规则，从而提高搜索的效率。最常见的方法之一就是前向选择，其基本思想是从空特征集开始，逐步向前添加特征，直到达到某个预设的终止条件为止。在每一步中，选择能够带来最大性能提升的特征添加到当前特征集中，直至满足停止条件。这个过程通常会在指定的性能指标下，如准确率或其他评估指标下进行。其实现方法如下：
 
 ```{r}
-#| eval: false
 # 加载包
 library(mlr3fselect)
 
@@ -228,7 +234,6 @@ instance$result_feature_set
 我们没有给出展示的结果，因为在实际的操作中，如果重复次数不够多，那么不同迭代中出现的结果可能会不一致，这里仅仅展示实现方法。在特征筛选之后，我们可以使用筛选的特征来进行模型训练，方法如下：
 
 ```{r}
-#| eval: false
 # 定义任务
 tsk_pen = tsk("penguins")
 
@@ -246,7 +251,6 @@ lrn_rpart$train(tsk_pen)
 很多时候，我们需要对同一个任务使用多个机器学习模型，并对模型进行比较；甚至有的时候，我们还需要看同一个模型在不同任务上的表现。在这种背景下，就需要构造任务组合，从而看在不同条件下创建的模型表现如何。下面我们展示在mlr3框架下如何对此进行实现：
 
 ```{r}
-#| eval: false
 # 选择2个分类任务
 tasks = tsks(c("german_credit", "sonar"))
 
@@ -264,7 +268,7 @@ design = benchmark_grid(tasks, learners, rsmp_cv5)
 bmr = benchmark(design)
 
 # 观察模型效果
- bmr$aggregate() [,.(task_id,learner_id,classif.ce)]
+bmr$aggregate() [,.(task_id,learner_id,classif.ce)]
 ```
 
 这里我们没有对结果进行展示，读者可以自行运行代码来观察，其中需要注意的细节包括：1、在使用算法的时候，“classif.rpart”使用的是决策树算法，“classif.ranger”使用的是随机森林算法，而“classif.featureless”则是一个基线模型，在分类问题上会对盲猜为多数类；2、这里默认观察模型的效果，会计算分类的错误率，错误率月低，代表模型表现越好，详见官方文档（<https://mlr3.mlr-org.com/reference/mlr_measures_classif.ce.html>）；3、在对bmr对象进行观察的时候，调用了`aggregate`方法，这个方法能够对不同迭代的表现结果进行汇总；4、mlr3框架使用了**data.table**作为底层，因此在观察模型效果的时候，我们选择列直接用了data.table中的方法。关于更多模型比较的内容，可以参考官方文档（<https://mlr3book.mlr-org.com/chapters/chapter3/evaluation_and_benchmarking.html>）。
@@ -307,7 +311,6 @@ learner = lrn("classif.ranger", num.trees = to_tune(100,400))
 要对函数进行更多的了解，可以通过键入`?to_tune`来参阅帮助文档进行学习。 当我们界定了搜索空间的范围时，很多时候我们没有办法进行地毯式的全面训练搜索，这时候就需要设定终止条件，比如训练一段时间后结束，或者进行100次迭代后结束等。在mlr3框架中，可以使用`trm`函数来定义一个终止条件。在知道上面我们提及的背景信息后，我们来尝试创建一个调参的对象：
 
 ```{r}
-#| eval: false
 # 定义任务
 tsk_sonar = tsk("sonar")
 
@@ -336,7 +339,6 @@ instance$result
 此外，mlr3框架中实现同样的方法，还有其他更加明晰的实现方法：
 
 ```{r}
-#| eval: false
 tuner = tnr("grid_search")
 
 learner = lrn("classif.ranger", num.trees = to_tune(c(100, 200, 400)))
@@ -418,7 +420,13 @@ bmr = benchmark(benchmark_grid(tasks, learners, rsmp("cv", folds = 3)))
 ```{r}
 #| eval: false
 bmr$aggregate(msr("classif.acc"))
-
+#       nr       task_id learner_id resampling_id iters classif.acc
+#    <int>        <char>     <char>        <char> <int>       <num>
+# 1:     1 german_credit         RF            cv     3   0.7550245
+# 2:     2 german_credit      Stack            cv     3   0.7390235
+# 3:     3         sonar         RF            cv     3   0.8221532
+# 4:     4         sonar      Stack            cv     3   0.7213941
+# Hidden columns: resample_result
 ```
 
 这里我们没有给出结果，请读者自行尝试。我们可以看到，mlr3框架可以让我们用短短的数行代码来实现非常复杂的机器学习操作，大大提高了我们完成机器学习任务的效率。

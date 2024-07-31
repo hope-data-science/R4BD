@@ -55,29 +55,34 @@ openxlsx2的核心功能包括： 1. XML解析改进：通过整合pugixml库，
 
 其中，常用的函数包括：
 
- - `wb_load`：加载xlsx文件为工作簿对象。
+-   `wb_load`：加载xlsx文件为工作簿对象。
 
- - `wb_add_worksheet`：添加工作表到工作簿。
+-   `wb_add_worksheet`：添加工作表到工作簿。
 
- - `wb_add_data`：将数据添加到工作表中。
+-   `wb_add_data`：将数据添加到工作表中。
 
- - `wb_save`：保存工作簿为xlsx文件。
+-   `wb_save`：保存工作簿为xlsx文件。
 
- - `wb_to_df`：将工作表转换为数据框。
+-   `wb_to_df`：将工作表转换为数据框。
 
 这里我们不会浪费篇幅来介绍工具包的技术细节，感兴趣的读者可以参考官方文档（<https://janmarvin.github.io/openxlsx2/>）进行学习。下面我们将会直接在实践中对综合运用本章介绍的工具，从而对文件进行高效的批处理。
 
 ## 综合实践
+
 在本部分，会首先生成一个数据集，然后模拟现实情况的需求，对数据进行各式各样的批处理，从而展示如何利用R语言各种工具包对各种文件进行高效的操作。
 
 ### 环境配置与数据生成
+
 首先，我们会加载必要的工具包：
+
 ```{r}
 #| eval: false
 library(pacman)
 p_load(fs,openxlsx2,archive,tidyfst,tidyverse)
 ```
+
 然后，我们来生成相关的数据集：
+
 ```{r}
 #| eval: false
 nr_of_rows <- 1e7
@@ -90,21 +95,41 @@ df <- data.table(
   )
 
 df
+
+#           Logical Integer  Real       Factor
+#            <lgcl>   <int> <num>       <fctr>
+#        1:    TRUE      75 89.32      NewYork
+#        2:    TRUE      39  6.99      NewYork
+#        3:    TRUE      76 62.89        Miami
+#        4:    TRUE      41 41.42      Atlanta
+#        5:    TRUE      36 53.85 SanFrancisco
+#       ---                                   
+#  9999996:    TRUE      37 66.42      Seattle
+#  9999997:    TRUE      46  6.99        Miami
+#  9999998:    TRUE      78 53.85      NewYork
+#  9999999:   FALSE      85 62.89   LosAngeles
+# 10000000:    TRUE      20 46.48      Atlanta
 ```
-经过观察，我们知道数据集一共有4列，分别是逻辑型、整数型、数值型和因子型数据。我们不妨来检测一下数据的大小：
+
+由于数据集生成具有一定的随机性，因此读者生成的数据框不会与上面展示的数据框完全一致，但是不影响试验的开展。经过观察，我们知道数据集一共有4列，分别是逻辑型、整数型、数值型和因子型数据。我们不妨来检测一下数据的大小：
+
 ```{r}
 #| eval: false
 object_size(df)
+# 190.7 Mb
 ```
+
 ### 数据的保存
-在这一部分，我们需要根据需求来对目标数据进行保存。我们的诉求和实现代码如下所示。
-1. 在根目录下创建temp文件夹，实现代码如下：
+
+在这一部分，我们需要根据需求来对目标数据进行保存。我们的诉求和实现代码如下所示。 1. 在根目录下创建temp文件夹，实现代码如下：
+
 ```{r}
 #| eval: false
 dir_create("temp")
 ```
 
-2. 在temp文件夹下创建csv文件夹，把数据根据Integer分组，保存在不同的csv文件中，实现代码如下：
+2.  在temp文件夹下创建csv文件夹，把数据根据Integer分组，保存在不同的csv文件中，实现代码如下：
+
 ```{r}
 #| eval: false
 dir_create("temp/csv")
@@ -116,7 +141,8 @@ df %>%
   })
 ```
 
-3. 在temp文件夹下创建fst文件夹，把数据根据Integer分组，保存在不同的fst文件中，实现代码如下：
+3.  在temp文件夹下创建fst文件夹，把数据根据Integer分组，保存在不同的fst文件中，实现代码如下：
+
 ```{r}
 #| eval: false
 dir_create("temp/fst")
@@ -129,12 +155,16 @@ df %>%
 ```
 
 ### 文件的压缩
+
 在本部分中，我们会对先前生成的数据进行打包压缩。由于Excel文件已经是一整个文件，因此不需要再进行压缩操作。我们首先把csv文件都打包为zip文件：
+
 ```{r}
 #| eval: false
 archive_write_dir(archive = "temp/csv.zip",dir = "temp/csv")
 ```
+
 另一方面，我们把fst文件都打包为tar文件：
+
 ```{r}
 #| eval: false
 archive_write_dir(archive = "temp/fst.tar",dir = "temp/fst")
@@ -143,16 +173,20 @@ archive_write_dir(archive = "temp/fst.tar",dir = "temp/fst")
 ### 文件的移动
 
 我们知道，文件打包后，移动会更加快。我们不妨来进行尝试，在temp中再建立一个dest文件夹，然后分别把csv文件夹和csv压缩包移动进去，并测试移动时间：
+
 ```{r}
 #| eval: false
 dir_create("temp/dest")
 pst(file_move("temp/csv","temp/dest/csv"))
 pst(file_move("temp/csv.zip","temp/dest/csv.zip"))
 ```
+
 如果效果不明显，可以尝试增加文件数量。
 
 ### 保存为Excel文件
+
 在这一步中，我们会把fst中的1到3号文件转存在一个Excel文件中（命名为“1-3.xlsx”），分成不同的工作簿进行保存，实现方法如下：
+
 ```{r}
 #| eval: false
 map(path("temp","fst",1:3,ext = "fst"),import_fst) %>% 
@@ -161,15 +195,18 @@ map(path("temp","fst",1:3,ext = "fst"),import_fst) %>%
 ```
 
 ### 文件的删除
+
 下面我们尝试删除temp文件夹，操作方法如下：
+
 ```{r}
 #| eval: false
 file_delete("temp")
 ```
 
 ## 小结
+
 本章介绍了如何在R语言中利用**fs**、**archive**和**openxlsx2**这些工具包，从而对文件进行批处理操作。当我们有海量文件的时候，我们就能够利用命令行对其进行移动、删除、复制等操作，并可以对多个文件进行压缩打包以便于传输、存储和管理。尽管本章没有对各个工具包的特性细节进行介绍（比如**openxlsx2**能够进行图片插入、表格格式设置、样式的更改等），这些内容笔者认为应该在读者需要的时候自行查询帮助文档，进而进行实现。通过本章的学习，相信读者可以了解并熟悉在R语言中如何利用脚本对多个文件进行批处理。
 
 ## 练习
-- 请设计一套代码，来测试各种压缩方法的特点（压缩比率、压缩时间），并对压缩后文件传输的速度进行测试。
 
+-   请设计一套代码，来测试各种压缩方法的特点（压缩比率、压缩时间），并对压缩后文件传输的速度进行测试。

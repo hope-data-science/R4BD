@@ -102,10 +102,12 @@ sc <- spark_connect(master = "local")
 spark_disconnect(sc)
 ```
 
-关于连接到其他集群的各种操作，可以参考官方的[配置文档](<https://spark.posit.co/guides/connections.html>)进行查阅。
+关于连接到其他集群的各种操作，可以参考官方的[配置文档](https://spark.posit.co/guides/connections.html)进行查阅。
 
 ### 读取
+
 把数据导入到Spark数据库中有两种方法，一种方法是利用`copy_to`函数从R环境中导入：
+
 ```{r}
 tbl_mtcars <- copy_to(sc, mtcars, "spark_mtcars")
 
@@ -126,7 +128,9 @@ tbl_mtcars
 #> # … with more rows, and 2 more variables: gear <dbl>,
 #> #   carb <dbl>
 ```
+
 另一种方法则是从本地的文件直接进行导入，大致形式如下：
+
 ```{r}
 spark_read_csv(sc, name = "test_table",  path = "/data/test.csv")
 ```
@@ -134,7 +138,9 @@ spark_read_csv(sc, name = "test_table",  path = "/data/test.csv")
 **sparklyr**支持直接读入的文件包括CSV、JSON、Parquet等。此外，不仅仅可以对这些格式的文件进行读入，还可以写出不同格式的文件，更多的信息可以参考相关的帮助文档（<https://spark.posit.co/packages/sparklyr/latest/reference/index.html#spark-data>）。
 
 ### 清洗
+
 在**sparklyr**中，我们可以直接使用dplyr命令来对数据进行操作：
+
 ```{r}
 tbl_mtcars %>% 
   group_by(vs,am) %>% 
@@ -153,7 +159,9 @@ tbl_mtcars %>%
 # 3     1     0     7 102.   3.57
 # 4     0     0    12 194.   3.12
 ```
+
 在底层，其实这些代码都转化为了SQL语句，如果需要观察，可以使用`show_query`函数，这与我们之前介绍的数据库操作是一致的：
+
 ```{r}
 tbl_mtcars %>% 
   group_by(vs,am) %>% 
@@ -168,7 +176,9 @@ tbl_mtcars %>%
 # FROM `spark_mtcars`
 # GROUP BY `vs`, `am`
 ```
+
 事实上，我们也可以直接使用SQL语句从中调取数据：
+
 ```{r}
 p_load(DBI)
 
@@ -180,10 +190,13 @@ dbGetQuery(sc,"SELECT vs, am, hp FROM spark_mtcars LIMIT 5")
 # 4  1  0 110
 # 5  0  0 175
 ```
+
 本部分与数据库操作基本一致，因此不再进行赘述。
 
 ### 建模
+
 在R中对处于Spark集群的数据进行分析，都是依赖把R命令转化为Spark能够理解的指令来实现的，**sparklyr**把这些指令转化为见名知意的R代码，下面我们来简单进行展示：
+
 ```{r}
 # 只选取其中3列，并划分训练集（70%）和测试集（30%）
 partitions <- mtcars_tbl %>%
@@ -197,8 +210,9 @@ fit <- partitions$training %>%
 # 利用模型对测试集进行预测
 pred <- ml_predict(fit, partitions$test)
 ```
+
 我们可以观察到，这里的`sdf_random_split`和`ml_predict`都是**sparklyr**提供的机器学习函数，能够协助我们对集群中的数据进行类似在R中开展的机器学习操作。关于更多在Spark中实现机器学习的操作，可以参考官方文档（<https://spark.posit.co/guides/mlib.html>）。
 
 ## 小结
-本章我们对分布式计算进行了了解，并学会如何使用**sparklyr**包来在R中对分布式计算进行实现。我们所介绍的功能只是冰山一角，更多的内容可以参考[sparklyr](https://spark.posit.co/)的[官方指南](https://spark.posit.co/guides/)。我们相信，随着前沿工具的蓬勃发展，分布式计算的实现工具会越来越便利，这意味着用户在不清楚底层逻辑的前提下就能够自由地对数据进行调度、处理和建模。正因为有这样的愿景，因此本章没有对更多的技术细节进行深究。相信通过对基本概念的了解，未来读者将会用到更加便捷的工具，从而在应对大规模数据集的时候更加从容地利用分布式计算方法开展分析。
 
+本章我们对分布式计算进行了了解，并学会如何使用**sparklyr**包来在R中对分布式计算进行实现。我们所介绍的功能只是冰山一角，更多的内容可以参考[sparklyr](https://spark.posit.co/)的[官方指南](https://spark.posit.co/guides/)。我们相信，随着前沿工具的蓬勃发展，分布式计算的实现工具会越来越便利，这意味着用户在不清楚底层逻辑的前提下就能够自由地对数据进行调度、处理和建模。正因为有这样的愿景，因此本章没有对更多的技术细节进行深究。相信通过对基本概念的了解，未来读者将会用到更加便捷的工具，从而在应对大规模数据集的时候更加从容地利用分布式计算方法开展分析。
