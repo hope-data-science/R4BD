@@ -237,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">目录</h2>
    
   <ul>
   <li><a href="#磁盘数据处理" id="toc-磁盘数据处理" class="nav-link active" data-scroll-target="#磁盘数据处理"><span class="header-section-number">12.1</span> 磁盘数据处理</a></li>
@@ -247,9 +247,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#数据库的连接" id="toc-数据库的连接" class="nav-link" data-scroll-target="#数据库的连接"><span class="header-section-number">12.2.2</span> 数据库的连接</a></li>
   <li><a href="#数据操作基础" id="toc-数据操作基础" class="nav-link" data-scroll-target="#数据操作基础"><span class="header-section-number">12.2.3</span> 数据操作基础</a></li>
   </ul></li>
-  <li><a href="#基于arrow的大数据处理平台" id="toc-基于arrow的大数据处理平台" class="nav-link" data-scroll-target="#基于arrow的大数据处理平台"><span class="header-section-number">12.3</span> 基于Arrow的大数据处理平台</a></li>
-  <li><a href="#小结" id="toc-小结" class="nav-link" data-scroll-target="#小结"><span class="header-section-number">12.4</span> 小结</a></li>
-  <li><a href="#练习" id="toc-练习" class="nav-link" data-scroll-target="#练习"><span class="header-section-number">12.5</span> 练习</a></li>
+  <li><a href="#基于arrow的大数据处理方案" id="toc-基于arrow的大数据处理方案" class="nav-link" data-scroll-target="#基于arrow的大数据处理方案"><span class="header-section-number">12.3</span> 基于Arrow的大数据处理方案</a></li>
+  <li><a href="#基于polars的大数据处理方案" id="toc-基于polars的大数据处理方案" class="nav-link" data-scroll-target="#基于polars的大数据处理方案"><span class="header-section-number">12.4</span> 基于Polars的大数据处理方案</a></li>
+  <li><a href="#小结" id="toc-小结" class="nav-link" data-scroll-target="#小结"><span class="header-section-number">12.5</span> 小结</a></li>
+  <li><a href="#练习" id="toc-练习" class="nav-link" data-scroll-target="#练习"><span class="header-section-number">12.6</span> 练习</a></li>
   </ul>
 </nav>
     </div>
@@ -275,12 +276,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>在现代数据分析和处理过程中，随着数据量的不断增加，单纯依赖内存来存储和处理数据已经变得不再现实。数据库作为一种高效的外存储解决方案，能够应对大规模数据管理的需求，为数据的存储、检索和处理提供了可靠保障。本章节将详细介绍如何通过数据库来管理和操作数据，从而实现数据持久化、快速查询和高效分析。通过学习数据库管理的基本概念、SQL语言的使用技巧以及数据库与R语言的无缝集成，可以掌握在大数据时代下，高效管理和利用数据的方法。同时，我们还会探讨另一种外存储数据处理方案，即基于Arrow的大数据系统，从而通过内存高效的数据交换格式和跨语言的互操作性来提升数据处理性能和灵活性。</p>
+<p>在现代数据分析和处理过程中，随着数据量的不断增加，单纯依赖内存来存储和处理数据已经变得不再现实。数据库作为一种高效的外存储解决方案，能够应对大规模数据管理的需求，为数据的存储、检索和处理提供了可靠保障。本章节将详细介绍如何通过数据库来管理和操作数据，从而实现数据持久化、快速查询和高效分析。通过学习数据库管理的基本概念、SQL语言的使用技巧以及数据库与R语言的无缝集成，可以掌握在大数据时代下，高效管理和利用数据的方法。同时，我们还会探讨另一类外存储数据处理方案，即基于Arrow或Polars的大数据系统，从而通过内存高效的数据交换格式和跨语言的互操作性来提升数据处理性能和灵活性。</p>
 <section id="磁盘数据处理" class="level2" data-number="12.1">
 <h2 data-number="12.1" class="anchored" data-anchor-id="磁盘数据处理"><span class="header-section-number">12.1</span> 磁盘数据处理</h2>
 <p>磁盘数据处理（On-Disk Data Processing）是一种在数据处理过程中主要依赖磁盘等外部存储设备来存储和处理数据的技术。当数据集的规模超出内存容量时，这种方法尤其有效，因为它能够利用磁盘的大容量来存储大量数据。磁盘数据处理通过将数据分块存储在磁盘上，并在需要时逐块读取和处理，从而避免了内存不足的问题。</p>
 <p>这种方法的一个显著优势是其可扩展性，能够处理比内存容量大得多的数据集，非常适合大数据分析和处理任务。例如，数据库管理系统（如MySQL、PostgreSQL）、分布式文件系统（如Hadoop HDFS）以及流式处理框架（如Apache Kafka）都广泛使用磁盘数据处理技术。然而，由于磁盘的读写速度相对较慢，磁盘数据处理可能会面临较高的I/O延迟。为了优化性能，通常会采用高速缓存、数据预取和并行I/O操作等技术。</p>
-<p>总的来说，磁盘数据处理通过有效利用外部存储设备，为大规模数据处理提供了一种解决方案。尽管存在I/O速度较慢的挑战，但通过适当的优化，可以在大数据环境中实现高效的数据处理和分析。在本章中，我们会描述如何在R环境中调用数据库资源，同时还会介绍另一种新兴的大数据处理系统——Apache Arrow。通过对这些工具的介绍，我们可以有效地利用计算机的磁盘资源来对比内存大的数据进行高效处理。</p>
+<p>总的来说，磁盘数据处理通过有效利用外部存储设备，为大规模数据处理提供了一种解决方案。尽管存在I/O速度较慢的挑战，但通过适当的优化，可以在大数据环境中实现高效的数据处理和分析。在本章中，我们会描述如何在R环境中调用数据库资源，同时还会介绍另一类新兴的大数据处理系统（Arrow和Polars），这些大数据处理方案允许用户把数据先存储为Parquet格式，实际处理的时候不需要把数据载入环境就能够对大数据进行分析。通过对这些工具的介绍，我们可以有效地利用计算机的磁盘资源来对比内存大的数据进行高效处理。</p>
 </section>
 <section id="数据库操作以duckdb为例" class="level2" data-number="12.2">
 <h2 data-number="12.2" class="anchored" data-anchor-id="数据库操作以duckdb为例"><span class="header-section-number">12.2</span> 数据库操作——以duckdb为例</h2>
@@ -405,7 +406,7 @@ Figure&nbsp;12.1: DuckDB数据库Logo
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>diamonds_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   table&lt;diamonds&gt; [?? x 10]
-# Database: DuckDB v0.10.2 [Admin@Windows 10 x64:R 4.4.0/:memory:]
+# Database: DuckDB v1.0.0 [Admin@Windows 10 x64:R 4.4.1/:memory:]
    carat cut       color clarity depth table price     x     y     z
    &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt; &lt;fct&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
  1  0.23 Ideal     E     SI2      61.5    55   326  3.95  3.98  2.43
@@ -426,7 +427,7 @@ Figure&nbsp;12.1: DuckDB数据库Logo
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>big_diamonds_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   SQL [?? x 5]
-# Database: DuckDB v0.10.2 [Admin@Windows 10 x64:R 4.4.0/:memory:]
+# Database: DuckDB v1.0.0 [Admin@Windows 10 x64:R 4.4.1/:memory:]
    carat cut       color clarity price
    &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt; &lt;fct&gt;   &lt;int&gt;
  1  1.54 Premium   E     VS2     15002
@@ -496,8 +497,8 @@ WHERE (price &gt; 15000.0)</code></pre>
 </div>
 </section>
 </section>
-<section id="基于arrow的大数据处理平台" class="level2" data-number="12.3">
-<h2 data-number="12.3" class="anchored" data-anchor-id="基于arrow的大数据处理平台"><span class="header-section-number">12.3</span> 基于Arrow的大数据处理平台</h2>
+<section id="基于arrow的大数据处理方案" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="基于arrow的大数据处理方案"><span class="header-section-number">12.3</span> 基于Arrow的大数据处理方案</h2>
 <p>Apache Arrow是一个跨语言的开发平台，用于高性能数据分析，提供了一种内存中的数据格式，旨在高效地共享数据而无需额外的序列化和反序列化步骤。它的设计目标是加速大数据处理和分析，使在处理和传输大规模数据集时表现出色。Arrow支持多种编程语言，包括C++, Java, Python, R等，使得不同语言之间的数据交换变得非常高效。其列式内存格式使数据在内存中的表示非常紧凑和高效，不仅减少了内存使用，还提升了CPU缓存命中率，从而加速数据处理。此外，通过Arrow的内存格式，不同进程和系统之间可以实现零拷贝的数据共享，大幅减少数据传输的开销。Arrow还与许多大数据系统（如Apache Parquet、Apache Spark、DuckDB等）无缝集成，支持高效的数据存储和处理。除了基本的数据类型，Arrow还支持复杂的数据结构和操作，如嵌套数据、时间戳和向量化操作。因此，Apache Arrow通过提供高效的内存格式和跨语言支持，为大数据处理和分析提供了一个强大而灵活的基础设施，极大地提升了数据密集型应用的性能。</p>
 <p>本部分聚焦的是如何利用Arrow来进行内存外的计算，在R包<strong>arrow</strong>中，<code>open_dataset</code>函数能够在不把数据载入到R环境的情况下对数据（可以是一份文件包含的数据，也可以是分散在多个文件中的数据；数据格式可以是CSV，也可以是parquet）进行查询操作，用户可以使用<strong>dplyr</strong>包提供的函数来对数据自由进行操作。在条件允许的情况下，我们推荐使用parquet来存储数据，然后再利用<strong>arrow</strong>包对其进行访问，因为Parquet格式有以下优点：</p>
 <ul>
@@ -560,6 +561,7 @@ WHERE (price &gt; 15000.0)</code></pre>
 <span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>df_pq</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>FileSystemDataset with 10 Parquet files
+4 columns
 Logical: bool
 Integer: int32
 Real: double
@@ -618,15 +620,97 @@ See $.data for the source Arrow object</code></pre>
 </div>
 <p>在这种背景下，使用parquet对数据进行存储是非常诱人的，因为这样能够让我们轻松地使用dplyr函数来对存储在磁盘的数据进行操作。</p>
 </section>
-<section id="小结" class="level2" data-number="12.4">
-<h2 data-number="12.4" class="anchored" data-anchor-id="小结"><span class="header-section-number">12.4</span> 小结</h2>
-<p>本章介绍了如何在数据分析中有效地使用数据库管理数据，并讨论如何使用Arrow来对存在磁盘的数据进行高效处理。通过学习使用<strong>DBI</strong>包连接数据库、执行SQL查询，以及借助<strong>dbplyr</strong>包将<strong>dplyr</strong>代码翻译成SQL，我们能够在R中直接操作和查询数据库中的数据。这种方法不仅提高了数据处理的效率，还减少了对中间文件（如CSV）的依赖，避免了繁琐的数据导入导出步骤。此外，我们还学习了Apache Arrow， 它所提供的Parquet内存格式减少了数据在不同系统间转换的开销，这对于需要处理大量数据的应用程序来说尤为重要。</p>
+<section id="基于polars的大数据处理方案" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="基于polars的大数据处理方案"><span class="header-section-number">12.4</span> 基于Polars的大数据处理方案</h2>
+<p>Polars 是一个高性能的数据框架库，专为数据操作和分析设计。它由 Rust 编写，确保了速度和内存安全，并利用并行处理来最大化性能。Polars 在处理大型数据集时表现出色，设计目的是最小化内存使用，使用高效的数据结构以减少开销。它提供了丰富的数据操作功能，如过滤、排序、聚合和连接等，支持链式操作，使得代码简洁且易读。总的来说，Polars 的特点包括：</p>
+<ul>
+<li>高性能：Polars利用并行计算和SIMD（单指令多数据）技术，在执行数据操作时大大提高了处理速度。它在处理大数据集时的性能优于许多传统的数据分析库。</li>
+<li>内存效率：Polars可以使用 Apache Arrow的内存格式（如Parquet），这使得它能够更有效地利用内存。其数据结构经过优化，可以处理更大的数据集，而不会消耗过多的内存资源。</li>
+<li>灵活的表达能力：Polars提供了一系列丰富的操作功能，包括数据选择、过滤、聚合、排序和连接等，支持链式调用，使得数据处理过程更为流畅。</li>
+<li>惰性计算：Polars 采用惰性执行策略，意味着只有在必要时才会执行计算。这种设计可以减少不必要的计算和内存开销，提升整体性能。</li>
+<li>跨平台支持：除了支持多种编程语言外，Polars还可以在不同的操作系统上运行，适用于各种开发环境。</li>
+<li>用户友好：Polars 的 API设计直观，易于学习和使用，适合各种数据分析任务。</li>
+</ul>
+<p>尽管核心是用 Rust 编写的，Polars 提供了 R 接口，因此可以在 R 中方便地使用。Polars 能处理复杂的数据查询和操作，包括时间序列数据、缺失值和类别数据等，未来可能还会支持更多编程语言。在R中要安装核心的Polars包，可以这样操作：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"polars"</span>, <span class="at">repos =</span> <span class="st">"https://community.r-multiverse.org"</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'tidypolars'</span>, </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">repos =</span> <span class="fu">c</span>(<span class="st">'https://etiennebacher.r-universe.dev'</span>, <span class="fu">getOption</span>(<span class="st">"repos"</span>))</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>以上代码会安装<strong>polars</strong>和<strong>tidypolars</strong>两个R包，前者负责在R中调用Rust所构建的Polars工具，后者则可以把常用的tidyverse代码（特别是<strong>dplyr</strong>和<strong>tidyr</strong>包中的函数）直接转译为Polars所支持的代码。下面我们对该工具进行简单的演示，首先我们生成一份数据集，并保存在根目录下的temp文件夹中：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(tidyfst,arrow)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 生成一亿行</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>nr_of_rows <span class="ot">&lt;-</span> <span class="fl">1e8</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 构造数据框</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Logical =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span>), <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.1</span>, <span class="fl">0.05</span>), nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Integer =</span> <span class="fu">sample</span>(<span class="dv">1</span>L<span class="sc">:</span><span class="dv">100</span>L, nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Real =</span> <span class="fu">sample</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span>, <span class="dv">20</span>) <span class="sc">/</span> <span class="dv">100</span>, nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Factor =</span> <span class="fu">as.factor</span>(<span class="fu">sample</span>(<span class="fu">labels</span>(UScitiesD), nr_of_rows, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 检查大小</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="fu">object_size</span>(df) <span class="co"># 1.9 Gb</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 导出parquet文件</span></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">write_parquet</span>(df,<span class="st">"temp/df.parquet"</span>) <span class="co"># 209.1 Mb</span></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 清除环境内的所有变量</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>然后，我们利用<strong>polars</strong>包的<code>scan_parquet</code>方法把数据扫描到R环境中：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(polars,tidypolars,tidyverse,tidyfst)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 扫描数据</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>pl<span class="sc">$</span><span class="fu">scan_parquet</span>(<span class="st">"df.parquet"</span>) <span class="ot">-&gt;</span> dat_pl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>需要注意的是，在上面的操作中，我们并没有把数据导入到环境里面。我们用了“扫描”一词，其实相当于对数据进行了连接，类似于我们在前一章节中提到的<code>open_dataset</code>操作。在这个背景下，我们可以对这个没有导入环境的数据进行各种操作，并把结果收集到环境中进行展示，操作方法如下：</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 观察前6行</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>dat_pl <span class="sc">%&gt;%</span> </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">compute</span>()</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 看看总共有多少行</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>dat_pl <span class="sc">%&gt;%</span> <span class="fu">count</span>() <span class="sc">%&gt;%</span> <span class="fu">compute</span>()</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 分组汇总计算</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="fu">pst</span>(</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  dat_pl <span class="sc">%&gt;%</span> </span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Logical,Factor) <span class="sc">%&gt;%</span> </span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">Real_mean =</span> <span class="fu">mean</span>(Real),<span class="at">Real_sd =</span> <span class="fu">sd</span>(Real),</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">median_Integer =</span> <span class="fu">median</span>(Integer)) <span class="sc">%&gt;%</span> </span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">compute</span>() <span class="ot">-&gt;</span> res </span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>) <span class="co"># Finished in 3.920s elapsed (15.4s cpu)</span></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看结果</span></span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>res</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 把结果转化为R中的数据框</span></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span><span class="fu">to_data_frame</span>()</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 把结果转化为数据框并使用tibble形式进行展示</span></span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>res <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>通过上面的试验，我们可以发现只需要把数据先存为Parquet格式，然后使用<code>scan_parquet</code>方法进行数据连接，就可以利用我们熟悉的<strong>dplyr</strong>和<strong>tidyr</strong>函数对保存在磁盘中的数据进行各式的数据操作，这给我们的大数据分析提供了巨大的便利，是解决内存不足计算（Out-of-Memory Computation）的最佳方案之一。</p>
 </section>
-<section id="练习" class="level2" data-number="12.5">
-<h2 data-number="12.5" class="anchored" data-anchor-id="练习"><span class="header-section-number">12.5</span> 练习</h2>
+<section id="小结" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="小结"><span class="header-section-number">12.5</span> 小结</h2>
+<p>本章介绍了如何在数据分析中有效地使用数据库管理数据，并讨论如何使用Arrow来对存在磁盘的数据进行高效处理。通过学习使用<strong>DBI</strong>包连接数据库、执行SQL查询，以及借助<strong>dbplyr</strong>包将<strong>dplyr</strong>代码翻译成SQL，我们能够在R中直接操作和查询数据库中的数据。这种方法不仅提高了数据处理的效率，还减少了对中间文件（如CSV）的依赖，避免了繁琐的数据导入导出步骤。此外，我们还学习了Apache Arrow和Polars， 它们所提供的Parquet内存格式减少了数据在不同系统间转换的开销，这对于需要处理大量数据的应用程序来说尤为重要。</p>
+</section>
+<section id="练习" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="练习"><span class="header-section-number">12.6</span> 练习</h2>
 <ul>
 <li>尝试使用duckdb方法构建一个数据库，然后实现所有数据库的日常操作，比如对某一列创建索引</li>
-<li>请比较一下是数据库操作快，还是使用Arrow对数据进行操作快，注意使用同样数据进行比较，同时对数据操作的时间和数据占据的内存进行比较。</li>
+<li>请比较一下是数据库操作快，还是使用Arrow/Polars对数据进行操作快，注意使用同样数据进行比较，同时对数据操作的时间和数据占据的内存进行比较。</li>
 <li>请比较一下，在内存允许的情况下，究竟是在内存中对数据进行处理快，还是使用磁盘进行数据处理速度快。</li>
 </ul>
 

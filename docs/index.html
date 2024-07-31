@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="黄天元">
-<meta name="dcterms.date" content="2024-06-16">
+<meta name="dcterms.date" content="2024-07-31">
 
 <title>大数据分析——基于R语言</title>
 <style>
@@ -238,7 +238,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">目录</h2>
    
   <ul>
   <li><a href="#前言" id="toc-前言" class="nav-link active" data-scroll-target="#前言">前言</a></li>
@@ -267,7 +267,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 16, 2024</p>
+      <p class="date">July 31, 2024</p>
     </div>
   </div>
   
@@ -281,10 +281,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="前言" class="level1 unnumbered">
 <h1 class="unnumbered">前言</h1>
-<p>本书主要介绍如何使用R语言来进行高性能计算，从而应对大数据时代给我们带来的各种挑战。这本书面向的是已经具有一定R语言基础的读者，在面对海量观测构成的数据集时，如何从容地像往常一样对数据进行丰富的分析与建模。为了对R基础较为薄弱的读者也友好，本书不会使用过分深刻晦涩的材料，力求深入浅出。书会结合当前最先进的R语言工具包（包括但不限于<strong>data.table、duckdb、arrow、sparklyr、Rcpp、future</strong>），系统地介绍以下几个部分的内容：</p>
+<p>本教程主要介绍如何使用R语言来进行高性能计算，从而应对大数据时代给我们带来的各种挑战。这本书面向的是已经具有一定R语言基础的读者，在面对海量观测构成的数据集时，如何从容地像往常一样对数据进行丰富的分析与建模。为了对R基础较为薄弱的读者也友好，本书不会使用过分深刻晦涩的材料，力求深入浅出。书会结合当前最先进的R语言工具包（包括但不限于<strong>data.table、duckdb、arrow、sparklyr、Rcpp、future</strong>），系统地介绍以下几个部分的内容：</p>
 <ul>
 <li>大数据基本概念</li>
-<li>R语言基本介绍</li>
+<li>R语言编程入门</li>
 <li>数据处理效能的衡量</li>
 <li>快速读写：大数据的导入与导出</li>
 <li>快速整理：基于data.table的数据处理工具</li>
@@ -303,8 +303,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  tidyfst,microbenchmark,pryr,bench,profvis,rio,scattermore,tidyverse,hexbin,</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  ggridges,GGally,mlr3verse,FSelectorRcpp,praznik,ranger,kknn,fs,archive,openxlsx2,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  Rcpp,DBI,RSQLite,futureverse,DBI,duckdb,dbplyr,arrow,sparklyr</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  Rcpp,DBI,RSQLite,futureverse,duckdb,dbplyr,arrow,sparklyr</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"polars"</span>, <span class="at">repos =</span> <span class="st">"https://community.r-multiverse.org"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">'tidypolars'</span>, </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">repos =</span> <span class="fu">c</span>(<span class="st">'https://etiennebacher.r-universe.dev'</span>, <span class="fu">getOption</span>(<span class="st">"repos"</span>))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

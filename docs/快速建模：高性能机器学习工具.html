@@ -237,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">目录</h2>
    
   <ul>
   <li><a href="#机器学习基本流程" id="toc-机器学习基本流程" class="nav-link active" data-scroll-target="#机器学习基本流程"><span class="header-section-number">7.1</span> 机器学习基本流程</a>
@@ -394,28 +394,28 @@ Figure&nbsp;7.1: 机器学习基本流程
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>split</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$train
-  [1]   1   3   4   5   8   9  11  13  15  16  17  19  20  22  23  25  26  27
- [19]  28  29  31  32  33  34  35  36  37  39  40  41  43  44  45  47  48  49
- [37]  50  52  53  55  56  58  59  60  62  63  66  68  69  71  72  75  77  79
- [55]  80  82  84  85  86  88  91  92  93  94  98 102 103 104 105 107 111 113
- [73] 114 116 117 118 119 120 121 123 124 126 128 131 132 133 134 135 136 137
- [91] 138 139 141 142 143 145 146 147 148 149 151 152 153 154 155 156 157 159
-[109] 160 161 162 164 165 166 167 168 169 170 172 174 175 176 178 179 180 181
-[127] 182 183 184 186 187 188 190 192 193 194 196 197 199 200 201 202 203 205
-[145] 208 209 211 212 213 215 216 217 219 222 223 224 225 227 231 232 233 236
-[163] 237 238 240 241 242 243 244 248 251 252 256 257 258 260 261 263 264 265
-[181] 266 267 269 271 274 278 282 283 284 286 288 289 290 291 292 293 295 296
-[199] 298 300 301 302 303 304 306 307 308 311 313 316 317 319 320 322 323 324
-[217] 328 329 330 331 333 334 336 337 338 339 340 341 342 343 344
+  [1]   2   3   4   5   6   8   9  10  12  13  14  20  21  23  24  25  26  27
+ [19]  29  32  34  35  36  37  38  40  42  45  46  47  48  49  50  51  53  59
+ [37]  60  62  63  64  65  67  70  71  74  77  78  79  81  82  83  84  86  89
+ [55]  91  92  94  95  96  97  98 100 101 102 103 104 105 106 107 109 110 111
+ [73] 112 113 114 118 119 120 121 122 123 127 128 129 130 132 133 134 135 136
+ [91] 138 140 141 143 144 145 146 147 149 150 151 152 154 156 158 159 160 162
+[109] 163 165 167 169 170 171 172 174 175 178 179 180 181 182 184 186 187 189
+[127] 190 192 193 196 197 198 200 201 202 204 205 206 207 208 210 211 214 215
+[145] 216 217 222 223 225 227 229 230 231 232 234 236 237 240 241 244 245 246
+[163] 247 248 250 251 252 253 254 256 258 259 260 261 262 264 266 267 268 269
+[181] 271 272 273 275 276 277 278 279 280 281 282 285 286 287 288 289 290 291
+[199] 294 299 300 301 302 303 305 307 308 309 310 311 312 313 314 316 317 318
+[217] 319 320 321 322 323 325 327 329 330 337 338 339 341 342 343
 
 $test
-  [1]   2   6   7  10  12  14  18  21  24  30  38  42  46  51  54  57  61  64
- [19]  65  67  70  73  74  76  78  81  83  87  89  90  95  96  97  99 100 101
- [37] 106 108 109 110 112 115 122 125 127 129 130 140 144 150 158 163 171 173
- [55] 177 185 189 191 195 198 204 206 207 210 214 218 220 221 226 228 229 230
- [73] 234 235 239 245 246 247 249 250 253 254 255 259 262 268 270 272 273 275
- [91] 276 277 279 280 281 285 287 294 297 299 305 309 310 312 314 315 318 321
-[109] 325 326 327 332 335</code></pre>
+  [1]   1   7  11  15  16  17  18  19  22  28  30  31  33  39  41  43  44  52
+ [19]  54  55  56  57  58  61  66  68  69  72  73  75  76  80  85  87  88  90
+ [37]  93  99 108 115 116 117 124 125 126 131 137 139 142 148 153 155 157 161
+ [55] 164 166 168 173 176 177 183 185 188 191 194 195 199 203 209 212 213 218
+ [73] 219 220 221 224 226 228 233 235 238 239 242 243 249 255 257 263 265 270
+ [91] 274 283 284 292 293 295 296 297 298 304 306 315 324 326 328 331 332 333
+[109] 334 335 336 340 344</code></pre>
 </div>
 </div>
 <p>上面这一步操作，将数据分为了两份，一份是训练数据，一份是测试数据。split变量是一个列表，放着的是训练集和测试集所在的行号。下一步，我们将选择机器学习的模型，制定一个学习器。我们将选用决策树算法进行训练，让其进行分类，实现方法如下：</p>
@@ -466,10 +466,10 @@ node), split, n, loss, yval, (yprob)
       * denotes terminal node
 
 1) root 231 129 Adelie (0.441558442 0.199134199 0.359307359)  
-  2) flipper_length&lt; 207.5 146  44 Adelie (0.698630137 0.294520548 0.006849315)  
-    4) bill_length&lt; 43.3 102   2 Adelie (0.980392157 0.019607843 0.000000000) *
-    5) bill_length&gt;=43.3 44   3 Chinstrap (0.045454545 0.931818182 0.022727273) *
-  3) flipper_length&gt;=207.5 85   3 Gentoo (0.000000000 0.035294118 0.964705882) *</code></pre>
+  2) flipper_length&lt; 207 144  44 Adelie (0.694444444 0.298611111 0.006944444)  
+    4) bill_length&lt; 43.35 100   3 Adelie (0.970000000 0.030000000 0.000000000) *
+    5) bill_length&gt;=43.35 44   4 Chinstrap (0.068181818 0.909090909 0.022727273) *
+  3) flipper_length&gt;=207 87   5 Gentoo (0.022988506 0.034482759 0.942528736) *</code></pre>
 </div>
 </div>
 <p>利用这个学习器得到的模型，我们可以对测试集的数据进行预测。我们会调用学习器learner的predict方法，然后对之前task任务数据中行号为test的测试集进行预测：</p>
@@ -479,13 +479,13 @@ node), split, n, loss, yval, (yprob)
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;PredictionClassif&gt; for 113 observations:
     row_ids     truth  response
-          2    Adelie    Adelie
-          6    Adelie    Adelie
+          1    Adelie    Adelie
           7    Adelie    Adelie
+         11    Adelie    Adelie
 ---                            
-        327 Chinstrap Chinstrap
-        332 Chinstrap Chinstrap
-        335 Chinstrap Chinstrap</code></pre>
+        336 Chinstrap Chinstrap
+        340 Chinstrap    Gentoo
+        344 Chinstrap Chinstrap</code></pre>
 </div>
 </div>
 <p>最后，我们可以观察一些衡量模型好坏的参数来评估其表现，比如我们可以用准确率来进行衡量，实现方法如下：</p>
@@ -493,7 +493,7 @@ node), split, n, loss, yval, (yprob)
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>prediction<span class="sc">$</span><span class="fu">score</span>(<span class="fu">msr</span>(<span class="st">"classif.acc"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>classif.acc 
-   0.920354 </code></pre>
+  0.9557522 </code></pre>
 </div>
 </div>
 <p>上面这些步骤，就是我们利用mlr3框架对一个基本任务进行机器学习的全过程。有了这个基本的概念，我们来看mlr3是如何使用其框架给我们的机器学习过程提供便捷的工具，让整个任务更加高效。</p>
@@ -590,17 +590,20 @@ node), split, n, loss, yval, (yprob)
 <span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 结果展示</span></span>
 <span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>instance<span class="sc">$</span>result_feature_set</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "bill_depth"     "bill_length"    "flipper_length"</code></pre>
+</div>
 </div>
 <p>我们没有给出展示的结果，因为在实际的操作中，如果重复次数不够多，那么不同迭代中出现的结果可能会不一致，这里仅仅展示实现方法。在特征筛选之后，我们可以使用筛选的特征来进行模型训练，方法如下：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义任务</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>tsk_pen <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"penguins"</span>)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择筛选出来的特征</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>tsk_pen<span class="sc">$</span><span class="fu">select</span>(instance<span class="sc">$</span>result_feature_set)</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 决策树模型训练</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>lrn_rpart<span class="sc">$</span><span class="fu">train</span>(tsk_pen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义任务</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>tsk_pen <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"penguins"</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择筛选出来的特征</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>tsk_pen<span class="sc">$</span><span class="fu">select</span>(instance<span class="sc">$</span>result_feature_set)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 决策树模型训练</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>lrn_rpart<span class="sc">$</span><span class="fu">train</span>(tsk_pen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>在实际操作中，还可以针对多个目标（比如同时优化特异度和敏感度）进行优化，同时还可以加入终止条件（比如只要迭代100次就停止），相关内容可以参考官方文档（<a href="https://mlr3book.mlr-org.com/chapters/chapter6/feature_selection.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter6/feature_selection.html</a>）。</p>
 </section>
@@ -609,24 +612,34 @@ node), split, n, loss, yval, (yprob)
 <h3 data-number="7.3.3" class="anchored" data-anchor-id="模型比较"><span class="header-section-number">7.3.3</span> 模型比较</h3>
 <p>很多时候，我们需要对同一个任务使用多个机器学习模型，并对模型进行比较；甚至有的时候，我们还需要看同一个模型在不同任务上的表现。在这种背景下，就需要构造任务组合，从而看在不同条件下创建的模型表现如何。下面我们展示在mlr3框架下如何对此进行实现：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择2个分类任务</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>tasks <span class="ot">=</span> <span class="fu">tsks</span>(<span class="fu">c</span>(<span class="st">"german_credit"</span>, <span class="st">"sonar"</span>))</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择3个算法，预测类型为概率值</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>learners <span class="ot">=</span> <span class="fu">lrns</span>(<span class="fu">c</span>(<span class="st">"classif.rpart"</span>, <span class="st">"classif.ranger"</span>,</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"classif.featureless"</span>), <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 设置重采样方法为5折交叉验证</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>rsmp_cv5 <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">5</span>)</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建训练网格</span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>design <span class="ot">=</span> <span class="fu">benchmark_grid</span>(tasks, learners, rsmp_cv5)</span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 对模型进行训练</span></span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(design)</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 观察模型效果</span></span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a> bmr<span class="sc">$</span><span class="fu">aggregate</span>() [,.(task_id,learner_id,classif.ce)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择2个分类任务</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>tasks <span class="ot">=</span> <span class="fu">tsks</span>(<span class="fu">c</span>(<span class="st">"german_credit"</span>, <span class="st">"sonar"</span>))</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 选择3个算法，预测类型为概率值</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>learners <span class="ot">=</span> <span class="fu">lrns</span>(<span class="fu">c</span>(<span class="st">"classif.rpart"</span>, <span class="st">"classif.ranger"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"classif.featureless"</span>), <span class="at">predict_type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 设置重采样方法为5折交叉验证</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>rsmp_cv5 <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">5</span>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建训练网格</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>design <span class="ot">=</span> <span class="fu">benchmark_grid</span>(tasks, learners, rsmp_cv5)</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 对模型进行训练</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(design)</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 观察模型效果</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>bmr<span class="sc">$</span><span class="fu">aggregate</span>() [,.(task_id,learner_id,classif.ce)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         task_id          learner_id classif.ce
+          &lt;char&gt;              &lt;char&gt;      &lt;num&gt;
+1: german_credit       classif.rpart  0.2880000
+2: german_credit      classif.ranger  0.2370000
+3: german_credit classif.featureless  0.3000000
+4:         sonar       classif.rpart  0.3022067
+5:         sonar      classif.ranger  0.1773519
+6:         sonar classif.featureless  0.4660859</code></pre>
+</div>
 </div>
 <p>这里我们没有对结果进行展示，读者可以自行运行代码来观察，其中需要注意的细节包括：1、在使用算法的时候，“classif.rpart”使用的是决策树算法，“classif.ranger”使用的是随机森林算法，而“classif.featureless”则是一个基线模型，在分类问题上会对盲猜为多数类；2、这里默认观察模型的效果，会计算分类的错误率，错误率月低，代表模型表现越好，详见官方文档（<a href="https://mlr3.mlr-org.com/reference/mlr_measures_classif.ce.html" class="uri">https://mlr3.mlr-org.com/reference/mlr_measures_classif.ce.html</a>）；3、在对bmr对象进行观察的时候，调用了<code>aggregate</code>方法，这个方法能够对不同迭代的表现结果进行汇总；4、mlr3框架使用了<strong>data.table</strong>作为底层，因此在观察模型效果的时候，我们选择列直接用了data.table中的方法。关于更多模型比较的内容，可以参考官方文档（<a href="https://mlr3book.mlr-org.com/chapters/chapter3/evaluation_and_benchmarking.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter3/evaluation_and_benchmarking.html</a>）。</p>
 </section>
@@ -635,8 +648,8 @@ node), split, n, loss, yval, (yprob)
 <p>机器学习中的参数调节是优化机器学习模型性能的关键步骤。超参数是模型在训练过程中设置的参数，不会从数据中学习到，需手动设定。例如，决策树的深度、支持向量机的核函数类型或正则化参数等都是超参数。参数调节旨在找到这些超参数的最佳组合，以提高模型在新数据上的表现，常见的方法包括网格搜索、随机搜索和贝叶斯优化等。网格搜索通过遍历预定义参数组合来寻找最佳参数，但计算量大；随机搜索在预定义范围内随机选择参数组合，效率较高；贝叶斯优化利用先前评估结果构建代理模型，预测并选择最优参数组合。参数调节通常结合交叉验证进行，以确保模型的泛化能力。通过优化超参数，模型能在新数据上表现得更好，提高预测准确性和稳健性。</p>
 <p>在mlr3中，如果要对一个学习器中的参数进行调节，可以在设置学习器的时候就进行声明，而我们日常没有特殊声明的时候都会直接使用函数的默认参数来进行设置。对于不同的机器学习算法，有不同的参数可以调节，我们可以去看学习器的参数集来观察有哪些参数可以调节，而且这些参数调节的范围是什么。比如我们想对随机森林方法的参数集进行观察，可以这样操作：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.table</span>(<span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>)<span class="sc">$</span>param_set)[,</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  .(id, class, lower, upper, nlevels)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.table</span>(<span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>)<span class="sc">$</span>param_set)[,</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  .(id, class, lower, upper, nlevels)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                              id    class lower upper nlevels
                           &lt;char&gt;   &lt;char&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;
@@ -675,22 +688,22 @@ node), split, n, loss, yval, (yprob)
 </div>
 <p>在展示结果中我们发现一共有30种参数可以进行调节，其中id存放的是参数的名称，class告诉我们参数的数据类型，而lower和upper分别界定的了参数的下限和上限，nlevels则告诉我们参数有几种可以选择（一般适用于离散型变量，如逻辑型和因子型）。这里，如果我们要对随机森林中树的数量进行调节，分别尝试100、200和400棵树，可以这样进行设置：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>如果只是想测试一个范围，比如100到400课树之间，则可以这样操作：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="dv">100</span>,<span class="dv">400</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="dv">100</span>,<span class="dv">400</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>不妨看一下<code>to_tune</code>函数是如何对搜索空间进行设定的：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 放入一个向量时，会进行遍历</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 放入一个向量时，会进行遍历</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Tuning over:
-p_fct(levels = c("100", "200", "400"))</code></pre>
+p_fct(levels = c(`100` = 100, `200` = 200, `400` = 400))</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 放入两个数字时，会生成一个范围</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">to_tune</span>(<span class="dv">100</span>,<span class="dv">400</span>)        </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 放入两个数字时，会生成一个范围</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">to_tune</span>(<span class="dv">100</span>,<span class="dv">400</span>)        </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Tuning over:
 range [100, 400]</code></pre>
@@ -698,52 +711,66 @@ range [100, 400]</code></pre>
 </div>
 <p>要对函数进行更多的了解，可以通过键入<code>?to_tune</code>来参阅帮助文档进行学习。 当我们界定了搜索空间的范围时，很多时候我们没有办法进行地毯式的全面训练搜索，这时候就需要设定终止条件，比如训练一段时间后结束，或者进行100次迭代后结束等。在mlr3框架中，可以使用<code>trm</code>函数来定义一个终止条件。在知道上面我们提及的背景信息后，我们来尝试创建一个调参的对象：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义任务</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>tsk_sonar <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"sonar"</span>)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义学习器（随机森林模型），设定需要调节的参数</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)))</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建调参的环境</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>instance <span class="ot">=</span> <span class="fu">ti</span>(</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">task =</span> tsk_sonar, <span class="co"># 设置任务</span></span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">learner =</span> learner, <span class="co"># 设置学习器</span></span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>), <span class="co"># 设置重采样方法：3折交叉验证</span></span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">measures =</span> <span class="fu">msr</span>(<span class="st">"classif.ce"</span>), <span class="co"># 设置评估指标：分类错误率</span></span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">terminator =</span> <span class="fu">trm</span>(<span class="st">"none"</span>) <span class="co"># 设置终止调节：不采用任何终止条件，全部测试</span></span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 设定调参方法为网格搜索</span></span>
-<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>tuner <span class="ot">=</span> <span class="fu">tnr</span>(<span class="st">"grid_search"</span>)</span>
-<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 进行调参</span></span>
-<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>tuner<span class="sc">$</span><span class="fu">optimize</span>(instance)</span>
-<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 显示调参结果</span></span>
-<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>instance<span class="sc">$</span>result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义任务</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>tsk_sonar <span class="ot">=</span> <span class="fu">tsk</span>(<span class="st">"sonar"</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义学习器（随机森林模型），设定需要调节的参数</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)))</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建调参的环境</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>instance <span class="ot">=</span> <span class="fu">ti</span>(</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">task =</span> tsk_sonar, <span class="co"># 设置任务</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">learner =</span> learner, <span class="co"># 设置学习器</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">resampling =</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>), <span class="co"># 设置重采样方法：3折交叉验证</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">measures =</span> <span class="fu">msr</span>(<span class="st">"classif.ce"</span>), <span class="co"># 设置评估指标：分类错误率</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">terminator =</span> <span class="fu">trm</span>(<span class="st">"none"</span>) <span class="co"># 设置终止调节：不采用任何终止条件，全部测试</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 设定调参方法为网格搜索</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>tuner <span class="ot">=</span> <span class="fu">tnr</span>(<span class="st">"grid_search"</span>)</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 进行调参</span></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>tuner<span class="sc">$</span><span class="fu">optimize</span>(instance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   num.trees learner_param_vals  x_domain classif.ce
+      &lt;char&gt;             &lt;list&gt;    &lt;list&gt;      &lt;num&gt;
+1:       400          &lt;list[2]&gt; &lt;list[1]&gt;  0.1971705</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 显示调参结果</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>instance<span class="sc">$</span>result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   num.trees learner_param_vals  x_domain classif.ce
+      &lt;char&gt;             &lt;list&gt;    &lt;list&gt;      &lt;num&gt;
+1:       400          &lt;list[2]&gt; &lt;list[1]&gt;  0.1971705</code></pre>
+</div>
 </div>
 <p>此外，mlr3框架中实现同样的方法，还有其他更加明晰的实现方法：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>tuner <span class="ot">=</span> <span class="fu">tnr</span>(<span class="st">"grid_search"</span>)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)))</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>rsmp_cv3 <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>)</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>msr_ce <span class="ot">=</span> <span class="fu">msr</span>(<span class="st">"classif.ce"</span>)</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>terminator <span class="ot">=</span> <span class="fu">trm</span>(<span class="st">"none"</span>)</span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">tuner =</span> tuner,</span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">task =</span> tsk_sonar,</span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">learner =</span> learner,</span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">resampling =</span> rsmp_cv3,</span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">measures =</span> msr_ce,</span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">terminator =</span> terminator</span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>instance<span class="sc">$</span>result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>tuner <span class="ot">=</span> <span class="fu">tnr</span>(<span class="st">"grid_search"</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>learner <span class="ot">=</span> <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>)))</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>rsmp_cv3 <span class="ot">=</span> <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>msr_ce <span class="ot">=</span> <span class="fu">msr</span>(<span class="st">"classif.ce"</span>)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>terminator <span class="ot">=</span> <span class="fu">trm</span>(<span class="st">"none"</span>)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>instance <span class="ot">=</span> <span class="fu">tune</span>(</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">tuner =</span> tuner,</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">task =</span> tsk_sonar,</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">learner =</span> learner,</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">resampling =</span> rsmp_cv3,</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">measures =</span> msr_ce,</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">terminator =</span> terminator</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>instance<span class="sc">$</span>result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   num.trees learner_param_vals  x_domain classif.ce
+      &lt;char&gt;             &lt;list&gt;    &lt;list&gt;      &lt;num&gt;
+1:       400          &lt;list[2]&gt; &lt;list[1]&gt;  0.1731539</code></pre>
+</div>
 </div>
 <p>最后返回的结果就是本次测试中获得的最佳参数（这里没有给出，请读者自行运行尝试）。关于如何在mlr3框架中灵活地对各种参数组合进行调节，可以参考官方文档（<a href="https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html</a>）。</p>
 </section>
@@ -751,42 +778,49 @@ range [100, 400]</code></pre>
 <h3 data-number="7.3.5" class="anchored" data-anchor-id="综合实践"><span class="header-section-number">7.3.5</span> 综合实践</h3>
 <p>在本节中，将会给出一个综合的例子，描述如何在mlr3框架中进行高效的机器学习。首先我们将加载包：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3verse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlr3verse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>随后我们会挑选2个内置任务，这两个任务的共同点是它们都属于二分类问题：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>tasks <span class="ot">=</span> <span class="fu">tsks</span>(<span class="fu">c</span>(<span class="st">"german_credit"</span>, <span class="st">"sonar"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>tasks <span class="ot">=</span> <span class="fu">tsks</span>(<span class="fu">c</span>(<span class="st">"german_credit"</span>, <span class="st">"sonar"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>而后，我们来定义学习器，并为需要调整的参数进行设置：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义随机森林学习器</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>glrn_rf_tuned <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(<span class="st">"robustify"</span>) <span class="sc">%&gt;&gt;%</span> <span class="fu">auto_tuner</span>(</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tnr</span>(<span class="st">"grid_search"</span>, <span class="at">resolution =</span> <span class="dv">5</span>), </span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="dv">200</span>, <span class="dv">500</span>)),</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rsmp</span>(<span class="st">"holdout"</span>)</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>))</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 为学习器进行命名，命名为RF</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>glrn_rf_tuned<span class="sc">$</span>id <span class="ot">=</span> <span class="st">"RF"</span></span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义集成学习的学习器</span></span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>glrn_stack <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(<span class="st">"robustify"</span>) <span class="sc">%&gt;&gt;%</span> <span class="fu">ppl</span>(<span class="st">"stacking"</span>,</span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lrns</span>(<span class="fu">c</span>(<span class="st">"classif.rpart"</span>, <span class="st">"classif.kknn"</span>)),</span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lrn</span>(<span class="st">"classif.log_reg"</span>)</span>
-<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>))</span>
-<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 为学习器进行命名，命名为Stack</span></span>
-<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>glrn_stack<span class="sc">$</span>id <span class="ot">=</span> <span class="st">"Stack"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义随机森林学习器</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>glrn_rf_tuned <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(<span class="st">"robustify"</span>) <span class="sc">%&gt;&gt;%</span> <span class="fu">auto_tuner</span>(</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tnr</span>(<span class="st">"grid_search"</span>, <span class="at">resolution =</span> <span class="dv">5</span>), </span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lrn</span>(<span class="st">"classif.ranger"</span>, <span class="at">num.trees =</span> <span class="fu">to_tune</span>(<span class="dv">200</span>, <span class="dv">500</span>)),</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rsmp</span>(<span class="st">"holdout"</span>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 为学习器进行命名，命名为RF</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>glrn_rf_tuned<span class="sc">$</span>id <span class="ot">=</span> <span class="st">"RF"</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义集成学习的学习器</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>glrn_stack <span class="ot">=</span> <span class="fu">as_learner</span>(<span class="fu">ppl</span>(<span class="st">"robustify"</span>) <span class="sc">%&gt;&gt;%</span> <span class="fu">ppl</span>(<span class="st">"stacking"</span>,</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lrns</span>(<span class="fu">c</span>(<span class="st">"classif.rpart"</span>, <span class="st">"classif.kknn"</span>)),</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lrn</span>(<span class="st">"classif.log_reg"</span>)</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 为学习器进行命名，命名为Stack</span></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>glrn_stack<span class="sc">$</span>id <span class="ot">=</span> <span class="st">"Stack"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>上面的代码虽然很短，但是其实细节非常多：1、<code>%&gt;&gt;%</code>是mlr3框架中独特的管道操作符，用于将多个数据处理和建模步骤组合在一起，以创建一个完整的机器学习工作流（详见<a href="https://mlr3book.mlr-org.com/chapters/chapter7/sequential_pipelines.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter7/sequential_pipelines.html</a>）；2、在定义网格搜索的时候，声明<strong>resolution</strong>参数为5，即分辨率为5，这样会把搜索空间分为5等分，然后在在空间内进行尝试，这个例子中是对随机森林下限为200课树、上限为500棵树这个空间进行划分（详见<a href="https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter4/hyperparameter_optimization.html</a>）；3、在定义名为“Stack”的学习器，使用了集成学习方法，基本思想是使用决策树和KNN算法先训练，然后结合两者的结果再拟合一个逻辑回归对响应变量进行预测。这个方法超越了本书介绍的范畴，感兴趣的读者可以参考官方文档（<a href="https://mlr3book.mlr-org.com/chapters/chapter8/non-sequential_pipelines_and_tuning.html" class="uri">https://mlr3book.mlr-org.com/chapters/chapter8/non-sequential_pipelines_and_tuning.html</a>）中的相关部分。 定义了两个学习器之后，我们要把两者合并到一起：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>learners <span class="ot">=</span> <span class="fu">c</span>(glrn_rf_tuned, glrn_stack)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>learners <span class="ot">=</span> <span class="fu">c</span>(glrn_rf_tuned, glrn_stack)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>然后，我们要对这些任务-模型组合进行训练，观察其表现。这里统一使用3折交叉验证进行重采样，实现代码如下：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(<span class="fu">benchmark_grid</span>(tasks, learners, <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>bmr <span class="ot">=</span> <span class="fu">benchmark</span>(<span class="fu">benchmark_grid</span>(tasks, learners, <span class="fu">rsmp</span>(<span class="st">"cv"</span>, <span class="at">folds =</span> <span class="dv">3</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>最后通过对所得结果的准确率进行计算并汇总，来对不同任务下不同算法效果的对比，实现代码如下：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>bmr<span class="sc">$</span><span class="fu">aggregate</span>(<span class="fu">msr</span>(<span class="st">"classif.acc"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>bmr<span class="sc">$</span><span class="fu">aggregate</span>(<span class="fu">msr</span>(<span class="st">"classif.acc"</span>))</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="co">#       nr       task_id learner_id resampling_id iters classif.acc</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="co">#    &lt;int&gt;        &lt;char&gt;     &lt;char&gt;        &lt;char&gt; &lt;int&gt;       &lt;num&gt;</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1:     1 german_credit         RF            cv     3   0.7550245</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2:     2 german_credit      Stack            cv     3   0.7390235</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 3:     3         sonar         RF            cv     3   0.8221532</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 4:     4         sonar      Stack            cv     3   0.7213941</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Hidden columns: resample_result</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>这里我们没有给出结果，请读者自行尝试。我们可以看到，mlr3框架可以让我们用短短的数行代码来实现非常复杂的机器学习操作，大大提高了我们完成机器学习任务的效率。</p>
 </section>

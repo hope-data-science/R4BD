@@ -237,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">目录</h2>
    
   <ul>
   <li><a href="#数据导入导出所需要考虑的因素" id="toc-数据导入导出所需要考虑的因素" class="nav-link active" data-scroll-target="#数据导入导出所需要考虑的因素"><span class="header-section-number">4.1</span> 数据导入导出所需要考虑的因素</a></li>
@@ -475,7 +475,7 @@ Figure&nbsp;4.1: rio包的六边形标志符
 <h2 data-number="4.4" class="anchored" data-anchor-id="通用交流"><span class="header-section-number">4.4</span> 通用交流</h2>
 <p>在我们的书中，主要使用R语言作为大数据分析的工具。R语言既支持多种数据格式的读入，也支持多种数据格式的写出。在写出的时候，需要注意写出文件的用途。如果仅仅是保存下来以便后续使用，那么写出什么格式都可以，因为R语言写出的格式基本都可以再用R环境读入。但是如果需要把写出的数据交给其他不会使用R语言的成员进行协作，那么就必须确保写出的数据格式能够有效地被伙伴所利用。</p>
 <p>举个例子，如果在一个数据团队中，只有你懂得如何使用R语言，其他成员只会使用Excel。那么你在使用R语言处理完数据后，得到的结果要给其他成员查阅的话，一般需要生成xlsx或csv格式，这样才能够确保其他伙伴能够在Excel中打开并进行再次加工。</p>
-<p>我们在前面两个章节中使用了R语言生态中的一些大数据方案，需要明确的是，如果使用<code>qs::qsave</code>和<code>saveRDS</code>函数所写出的文件，只有R环境才能再次进行读取，使用其他软件则一般没有通用接口可以读入。而我们在“速度至上”章节中发现的最快格式fst，当前也只是在R中比较流行，这种格式在其他软件平台（如Python）还没有接口能够读入。</p>
+<p>我们在前面两个章节中使用了R语言生态中的一些大数据方案，需要明确的是，如果使用<code>qs::qsave</code>和<code>saveRDS</code>函数所写出的文件，只有R环境才能再次进行读取，使用其他软件则一般没有通用接口可以读入。而我们在“速度至上”章节中发现的最快格式fst，当前也只是在R中比较流行，这种格式在其他软件平台（如Python）还没有接口能够直接读入。</p>
 <p>在这个背景下，如果生成的数据结果不是特别大，可以优先数据接口的通用性。R语言的<strong>rio</strong>包支持导出多种格式的数据文件，包括而不限于：1、xls/xlsx（Excel软件通用格式）；2、sas/sas7bdat（SAS软件通用格式）；3、sav/spss/zsav（SPSS软件通用格式）；4、mat/matlab（Matlab软件通用格式）。此外，<strong>rio</strong>还可以直接导出压缩文件等其他多种格式，详细的支持文件格式列表可以查阅官方链接：<a href="https://cran.r-project.org/web/packages/rio/vignettes/rio.html" class="uri">https://cran.r-project.org/web/packages/rio/vignettes/rio.html</a>。</p>
 <p>如果导出的数据非常大，那么应该优先选择的数据格式是Apache Arrow所定义的数据格式，即Parquet和Feather。Parquet 和 Feather 是两种用于存储数据的文件格式，它们在设计和用途上有所不同，各自适用于不同的场景和需求。下面我们简单对两种文件格式进行介绍：（1）Parquet：Parquet 文件格式被设计用于最大化存储空间的利用率，采用了先进的压缩和编码技术。它非常适合在存储大量数据时尽量减少磁盘使用空间。Parquet 文件通常比较小，因为它使用了列式存储和高效的压缩策略。然而，读取 Parquet 文件需要相对复杂的解码过程，并且数据不能直接操作，而是需要以大块进行解码。因此，Parquet 文件适合于长期存储和归档目的，即使在未来几年也能被广泛支持的系统读取。（2）Feather：Feather 文件格式最初是为了在 Arrow 文件格式开发之前，简化存储 Arrow 格式的一部分数据而设计的。现在，“Feather version 2” 实际上就是 Arrow IPC 文件格式。Feather 文件格式保留了 Feather 名称和 API 以确保向后兼容性。与 Parquet 相比，Feather 文件更注重数据的直接读写和处理效率。Feather 文件格式中的数据与内存中的数据表示相同，因此读取 Feather 文件时无需解码，可以直接进行访问，从而提高了读写速度和操作效率。一言以蔽之，Parquet 适合长期存储和归档，而 Feather 则更适用于数据的直接读写和操作，特别是在计算任务中的实时数据处理。</p>
 </section>

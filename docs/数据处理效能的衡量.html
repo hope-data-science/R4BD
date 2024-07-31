@@ -237,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">目录</h2>
    
   <ul>
   <li><a href="#时间衡量" id="toc-时间衡量" class="nav-link active" data-scroll-target="#时间衡量"><span class="header-section-number">3.1</span> 时间衡量</a></li>
@@ -289,7 +289,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="fl">0.5</span>) <span class="co"># 暂停0.5秒的时间</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "# Finished in 0.500s elapsed (0.000s cpu)"</code></pre>
+<pre><code>[1] "# Finished in 0.510s elapsed (0.000s cpu)"</code></pre>
 </div>
 </div>
 <p>在上面给出的结果中，首先给出的是实际系统运行时间（Wall-Clock Time），随后在括号内给出的时间是CPU运行时间（CPU Time）。CPU运行时间指的是CPU实际用于处理某个程序的时间。这个时间只计算CPU在执行这个特定程序或进程上的工作时间，不包括系统处理其他任务的时间（如输入/输出操作、磁盘操作或网络通信）的时间。实际系统运行时间是从程序开始到程序结束所经过的总时间，就像是用墙上的时钟来度量时间一样。这个时间包括了所有的等待和延迟时间，比如CPU切换到其他任务、数据从硬盘加载、网络延迟等。因此，这个时间通常会比CPU运行时间长，因为它包括了程序执行中所有可能的等待时间。</p>
@@ -300,8 +300,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">times =</span> <span class="dv">5</span>)  <span class="co"># 重复运行5次</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
-           expr      min       lq     mean   median      uq      max neval
- Sys.sleep(0.1) 100.3082 100.4698 103.1366 100.4896 101.271 113.1443     5</code></pre>
+           expr      min       lq     mean   median       uq     max neval
+ Sys.sleep(0.1) 108.5984 108.8506 109.6036 109.2285 109.5447 111.796     5</code></pre>
 </div>
 </div>
 <p>得到的结果中，“Unit”部分声明了本次代码执行时间衡量的时间单位（“milliseconds”代表时间单位为微秒），<em>expr</em>代表执行的代码，<em>neval</em>代表代码执行的次数，而<em>mean</em>和<em>median</em>分别代表多次执行中时间的平均值和中位数，<em>min</em>和<em>max</em>则给出了执行时间的最小值和最大值。 此外，<code>microbenchmark</code>函数还可以比较不同代码的运行时间长短，实现方法如下：</p>
@@ -312,8 +312,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
            expr      min       lq     mean   median       uq      max neval
- Sys.sleep(0.1) 101.4396 109.6315 111.2815 114.1793 115.4724 115.6848     5
- Sys.sleep(0.2) 202.6440 205.0903 208.1864 207.2752 210.6267 215.2959     5</code></pre>
+ Sys.sleep(0.1) 107.9187 108.5331 108.7826 108.5972 109.3027 109.5615     5
+ Sys.sleep(0.2) 201.7077 202.2759 205.4304 204.4330 204.9903 213.7449     5</code></pre>
 </div>
 </div>
 </section>
@@ -342,7 +342,7 @@ Attaching package: 'pryr'</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mem_used</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>53.1 MB</code></pre>
+<pre><code>53.5 MB</code></pre>
 </div>
 </div>
 <p>有的时候，我们需要知道经过某一步操作之后，我们R占用内存的变化是多少，可以使用<code>mem_change</code>函数来完成这一步操作：</p>
@@ -364,7 +364,7 @@ Attaching package: 'pryr'</code></pre>
 <pre><code># A tibble: 1 × 6
   expression      min   median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 a             2.6ms   2.89ms      316.     781KB     4.13</code></pre>
+1 a            2.55ms   2.81ms      349.     781KB     4.08</code></pre>
 </div>
 </div>
 <p>上面的代码会对表达式执行若干次，然后进行效能的衡量。在返回结果中，<em>median</em>代表若干次迭代中时间花销的中位数，<em>mem_alloc</em>代表在运行表达式时，R分配的内存总量；而<em>itr/sec</em>则告诉我们每秒可以对该表达式执行多少次。 <code>mark</code>函数不仅可以对一个表达式的效能进行测量，还可以对多个表达式的效能进行比较。一般来说，默认情况下要求不同表达式的返回值必须是一致的，但是我们可以通过把<em>check</em>参数设置为FALSE来避免这一默认设置。实现方法如下：</p>
@@ -379,20 +379,12 @@ Attaching package: 'pryr'</code></pre>
 <pre><code># A tibble: 3 × 6
   expression      min   median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 a            2.72ms   2.96ms      307.   781.3KB     4.11
-2 b            2.71ms   2.96ms      304.   781.3KB     6.24
-3 c            5.42ms    5.9ms      157.    1.53MB     4.18</code></pre>
+1 a            2.54ms    2.8ms      345.   781.3KB     6.24
+2 b            2.55ms   2.79ms      346.   781.3KB     4.09
+3 c            5.11ms   5.61ms      175.    1.53MB     6.39</code></pre>
 </div>
 </div>
-<p>以上代码利用<code>mark</code>函数对比了3个表达式的效能。 此外，还可以使用<strong>profvis</strong>包的<code>profvis</code>函数来对表达式，该工具能够提供一个交互式的图形界面，让用户看到每一步操作中R语言在时间和空间上的花销。实现方法如下：</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(profvis)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">profvis</span>({</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="fl">1e5</span>)</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="fl">1e5</span> <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  c <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="fl">2e5</span>)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<p>以上代码利用<code>mark</code>函数对比了3个表达式的效能。</p>
 </section>
 <section id="小结" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="小结"><span class="header-section-number">3.4</span> 小结</h2>

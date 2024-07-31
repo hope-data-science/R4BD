@@ -237,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">目录</h2>
    
   <ul>
   <li><a href="#调用c" id="toc-调用c" class="nav-link active" data-scroll-target="#调用c"><span class="header-section-number">9.1</span> 调用C++</a></li>
@@ -309,7 +309,8 @@ int fibonacci(const int x) {
 </div>
 <p>现在，我们就可以直接在R中对其进行调用了：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fibonacci</span>(<span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fibonacci</span>(<span class="dv">20</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 6765</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>在上面的例子中，我们展示了如何简单地在R中调用C++。在实际应用中，当我们发现某一个步骤非常消耗时间，而又可以使用C++进行实现，就可以尝试是否能够通过<strong>Rcpp</strong>来突破这个瓶颈。关于如何更好地充分利用<strong>Rcpp</strong>工具，可以参考开源图书<a href="https://teuder.github.io/rcpp4everyone_en/">Rcpp for everyone</a>，该书全面地介绍了<strong>Rcpp</strong>包的使用方法。另外，更多最新的讯息，可以参考官方文档<a href="https://www.rcpp.org/" class="uri">https://www.rcpp.org/</a>。</p>
 </section>
