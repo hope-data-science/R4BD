@@ -245,6 +245,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#极限压缩" id="toc-极限压缩" class="nav-link" data-scroll-target="#极限压缩"><span class="header-section-number">4.3</span> 极限压缩</a></li>
   <li><a href="#通用交流" id="toc-通用交流" class="nav-link" data-scroll-target="#通用交流"><span class="header-section-number">4.4</span> 通用交流</a></li>
   <li><a href="#小结" id="toc-小结" class="nav-link" data-scroll-target="#小结"><span class="header-section-number">4.5</span> 小结</a></li>
+  <li><a href="#练习" id="toc-练习" class="nav-link" data-scroll-target="#练习"><span class="header-section-number">4.6</span> 练习</a></li>
+  <li><a href="#参考资料" id="toc-参考资料" class="nav-link" data-scroll-target="#参考资料"><span class="header-section-number">4.7</span> 参考资料</a></li>
   </ul>
 </nav>
     </div>
@@ -482,6 +484,20 @@ Figure&nbsp;4.1: rio包的六边形标志符
 <section id="小结" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="小结"><span class="header-section-number">4.5</span> 小结</h2>
 <p>本章聚焦于大数据的读写性能，介绍了大数据读写中需要考虑的三个要素：（1）读写速度；（2）内存占用；（3）文件格式通用性。在R平台中进行测试，发现读写速度最快的文件格式是fst，而存储效率最高的是Parquet格式，在考虑通用交流的时候则需靠考虑团队成员能够读取什么格式的文件。</p>
+</section>
+<section id="练习" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="练习"><span class="header-section-number">4.6</span> 练习</h2>
+<p>设计一个试验，对于不同体量（不应低于100M）的数据，观察读写不同数据格式的文件（包括但不限于csv、parquet、qs、fst等），需要的时间和空间分别是多少。要求使用图表进行展示，并给出明确的结论。附加考虑：当数据是不同类型的时候，上面的结论是否有所变化？</p>
+</section>
+<section id="参考资料" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="参考资料"><span class="header-section-number">4.7</span> 参考资料</h2>
+<ul>
+<li><a href="https://rsangole.netlify.app/posts/2022-09-14_data-read-write-performance/data-read-write-perf" class="uri">https://rsangole.netlify.app/posts/2022-09-14_data-read-write-performance/data-read-write-perf</a></li>
+<li><a href="https://tomaztsql.wordpress.com/2022/05/08/comparing-performances-of-csv-to-rds-parquet-and-feather-data-types/" class="uri">https://tomaztsql.wordpress.com/2022/05/08/comparing-performances-of-csv-to-rds-parquet-and-feather-data-types/</a></li>
+<li><a href="https://prof-thiagooliveira.netlify.app/post/data-read-write-performance/" class="uri">https://prof-thiagooliveira.netlify.app/post/data-read-write-performance/</a></li>
+<li><a href="https://stackoverflow.com/questions/58699848/best-file-type-for-loading-data-in-to-r-speed-wise" class="uri">https://stackoverflow.com/questions/58699848/best-file-type-for-loading-data-in-to-r-speed-wise</a></li>
+<li><a href="https://h2oai.github.io/db-benchmark/" class="uri">https://h2oai.github.io/db-benchmark/</a></li>
+</ul>
 
 
 </section>

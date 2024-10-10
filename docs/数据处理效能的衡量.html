@@ -300,8 +300,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">times =</span> <span class="dv">5</span>)  <span class="co"># 重复运行5次</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
-           expr      min       lq     mean   median       uq     max neval
- Sys.sleep(0.1) 108.5984 108.8506 109.6036 109.2285 109.5447 111.796     5</code></pre>
+           expr      min       lq    mean   median       uq      max neval
+ Sys.sleep(0.1) 109.6687 110.5331 111.458 110.6252 111.5059 114.9572     5</code></pre>
 </div>
 </div>
 <p>得到的结果中，“Unit”部分声明了本次代码执行时间衡量的时间单位（“milliseconds”代表时间单位为微秒），<em>expr</em>代表执行的代码，<em>neval</em>代表代码执行的次数，而<em>mean</em>和<em>median</em>分别代表多次执行中时间的平均值和中位数，<em>min</em>和<em>max</em>则给出了执行时间的最小值和最大值。 此外，<code>microbenchmark</code>函数还可以比较不同代码的运行时间长短，实现方法如下：</p>
@@ -312,8 +312,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
            expr      min       lq     mean   median       uq      max neval
- Sys.sleep(0.1) 107.9187 108.5331 108.7826 108.5972 109.3027 109.5615     5
- Sys.sleep(0.2) 201.7077 202.2759 205.4304 204.4330 204.9903 213.7449     5</code></pre>
+ Sys.sleep(0.1) 101.8236 103.7175 108.0753 109.8820 109.9186 115.0347     5
+ Sys.sleep(0.2) 203.1670 204.1940 206.2796 204.2952 204.7377 215.0043     5</code></pre>
 </div>
 </div>
 </section>
@@ -342,7 +342,7 @@ Attaching package: 'pryr'</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mem_used</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>53.5 MB</code></pre>
+<pre><code>53.4 MB</code></pre>
 </div>
 </div>
 <p>有的时候，我们需要知道经过某一步操作之后，我们R占用内存的变化是多少，可以使用<code>mem_change</code>函数来完成这一步操作：</p>
@@ -352,7 +352,7 @@ Attaching package: 'pryr'</code></pre>
 <pre><code>-800 kB</code></pre>
 </div>
 </div>
-<p>注意，如果结果带有负号，说明R所占用内存减少了，否则就是增加了。</p>
+<p>注意，如果结果带有负号，说明R所占用内存减少了，否则就是增加了。 此外，如果对一个已经保存在本地的文件，需要查看其占用内存空间，可以使用<strong>fs</strong>包的<code>file_size</code>函数进行查看，只需要把文件的路径放入即可。</p>
 </section>
 <section id="综合衡量" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="综合衡量"><span class="header-section-number">3.3</span> 综合衡量</h2>
@@ -364,7 +364,7 @@ Attaching package: 'pryr'</code></pre>
 <pre><code># A tibble: 1 × 6
   expression      min   median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 a            2.55ms   2.81ms      349.     781KB     4.08</code></pre>
+1 a            2.54ms   2.79ms      352.     781KB     4.09</code></pre>
 </div>
 </div>
 <p>上面的代码会对表达式执行若干次，然后进行效能的衡量。在返回结果中，<em>median</em>代表若干次迭代中时间花销的中位数，<em>mem_alloc</em>代表在运行表达式时，R分配的内存总量；而<em>itr/sec</em>则告诉我们每秒可以对该表达式执行多少次。 <code>mark</code>函数不仅可以对一个表达式的效能进行测量，还可以对多个表达式的效能进行比较。一般来说，默认情况下要求不同表达式的返回值必须是一致的，但是我们可以通过把<em>check</em>参数设置为FALSE来避免这一默认设置。实现方法如下：</p>
@@ -379,9 +379,9 @@ Attaching package: 'pryr'</code></pre>
 <pre><code># A tibble: 3 × 6
   expression      min   median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 a            2.54ms    2.8ms      345.   781.3KB     6.24
-2 b            2.55ms   2.79ms      346.   781.3KB     4.09
-3 c            5.11ms   5.61ms      175.    1.53MB     6.39</code></pre>
+1 a            2.55ms   2.79ms      346.   781.3KB     6.25
+2 b            2.54ms    2.8ms      345.   781.3KB     4.08
+3 c            5.33ms   5.67ms      173.    1.53MB     6.39</code></pre>
 </div>
 </div>
 <p>以上代码利用<code>mark</code>函数对比了3个表达式的效能。</p>
