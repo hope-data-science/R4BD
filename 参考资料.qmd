@@ -9,3 +9,4 @@
 (@) [R interface to Apache Spark](https://spark.posit.co/)
 (@) [An Introduction to Polars from R](https://pola-rs.github.io/r-polars/vignettes/polars.html)
 (@) [tidypolars](https://tidypolars.etiennebacher.com/)
+(@) [fastverse](https://fastverse.github.io/fastverse/)

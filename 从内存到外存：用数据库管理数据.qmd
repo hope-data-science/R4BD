@@ -39,7 +39,7 @@ knitr::include_graphics("fig/duckdb.png")
 
 ### 数据库的连接
 
-完事开头难，对数据库操作的第一步就是必须让R环境与数据库连接起来。在R中要与数据库连接，一般需要两个包：其一是**DBI**，这个包提供了用于数据库连接、数据传输、执行查询的通用函数；其二是针对用户连接数据库系统的定制包，这些包能够把**DBI**命令转化为特定数据库系统能够解读的命令，比如要使用SQLite就需要**RSQLite**包，使用PostgreSQL就需要使用**PostgreSQL**包。对于咱们的试验来说，需要使用**duckdb**包来完成这个操作，实现方法如下：
+万事开头难，对数据库操作的第一步就是必须让R环境与数据库连接起来。在R中要与数据库连接，一般需要两个包：其一是**DBI**，这个包提供了用于数据库连接、数据传输、执行查询的通用函数；其二是针对用户连接数据库系统的定制包，这些包能够把**DBI**命令转化为特定数据库系统能够解读的命令，比如要使用SQLite就需要**RSQLite**包，使用PostgreSQL就需要使用**PostgreSQL**包。对于咱们的试验来说，需要使用**duckdb**包来完成这个操作，实现方法如下：
 
 ```{r}
 con = dbConnect(duckdb())
@@ -267,7 +267,7 @@ library(pacman)
 p_load(polars,tidypolars,tidyverse,tidyfst)
 
 # 扫描数据
-pl$scan_parquet("df.parquet") -> dat_pl
+scan_parquet_polars("temp/df.parquet") -> dat_pl
 ```
 
 需要注意的是，在上面的操作中，我们并没有把数据导入到环境里面。我们用了“扫描”一词，其实相当于对数据进行了连接，类似于我们在前一章节中提到的`open_dataset`操作。在这个背景下，我们可以对这个没有导入环境的数据进行各种操作，并把结果收集到环境中进行展示，操作方法如下：
@@ -293,9 +293,6 @@ pst(
 
 # 查看结果
 res
-
-# 把结果转化为R中的数据框
-res$to_data_frame()
 
 # 把结果转化为数据框并使用tibble形式进行展示
 res %>% as_tibble()

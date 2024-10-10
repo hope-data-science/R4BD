@@ -233,3 +233,17 @@ res %>%
 ## 小结
 
 本章聚焦于大数据的读写性能，介绍了大数据读写中需要考虑的三个要素：（1）读写速度；（2）内存占用；（3）文件格式通用性。在R平台中进行测试，发现读写速度最快的文件格式是fst，而存储效率最高的是Parquet格式，在考虑通用交流的时候则需靠考虑团队成员能够读取什么格式的文件。
+
+## 练习
+
+设计一个试验，对于不同体量（不应低于100M）的数据，观察读写不同数据格式的文件（包括但不限于csv、parquet、qs、fst等），需要的时间和空间分别是多少。要求使用图表进行展示，并给出明确的结论。附加考虑：当数据是不同类型的时候，上面的结论是否有所变化？
+
+## 参考资料
+- <https://rsangole.netlify.app/posts/2022-09-14_data-read-write-performance/data-read-write-perf>
+- <https://tomaztsql.wordpress.com/2022/05/08/comparing-performances-of-csv-to-rds-parquet-and-feather-data-types/>
+- <https://prof-thiagooliveira.netlify.app/post/data-read-write-performance/>
+- <https://stackoverflow.com/questions/58699848/best-file-type-for-loading-data-in-to-r-speed-wise>
+- <https://h2oai.github.io/db-benchmark/>
+
+
+
