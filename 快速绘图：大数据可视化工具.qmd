@@ -51,7 +51,7 @@ knitr::include_graphics("fig/big_np.jpg")
 ```{r}
 #| eval: false
 library(pacman)
-p_load(ggplot2,pryr,bench,fs,tidyst)
+p_load(ggplot2,pryr,bench,fs,tidyfst)
 
 x = rnorm(1e6,mean = 6)
 y = rnorm(1e6) + 2 + 1.5 * x
