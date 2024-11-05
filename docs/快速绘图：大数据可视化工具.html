@@ -302,7 +302,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="fig-chart_selection" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-chart_selection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="fig/chart_selection.jpg" class="img-fluid figure-img">
+<img src="fig/chart_selection.jpg" class="img-fluid figure-img" width="504">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-chart_selection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6.1: 面向不同目标的可视化解决方案
@@ -320,7 +320,7 @@ Figure&nbsp;6.1: 面向不同目标的可视化解决方案
 <div id="fig-big_np" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-big_np-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="fig/big_np.jpg" class="img-fluid figure-img">
+<img src="fig/big_np.jpg" class="img-fluid figure-img" width="546">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-big_np-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6.2: 大N问题和大P问题
@@ -335,7 +335,7 @@ Figure&nbsp;6.2: 大N问题和大P问题
 <p>一般来说，可视化中的大N问题是因为数据点过多导致可视化过程卡顿，甚至因内存不足而无法实现。下面我们举一个例子，比如我们构造100万个点，它们有横坐标x和纵坐标y。构造代码如下：</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(ggplot2,pryr,bench,fs,tidyst)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(ggplot2,pryr,bench,fs,tidyfst)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="fl">1e6</span>,<span class="at">mean =</span> <span class="dv">6</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="fl">1e6</span>) <span class="sc">+</span> <span class="dv">2</span> <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> x</span>
