@@ -8,7 +8,6 @@ lgr::get_logger("mlr3")$set_threshold("warn")
 lgr::get_logger("bbotk")$set_threshold("warn")
 ```
 
-
 ## 机器学习基本流程
 
 机器学习是一种通过算法和统计模型，使计算机系统从数据中自动学习和改进的技术。它包括监督学习、无监督学习、半监督学习和强化学习四种主要类型。机器学习广泛应用于图像识别、自然语言处理、医疗诊断和金融预测等领域。通过从大量数据中提取模式和特征，机器学习在解决复杂问题方面展现了强大的能力。
@@ -271,7 +270,7 @@ bmr = benchmark(design)
 bmr$aggregate() [,.(task_id,learner_id,classif.ce)]
 ```
 
-这里我们没有对结果进行展示，读者可以自行运行代码来观察，其中需要注意的细节包括：1、在使用算法的时候，“classif.rpart”使用的是决策树算法，“classif.ranger”使用的是随机森林算法，而“classif.featureless”则是一个基线模型，在分类问题上会对盲猜为多数类；2、这里默认观察模型的效果，会计算分类的错误率，错误率月低，代表模型表现越好，详见官方文档（<https://mlr3.mlr-org.com/reference/mlr_measures_classif.ce.html>）；3、在对bmr对象进行观察的时候，调用了`aggregate`方法，这个方法能够对不同迭代的表现结果进行汇总；4、mlr3框架使用了**data.table**作为底层，因此在观察模型效果的时候，我们选择列直接用了data.table中的方法。关于更多模型比较的内容，可以参考官方文档（<https://mlr3book.mlr-org.com/chapters/chapter3/evaluation_and_benchmarking.html>）。
+这里我们没有对结果进行展示，读者可以自行运行代码来观察，其中需要注意的细节包括：1、在使用算法的时候，“classif.rpart”使用的是决策树算法，“classif.ranger”使用的是随机森林算法，而“classif.featureless”则是一个基线模型，在分类问题上会对盲猜为多数类；2、这里默认观察模型的效果，会计算分类的错误率，错误率越低，代表模型表现越好，详见官方文档（<https://mlr3.mlr-org.com/reference/mlr_measures_classif.ce.html>）；3、在对bmr对象进行观察的时候，调用了`aggregate`方法，这个方法能够对不同迭代的表现结果进行汇总；4、mlr3框架使用了**data.table**作为底层，因此在观察模型效果的时候，我们选择列直接用了data.table中的方法。关于更多模型比较的内容，可以参考官方文档（<https://mlr3book.mlr-org.com/chapters/chapter3/evaluation_and_benchmarking.html>）。
 
 ### 参数调节
 
