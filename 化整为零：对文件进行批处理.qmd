@@ -45,6 +45,7 @@
 
 值得一提的是，当我们把多个文件进行打包的时候，并不总是必须对文件进行压缩（即把文件的总容量减小），有的时候我们甚至会把文件变大，但是压缩依然有意义。我们可以把这个过程看做是把很多小物件放进一个容器中（容器可以是塑料袋、收纳盒或集装箱）。有的物件具有弹性，因此我们可以用力压，让它的体积更小；有的东西则弹性不大，只能直接放进容器中。但是无论如何，只要我们把东西归置到一起，就会便于我们管理，而且在对这一群东西进行移动的时候会更加方便。举一个通俗的例子，如果现在我们有6瓶矿泉水，一个人一双手要把这些水移动到操场将会非常困难。但是如果我们再提供一个背包，把6瓶矿泉水都放进去，尽管背包和矿泉水的容积可能没有变小，但是移动这些矿泉水就会非常便捷。因此压缩文件格式其实就是一定组织形式的容器，在大数据传输中还会使用[hdf5](https://www.hdfgroup.org/solutions/hdf5/)等其他形式的打包管理工具，而且在R中也有便捷的接口可以调用（比如hdf5可以使用[hdf5r](https://hhoeflin.github.io/hdf5r/)包进行调用），感兴趣的读者可以根据需要自行学习和了解。
 
+
 ## Excel文件批处理
 
 Excel 文件批处理是指对多个Excel文件进行一系列自动化操作，以提高效率和减少手动工作，这些操作包括创建、读取、修改、复制、移动和删除Excel文件。在数据处理和分析过程中，批处理操作可以显著节省时间，尤其是当需要处理大量结构类似的文件时。
@@ -85,11 +86,11 @@ p_load(fs,openxlsx2,archive,tidyfst,tidyverse)
 
 ```{r}
 #| eval: false
-nr_of_rows <- 1e7
+nr_of_rows <- 1e7 # 可适当增加数据量，如改为 5e7或1e8
 
 df <- data.table(
     Logical = sample(c(TRUE, FALSE, NA), prob = c(0.85, 0.1, 0.05), nr_of_rows, replace = TRUE),
-    Integer = sample(1L:100L, nr_of_rows, replace = TRUE),
+    Integer = sample(1L:100L, nr_of_rows, replace = TRUE), # 可适当增加文件数量，如改为 1:1e3或1:1e4
     Real = sample(sample(1:10000, 20) / 100, nr_of_rows, replace = TRUE),
     Factor = as.factor(sample(labels(UScitiesD), nr_of_rows, replace = TRUE))
   )
@@ -153,6 +154,47 @@ df %>%
     export_fst(x,path("temp","fst",fn,ext = "fst")) # 写出文件
   })
 ```
+
+### 文件批量读取
+如果我们需要对csv文件夹下的所有文件进行读取，然后合并为一个数据框，可以使用readr包的`read_csv`函数进行实现，操作方法如下：
+
+```{r}
+#| eval: false
+dir_ls("temp/csv") -> all_csv_paths
+read_csv(all_csv_paths,id = "file_path") -> all_data
+all_data
+
+# # A tibble: 10,000,000 × 5
+#    file_path      Logical Integer  Real Factor      
+#    <chr>          <lgl>     <dbl> <dbl> <chr>       
+#  1 temp/csv/1.csv TRUE          1 54.6  Denver      
+#  2 temp/csv/1.csv TRUE          1 52.2  Houston     
+#  3 temp/csv/1.csv TRUE          1 35.8  SanFrancisco
+#  4 temp/csv/1.csv TRUE          1 79.5  Houston     
+#  5 temp/csv/1.csv TRUE          1 92.2  LosAngeles  
+#  6 temp/csv/1.csv FALSE         1 53.8  Atlanta     
+#  7 temp/csv/1.csv TRUE          1 78.4  Miami       
+#  8 temp/csv/1.csv TRUE          1 18.2  Atlanta     
+#  9 temp/csv/1.csv TRUE          1  8.83 Denver      
+# 10 temp/csv/1.csv FALSE         1 49.8  Houston     
+# # ℹ 9,999,990 more rows
+# # ℹ Use `print(n = ...)` to see more rows
+```
+
+那么在返回的all_data变量中，包含了所有文件合并后的信息，其中file_path列保存了文件的路径。
+
+不过在R中，能够最快读取csv格式文件的还是data.table包提供的`fread`函数，因此如果对性能有较高要求，可以这样操作：
+```{r}
+#| eval: false
+map_dfr(all_csv_paths,fread) -> all_data2
+```
+这里使用了purrr包的`map_dfr`函数，会开展向量化操作，得到的结果会把数据框按照行合并到一起。在上述操作中，没有记录文件名称，如果需要记录，可以这样操作：
+```{r}
+#| eval: false
+lapply(all_csv_paths,\(x) fread(x)[,file_path:=x]) %>% 
+  rbindlist() -> all_data3
+```
+这里我们使用了基本包的`lapply`函数，并且利用data.table包的`rbindlist`函数把获得的数据框列表合并到一起。
 
 ### 文件的压缩
 
