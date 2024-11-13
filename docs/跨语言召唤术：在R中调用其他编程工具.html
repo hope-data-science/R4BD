@@ -279,7 +279,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="9.1" class="anchored" data-anchor-id="调用c"><span class="header-section-number">9.1</span> 调用C++</h2>
 <p>在R语言中调用C++主要是为了提升性能和效率。R适合数据分析和统计建模，但在处理计算密集型任务、大规模数据集或复杂算法时可能表现较慢。通过调用C++，可以利用其高效的计算能力和更好的内存管理，显著加快计算速度，满足实时处理和低延迟要求，进而优化整个工作流程。</p>
 <p><strong>Rcpp</strong>包是一个强大且流行的R扩展包，用于在R中集成和调用C++代码。它提供了一个简洁的接口，使得在R中编写和执行C++代码变得更加容易，从而结合了R的简便性和C++的高效性。通过<strong>Rcpp</strong>，用户可以在R环境中执行高性能计算任务，并且可以轻松地在两种语言之间传递数据，极大地提高了计算效率和代码执行速度。</p>
-<p>一般来说，有两种方案能够利用<strong>Rcpp</strong>包来在R环境中对C++进行调用。一种方法是使用<code>cppFunction</code>函数，在R中直接对C++函数进行定义，然后调用。比如我们想要判断一个数字是否为基数，可以这样进行操作：</p>
+<p>一般来说，有两种方案能够利用<strong>Rcpp</strong>包来在R环境中对C++进行调用。一种方法是使用<code>cppFunction</code>函数，在R中直接对C++函数进行定义，然后调用。比如我们想要判断一个数字是否为奇数，可以这样进行操作：</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 加载包</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Rcpp)</span>
